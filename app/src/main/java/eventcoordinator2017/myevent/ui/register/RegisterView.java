@@ -12,7 +12,7 @@ public interface RegisterView extends MvpView {
 
     void showAlert(String message);
 
-    void setEditTextValue(String email, String password, String confirmPassword, String firstName, String lastName, String birthday, String contact, String address, String city, String zipCode, String country);
+    void setEditTextValue(String email, String password, String confirmPassword, String firstName, String lastName, String birthday, String contact, String address);
 
     void startLoading();
 

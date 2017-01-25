@@ -101,10 +101,7 @@ public class RegisterActivity extends MvpViewStateActivity<RegisterView, Registe
                 binding.etLName.getText().toString(),
                 binding.etBday.getText().toString(),
                 binding.etContact.getText().toString(),
-                binding.etAddress.getText().toString(),
-                binding.etCity.getText().toString(),
-                binding.etZipcode.getText().toString(),
-                binding.etCountry.getText().toString()
+                binding.etAddress.getText().toString()
         );
     }
 
@@ -114,7 +111,7 @@ public class RegisterActivity extends MvpViewStateActivity<RegisterView, Registe
     }
 
     @Override
-    public void setEditTextValue(String email, String password, String confirmPassword, String firstName, String lastName, String birthday, String contact, String address, String city, String zipCode, String country) {
+    public void setEditTextValue(String email, String password, String confirmPassword, String firstName, String lastName, String birthday, String contact, String address) {
         binding.etEmail.setText(email);
         binding.etPassword.setText(password);
         binding.etConfirmPass.setText(confirmPassword);
@@ -123,9 +120,6 @@ public class RegisterActivity extends MvpViewStateActivity<RegisterView, Registe
         binding.etBday.setText(birthday);
         binding.etContact.setText(contact);
         binding.etAddress.setText(address);
-        binding.etCity.setText(city);
-        binding.etZipcode.setText(zipCode);
-        binding.etCountry.setText(country);
     }
 
     @Override
@@ -234,9 +228,6 @@ public class RegisterActivity extends MvpViewStateActivity<RegisterView, Registe
         registerViewState.setContact(binding.etContact.getText().toString());
         registerViewState.setBirthday(binding.etContact.getText().toString());
         registerViewState.setAddress(binding.etAddress.getText().toString());
-        registerViewState.setCity(binding.etCity.getText().toString());
-        registerViewState.setZipCode(binding.etZipcode.getText().toString());
-        registerViewState.setCountry(binding.etCountry.getText().toString());
 
     }
 

@@ -29,19 +29,16 @@ public class RegisterPresenter extends MvpNullObjectBasePresenter<RegisterView> 
                          String lastName,
                          String birthday,
                          String contact,
-                         String address,
-                         String city,
-                         String zipCode,
-                         String country) {
+                         String address) {
 
         if (email.equals("") || password.equals("") || confirmPassword.equals("") || firstName.equals("") || lastName.equals("") || birthday.equals("") ||
-                contact.equals("") || address.equals("") || city.equals("") || zipCode.equals("") || country.equals("")) {
+                contact.equals("") || address.equals("")) {
             getView().showAlert("Fill-up all fields");
         } else if (!password.contentEquals(confirmPassword)) {
             getView().showAlert("Password does not match");
         } else {
             getView().startLoading();
-            App.getInstance().getApiInterface().register(email,password, firstName, lastName, contact,birthday,address,city,zipCode,country)
+            App.getInstance().getApiInterface().register(email,password, firstName, lastName, contact,birthday,address)
                     .enqueue(new Callback<ResultResponse>() {
                         @Override
                         public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {

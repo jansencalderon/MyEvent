@@ -27,10 +27,7 @@ public interface ApiInterface {
                                   @Field(Constants.LAST_NAME) String lastName,
                                   @Field(Constants.CONTACT) String contact,
                                   @Field(Constants.BIRTHDAY) String birthday,
-                                  @Field(Constants.ADDRESS) String address,
-                                  @Field(Constants.CITY) String city,
-                                  @Field(Constants.ZIP_CODE) String zipcode,
-                                  @Field(Constants.COUNTRY) String country
+                                  @Field(Constants.ADDRESS) String address
     );
 
     @FormUrlEncoded

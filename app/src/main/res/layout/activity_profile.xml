@@ -51,7 +51,7 @@
                         app:layout_collapseMode="pin"/>
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:layout_width="100dp"
-                        android:src="@drawable/user"
+                        android:src="@drawable/ic_user"
                         android:layout_gravity="center"
                         android:layout_height="100dp" />
 

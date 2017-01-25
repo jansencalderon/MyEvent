@@ -17,9 +17,6 @@ public class RegisterViewState implements RestorableViewState<RegisterView> {
     private String birthday;
     private String contact;
     private String address;
-    private String city;
-    private String zipCode;
-    private String country;
 
     @Override
     public void saveInstanceState(@NonNull Bundle out) {
@@ -31,9 +28,6 @@ public class RegisterViewState implements RestorableViewState<RegisterView> {
         out.putString(Constants.BIRTHDAY, birthday);
         out.putString(Constants.CONTACT,contact);
         out.putString(Constants.ADDRESS, address);
-        out.putString(Constants.CITY, city);
-        out.putString(Constants.ZIP_CODE, zipCode);
-        out.putString(Constants.COUNTRY, country);
     }
 
     @Override
@@ -46,16 +40,13 @@ public class RegisterViewState implements RestorableViewState<RegisterView> {
         birthday = in.getString(Constants.BIRTHDAY, "");
         contact = in.getString(Constants.CONTACT, "");
         address = in.getString(Constants.ADDRESS, "");
-        city = in.getString(Constants.CITY, "");
-        zipCode = in.getString(Constants.ZIP_CODE, "");
-        country = in.getString(Constants.COUNTRY, "");
 
         return this;
     }
 
     @Override
     public void apply(RegisterView view, boolean retained) {
-        view.setEditTextValue(email, password, confirmPassword,firstName,lastName,birthday,contact,address,city,zipCode,country);
+        view.setEditTextValue(email, password, confirmPassword,firstName,lastName,birthday,contact,address);
     }
 
     public String getEmail() {
@@ -120,29 +111,5 @@ public class RegisterViewState implements RestorableViewState<RegisterView> {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getZipCode() {
-        return zipCode;
-    }
-
-    public void setZipCode(String zipCode) {
-        this.zipCode = zipCode;
-    }
-
-    public String getCountry() {
-        return country;
-    }
-
-    public void setCountry(String country) {
-        this.country = country;
     }
 }

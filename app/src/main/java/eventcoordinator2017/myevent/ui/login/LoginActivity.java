@@ -49,6 +49,11 @@ public class LoginActivity extends MvpViewStateActivity<LoginView, LoginPresente
         binding.setView(getMvpView());
         binding.etEmail.addTextChangedListener(this);
         binding.etPassword.addTextChangedListener(this);
+
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Logging in...");
     }
 
 
@@ -114,12 +119,9 @@ public class LoginActivity extends MvpViewStateActivity<LoginView, LoginPresente
 
     @Override
     public void startLoading() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setCancelable(false);
-            progressDialog.setMessage("Logging in...");
+        if (progressDialog != null) {
+            progressDialog.show();
         }
-        progressDialog.show();
     }
 
     @Override

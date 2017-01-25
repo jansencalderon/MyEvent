@@ -24,7 +24,7 @@
             android:id="@+id/userImage"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:src="@drawable/user" />
+            android:src="@drawable/accent" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -43,8 +43,8 @@
                 android:textSize="20sp" />
 
             <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
                 android:src="@drawable/ic_brush"
                 android:background="?selectableItemBackground"
                 android:layout_marginLeft="10dp"
