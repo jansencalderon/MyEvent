@@ -26,6 +26,7 @@ import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.databinding.ActivityMainBinding;
 import eventcoordinator2017.myevent.model.data.User;
+import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import eventcoordinator2017.myevent.ui.login.LoginActivity;
 import eventcoordinator2017.myevent.ui.profile.ProfileActivity;
 import io.realm.Realm;
@@ -142,8 +143,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
         if (id == R.id.home) {
 
-        } else if (id == R.id.transactions) {
-          //  startActivity(new Intent(this, TransactionsActivity.class));
+        } else if (id == R.id.events) {
+           startActivity(new Intent(this, EventsActivity.class));
             binding.navigationView.getMenu().getItem(0).setChecked(true);
         } else if (id == R.id.logout) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

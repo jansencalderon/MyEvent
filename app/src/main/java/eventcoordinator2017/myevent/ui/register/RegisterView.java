@@ -20,11 +20,5 @@ public interface RegisterView extends MvpView {
 
     void onRegistrationSuccess();
 
-    void onChecked();
-
-    void onCheckedIsTrue();
-
-    void onCheckedIsFalse();
-
     void onBirthdayClicked();
 }

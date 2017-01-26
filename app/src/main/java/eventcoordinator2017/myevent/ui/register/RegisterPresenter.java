@@ -78,16 +78,6 @@ public class RegisterPresenter extends MvpNullObjectBasePresenter<RegisterView> 
 
     }
 
-    public void onChecked(boolean isChecked){
-        if (isChecked) {
-           getView().onCheckedIsTrue();
-        } else {
-           getView().onCheckedIsFalse();
-        }
-        ;
-    }
-
-    ;
 
 
 }

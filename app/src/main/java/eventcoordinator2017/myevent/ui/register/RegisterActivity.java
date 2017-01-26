@@ -41,7 +41,6 @@ public class RegisterActivity extends MvpViewStateActivity<RegisterView, Registe
         setRetainInstance(true);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_register);
         binding.setView(getMvpView());
-        binding.btnSubmit.setAlpha(.5f);
 
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null)
@@ -154,25 +153,6 @@ public class RegisterActivity extends MvpViewStateActivity<RegisterView, Registe
     }
 
 
-    //checked
-    @Override
-    public void onChecked() {
-        presenter.onChecked(binding.checkBoxAgree.isChecked());
-    }
-
-
-    @Override
-    public void onCheckedIsTrue() {
-        binding.btnSubmit.setEnabled(true);
-        binding.btnSubmit.setAlpha(1);
-    }
-
-    @Override
-    public void onCheckedIsFalse() {
-        binding.btnSubmit.setEnabled(false);
-        binding.btnSubmit.setAlpha(.5f);
-
-    }
 
     @Override
     public void onBirthdayClicked() {

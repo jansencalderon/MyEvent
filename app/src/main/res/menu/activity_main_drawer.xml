@@ -8,9 +8,9 @@
         android:title="Home"
         android:checked="true"/>
     <item
-        android:id="@+id/transactions"
+        android:id="@+id/events"
         android:icon="@drawable/ic_calendar_check_o"
-        android:title="My Transactions"
+        android:title="My Events"
         android:checkable="false" />
     <item
         android:id="@+id/logout"
