@@ -18,4 +18,7 @@ public class Endpoints {
 
     public static final String VERIFY = "verifyUser";
     public static final String VERIFY_RESEND_EMAIL ="resendEmail";
+
+
+    public static final String GET_USER_EVENTS ="getAllUserEvents";
 }

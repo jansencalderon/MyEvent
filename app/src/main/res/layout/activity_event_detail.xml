@@ -4,9 +4,11 @@
 
     <data>
 
+        <import type="android.view.View" />
+        <import type="eventcoordinator2017.myevent.utils.DateTimeUtils" />
         <variable
-            name="user"
-            type="eventcoordinator2017.myevent.model.data.User" />
+            name="event"
+            type="eventcoordinator2017.myevent.model.data.Event" />
 
         <variable
             name="view"
@@ -67,6 +69,69 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <LinearLayout
+                android:padding="10dp"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="Jansen's Birthday"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text='@{DateTimeUtils.toReadable(event.eventDateFrom) +" to "+DateTimeUtils.toReadable(event.eventDateTo)}'
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@{event.eventDescription}"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@{event.locName}"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@{event.eventTags}"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@{event.packages.packageName}"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@{event.packages.packagePrice}"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
     </LinearLayout>
 </layout>

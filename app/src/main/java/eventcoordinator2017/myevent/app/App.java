@@ -5,6 +5,7 @@ import android.app.Application;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import eventcoordinator2017.myevent.model.data.User;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
 import okhttp3.OkHttpClient;
@@ -75,6 +76,13 @@ public class App extends Application {
             apiInterface = getClient().create(ApiInterface.class);
         }
         return apiInterface;
+    }
+
+    public static User getUser(){
+        Realm realm = Realm.getDefaultInstance();
+        User user = realm.where(User.class).findFirst();
+
+        return user;
     }
 
 
