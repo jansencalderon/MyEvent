@@ -4,6 +4,7 @@ package eventcoordinator2017.myevent.app;
 import java.util.List;
 
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.response.LoginResponse;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
 import retrofit2.Call;
@@ -46,6 +47,11 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(Endpoints.GET_USER_EVENTS)
     Call<List<Event>> getUserEvents(@Field(Constants.USER_ID) String user_id);
+
+
+    @FormUrlEncoded
+    @POST(Endpoints.GET_PACKAGES)
+    Call<List<Package>> getPackages(@Field("") String ah);
 
 
 

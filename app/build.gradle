@@ -40,6 +40,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.1.0'
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
+    compile 'me.gujun.android.taggroup:library:1.4@aar'
 
     compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
     compile 'com.hannesdorfmann.mosby:viewstate:2.0.1'
@@ -50,9 +51,10 @@ dependencies {
 
     compile 'de.hdodenhof:circleimageview:2.1.0'
 
-    compile 'com.google.android.gms:play-services-appindexing:8.4.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.6.1'
 
-    testCompile 'junit:junit:4.12'
+    compile 'com.google.android.gms:play-services-location:9.6.1'
+    compile 'com.google.android.gms:play-services-places:9.6.1'
 
     testCompile 'junit:junit:4.12'
 }

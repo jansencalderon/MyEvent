@@ -47,7 +47,9 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
     }
 
     public void onStop() {
-        eventRealmResults.removeChangeListeners();
+        if(eventRealmResults.isValid()){
+            eventRealmResults.removeChangeListeners();
+        }
         realm.close();
     }
 

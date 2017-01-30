@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventsBinding;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
+import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
 import eventcoordinator2017.myevent.ui.events.details.EventDetailActivity;
 import eventcoordinator2017.myevent.ui.events.details.EventDetailView;
 
@@ -77,9 +79,21 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
             case android.R.id.home:
                 onBackPressed();
                 return true;
+            case R.id.add_event:
+                startActivity(new Intent(EventsActivity.this, EventAddActivity.class));
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.event, menu);
+
+
+        return true;
     }
 
     @Override

@@ -21,4 +21,5 @@ public class Endpoints {
 
 
     public static final String GET_USER_EVENTS ="getAllUserEvents";
+    public static final String GET_PACKAGES ="getPackages";
 }
