@@ -38,7 +38,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
         user = App.getUser();
 
         packageRealmResults = realm.where(Package.class).
-                findAllSorted("packageId", Sort.ASCENDING);
+                findAllSortedAsync("packageId", Sort.ASCENDING);
         packageRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Package>>() {
             @Override
             public void onChange(RealmResults<Package> element) {
@@ -105,20 +105,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
         } else if (eventLat.equals("") || eventLng.equals("")) {
             getView().showAlert("Please select valid location");
         } else {
-            Realm realm = Realm.getDefaultInstance();
-            realm.beginTransaction();
-            Event event = realm.createObject(Event.class);
-            event.setEventName(eventName);
-            event.setEventDescription(eventDescription);
-            event.setEventTags(joined);
-            event.setLocName(eventLocation);
-            event.setLocLat(eventLat);
-            event.setLocLong(eventLng);
-            event.setEventDateFrom(fromDate + " " + fromTime);
-            event.setEventDateTo(toDate + " " + toTime);
-            realm.commitTransaction();
-            realm.close();
-            getView().onNext();
+
         }
 
     }
@@ -132,13 +119,24 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
         if (packageRealmResults.isLoaded() && packageRealmResults.isValid()) {
             List<Package> packageList;
             if (query != null && !query.isEmpty()) {
-                packageList = realm.copyFromRealm(packageRealmResults.where()
-                        .lessThan("packagePriceInt",Integer.parseInt(query))
-                        .findAll());
+                getView().showAlert(query);
+                RealmResults<Package> packages = packageRealmResults;
+                try {
+                    packages = packageRealmResults.where()
+                            .lessThan("packagePrice", 1001)
+                            .findAll();
+                } catch (Exception e) {
+                    getView().showAlert("Errpr custom field");
+                    e.printStackTrace();
+                }
+
+                packageList = realm.copyFromRealm(packages);
+                getView().setPackages(packageList);
             } else {
                 packageList = realm.copyFromRealm(packageRealmResults);
             }
-            getView().setPackages(packageList);
+
+
         }
     }
 }

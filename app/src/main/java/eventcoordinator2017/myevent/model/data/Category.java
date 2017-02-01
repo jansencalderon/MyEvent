@@ -18,10 +18,10 @@ public class Category extends RealmObject {
     @PrimaryKey
     @SerializedName("category_id")
     @Expose
-    private String categoryId;
+    private int categoryId;
     @SerializedName("package_id")
     @Expose
-    private String packageId;
+    private int packageId;
     @SerializedName("category_name")
     @Expose
     private String categoryName;
@@ -30,21 +30,22 @@ public class Category extends RealmObject {
     private String categoryDescription;
     @SerializedName("items")
     @Expose
-    private RealmList<Item> items = null;
+    private RealmList<Item> items;
 
-    public String getCategoryId() {
+
+    public int getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 
-    public String getPackageId() {
+    public int getPackageId() {
         return packageId;
     }
 
-    public void setPackageId(String packageId) {
+    public void setPackageId(int packageId) {
         this.packageId = packageId;
     }
 
@@ -71,6 +72,5 @@ public class Category extends RealmObject {
     public void setItems(RealmList<Item> items) {
         this.items = items;
     }
-
 }
 

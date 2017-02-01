@@ -46,7 +46,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST(Endpoints.GET_USER_EVENTS)
-    Call<List<Event>> getUserEvents(@Field(Constants.USER_ID) String user_id);
+    Call<List<Event>> getUserEvents(@Field(Constants.USER_ID) int user_id);
 
 
     @FormUrlEncoded

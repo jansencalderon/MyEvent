@@ -15,7 +15,7 @@ public class User extends RealmObject {
     @PrimaryKey
     @SerializedName("user_id")
     @Expose
-    private String userId;
+    private int userId;
     @SerializedName("fb_id")
     @Expose
     private String fbId;
@@ -67,11 +67,11 @@ public class User extends RealmObject {
 
     private String fullName;
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 

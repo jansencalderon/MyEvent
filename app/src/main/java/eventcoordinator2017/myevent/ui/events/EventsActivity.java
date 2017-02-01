@@ -21,6 +21,7 @@ import eventcoordinator2017.myevent.databinding.ActivityEventsBinding;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
+import eventcoordinator2017.myevent.ui.events.crud.EventsCrudActivity;
 import eventcoordinator2017.myevent.ui.events.details.EventDetailActivity;
 import eventcoordinator2017.myevent.ui.events.details.EventDetailView;
 
@@ -80,7 +81,7 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
                 onBackPressed();
                 return true;
             case R.id.add_event:
-                startActivity(new Intent(EventsActivity.this, EventAddActivity.class));
+                startActivity(new Intent(EventsActivity.this, EventsCrudActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -15,13 +15,13 @@ public class Event extends RealmObject{
     @PrimaryKey
     @SerializedName("event_id")
     @Expose
-    private String eventId;
+    private int eventId;
     @SerializedName("user_id")
     @Expose
-    private String userId;
+    private int userId;
     @SerializedName("package_id")
     @Expose
-    private String packageId;
+    private int packageId;
     @SerializedName("event_name")
     @Expose
     private String eventName;
@@ -42,10 +42,10 @@ public class Event extends RealmObject{
     private String locName;
     @SerializedName("loc_lat")
     @Expose
-    private String locLat;
+    private double locLat;
     @SerializedName("loc_long")
     @Expose
-    private String locLong;
+    private double locLong;
     @SerializedName("image_directory")
     @Expose
     private String imageDirectory;
@@ -53,27 +53,27 @@ public class Event extends RealmObject{
     @Expose
     private Package packages;
 
-    public String getEventId() {
+    public int getEventId() {
         return eventId;
     }
 
-    public void setEventId(String eventId) {
+    public void setEventId(int eventId) {
         this.eventId = eventId;
     }
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
-    public String getPackageId() {
+    public int getPackageId() {
         return packageId;
     }
 
-    public void setPackageId(String packageId) {
+    public void setPackageId(int packageId) {
         this.packageId = packageId;
     }
 
@@ -125,19 +125,19 @@ public class Event extends RealmObject{
         this.locName = locName;
     }
 
-    public String getLocLat() {
+    public double getLocLat() {
         return locLat;
     }
 
-    public void setLocLat(String locLat) {
+    public void setLocLat(double locLat) {
         this.locLat = locLat;
     }
 
-    public String getLocLong() {
+    public double getLocLong() {
         return locLong;
     }
 
-    public void setLocLong(String locLong) {
+    public void setLocLong(double locLong) {
         this.locLong = locLong;
     }
 

@@ -16,10 +16,10 @@ public class Package extends RealmObject {
     @PrimaryKey
     @SerializedName("package_id")
     @Expose
-    private String packageId;
+    private int packageId;
     @SerializedName("company_id")
     @Expose
-    private String companyId;
+    private int companyId;
     @SerializedName("package_name")
     @Expose
     private String packageName;
@@ -28,26 +28,27 @@ public class Package extends RealmObject {
     private String packageType;
     @SerializedName("package_price")
     @Expose
-    private String packagePrice;
+    private int packagePrice;
     @SerializedName("category")
     @Expose
     private RealmList<Category> category;
 
     private int packagePriceInt;
 
-    public String getPackageId() {
+
+    public int getPackageId() {
         return packageId;
     }
 
-    public void setPackageId(String packageId) {
+    public void setPackageId(int packageId) {
         this.packageId = packageId;
     }
 
-    public String getCompanyId() {
+    public int getCompanyId() {
         return companyId;
     }
 
-    public void setCompanyId(String companyId) {
+    public void setCompanyId(int companyId) {
         this.companyId = companyId;
     }
 
@@ -67,11 +68,11 @@ public class Package extends RealmObject {
         this.packageType = packageType;
     }
 
-    public String getPackagePrice() {
+    public int getPackagePrice() {
         return packagePrice;
     }
 
-    public void setPackagePrice(String packagePrice) {
+    public void setPackagePrice(int packagePrice) {
         this.packagePrice = packagePrice;
     }
 
@@ -84,6 +85,10 @@ public class Package extends RealmObject {
     }
 
     public int getPackagePriceInt() {
-        return Integer.parseInt(packagePrice);
+        return packagePriceInt;
+    }
+
+    public void setPackagePriceInt(int packagePriceInt) {
+        this.packagePriceInt = packagePriceInt;
     }
 }
