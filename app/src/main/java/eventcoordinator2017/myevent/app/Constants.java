@@ -32,4 +32,5 @@ public class Constants {
     public static final String VER_CODE = "verification_code";
     public static final String USER_ID = "user_id";
     public static String EVENT_ID = "event_id";
+    public static String ID ="id";
 }

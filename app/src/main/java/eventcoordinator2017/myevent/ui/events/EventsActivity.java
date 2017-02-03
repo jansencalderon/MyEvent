@@ -15,15 +15,12 @@ import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import java.util.List;
 
 import eventcoordinator2017.myevent.R;
-import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventsBinding;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
-import eventcoordinator2017.myevent.ui.events.crud.EventsCrudActivity;
 import eventcoordinator2017.myevent.ui.events.details.EventDetailActivity;
-import eventcoordinator2017.myevent.ui.events.details.EventDetailView;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -81,7 +78,7 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
                 onBackPressed();
                 return true;
             case R.id.add_event:
-                startActivity(new Intent(EventsActivity.this, EventsCrudActivity.class));
+                startActivity(new Intent(EventsActivity.this, EventAddActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

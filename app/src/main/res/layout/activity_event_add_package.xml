@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="view"
+            type="eventcoordinator2017.myevent.ui.events.add.EventAddView" />
+
+
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            app:layout_collapseMode="pin"
+            app:title="Add Package" />
+
+        <LinearLayout
+            android:id="@+id/eventBudgetInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/activity_horizontal_margin">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="Budget For Event"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content" />
+            <LinearLayout
+                android:id="@+id/type"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="10dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₱"
+                    android:textSize="24sp"
+                    android:textColor="@color/darkGray" />
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:hint="0000.00"
+                    android:id="@+id/eventBudget"
+                    android:inputType="number"
+                    android:enabled="false"
+                    android:textSize="32sp"
+                    android:gravity="center"
+                    android:textColor="@color/darkGray"
+                    android:textColorHint="@color/lightestGray" />
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:src="@drawable/ic_brush"
+                    android:layout_gravity="top"
+                    android:onClick="@{()->view.clearBudget()}"
+                    android:tint="@color/colorPrimaryDark"
+                    android:layout_height="30dp" />
+            </LinearLayout>
+
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>

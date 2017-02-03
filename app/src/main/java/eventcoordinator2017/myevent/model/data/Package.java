@@ -33,8 +33,7 @@ public class Package extends RealmObject {
     @Expose
     private RealmList<Category> category;
 
-    private int packagePriceInt;
-
+    private String formattedPrice;
 
     public int getPackageId() {
         return packageId;
@@ -84,11 +83,11 @@ public class Package extends RealmObject {
         this.category = category;
     }
 
-    public int getPackagePriceInt() {
-        return packagePriceInt;
+    public String getFormattedPrice() {
+        return formattedPrice;
     }
 
-    public void setPackagePriceInt(int packagePriceInt) {
-        this.packagePriceInt = packagePriceInt;
+    public void setFormattedPrice(String formattedPrice) {
+        this.formattedPrice = formattedPrice;
     }
 }

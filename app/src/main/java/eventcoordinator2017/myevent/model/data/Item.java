@@ -15,10 +15,10 @@ public class Item extends RealmObject{
     @PrimaryKey
     @SerializedName("item_id")
     @Expose
-    private String itemId;
+    private int itemId;
     @SerializedName("category_id")
     @Expose
-    private String categoryId;
+    private int categoryId;
     @SerializedName("item_name")
     @Expose
     private String itemName;
@@ -26,19 +26,19 @@ public class Item extends RealmObject{
     @Expose
     private String itemDescription;
 
-    public String getItemId() {
+    public int getItemId() {
         return itemId;
     }
 
-    public void setItemId(String itemId) {
+    public void setItemId(int itemId) {
         this.itemId = itemId;
     }
 
-    public String getCategoryId() {
+    public int getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId(int categoryId) {
         this.categoryId = categoryId;
     }
 

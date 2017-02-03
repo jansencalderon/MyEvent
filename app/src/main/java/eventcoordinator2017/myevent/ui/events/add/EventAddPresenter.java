@@ -8,11 +8,8 @@ import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
-import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.User;
-import eventcoordinator2017.myevent.ui.events.EventsPresenter;
-import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -46,6 +43,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
             }
         });
 
+        getView().askForBudget("");
         loadPackageList();
     }
 
@@ -119,23 +117,17 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
         if (packageRealmResults.isLoaded() && packageRealmResults.isValid()) {
             List<Package> packageList;
             if (query != null && !query.isEmpty()) {
-                getView().showAlert(query);
-                RealmResults<Package> packages = packageRealmResults;
-                try {
-                    packages = packageRealmResults.where()
-                            .lessThan("packagePrice", 1001)
-                            .findAll();
-                } catch (Exception e) {
-                    getView().showAlert("Errpr custom field");
-                    e.printStackTrace();
-                }
+                RealmResults<Package> packages = packageRealmResults.where()
+                        .lessThanOrEqualTo("packagePrice", Integer.parseInt(query))
+                        .findAll();
 
                 packageList = realm.copyFromRealm(packages);
-                getView().setPackages(packageList);
+
             } else {
                 packageList = realm.copyFromRealm(packageRealmResults);
             }
 
+            getView().setPackages(packageList);
 
         }
     }

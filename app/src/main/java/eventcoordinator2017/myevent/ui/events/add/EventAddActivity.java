@@ -40,11 +40,7 @@ import java.util.Locale;
 
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddBinding;
-import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.Package;
-import eventcoordinator2017.myevent.ui.login.LoginActivity;
-import eventcoordinator2017.myevent.ui.main.MainActivity;
-import io.realm.Realm;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -67,7 +63,6 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_add);
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_event_add);
         binding.setView(getMvpView());
 
@@ -102,6 +97,21 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     @Override
     public void showAlert(String message) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onPackageClicked(Package aPackage) {
+
+    }
+
+    @Override
+    public void askForBudget(String budget) {
+
+    }
+
+    @Override
+    public void clearBudget() {
+
     }
 
     @Override
@@ -153,7 +163,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void onNext() {
-        startActivity(new Intent(this,EventAddBudgetActivity.class));
+        startActivity(new Intent(this,EventAddPackageActivity.class));
     }
 
     @Override
@@ -170,6 +180,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     public void setPackages(List<Package> packageList) {
 
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

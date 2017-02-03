@@ -33,7 +33,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         Intent i = getIntent();
-        presenter.onStart(i.getStringExtra(Constants.EVENT_ID));
+        presenter.onStart(i.getIntExtra(Constants.EVENT_ID, 0));
     }
 
     @NonNull

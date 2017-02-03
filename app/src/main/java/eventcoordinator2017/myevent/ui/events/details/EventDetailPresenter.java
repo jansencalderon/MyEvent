@@ -20,7 +20,7 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
     private User user;
     private Event event;
 
-    public void onStart(String eventId){
+    public void onStart(int eventId){
         realm = Realm.getDefaultInstance();
         user = App.getUser();
 

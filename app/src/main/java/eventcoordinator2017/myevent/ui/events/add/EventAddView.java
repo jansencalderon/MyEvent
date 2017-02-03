@@ -17,6 +17,12 @@ public interface EventAddView extends MvpView{
 
     void showAlert(String message);
 
+    void onPackageClicked(Package aPackage);
+
+    void askForBudget(String budget);
+
+    void clearBudget();
+
     void onPhotoClicked();
 
     void onDateClicked(int id);
