@@ -32,6 +32,7 @@
         <activity android:name=".ui.events.details.EventDetailActivity" />
         <activity android:name=".ui.events.add.EventAddActivity" />
         <activity android:name=".ui.events.add.EventAddPackageActivity" />
+        <activity android:name=".ui.pack.PackActivity" />
 
         <meta-data
             android:name="com.google.android.gms.version"

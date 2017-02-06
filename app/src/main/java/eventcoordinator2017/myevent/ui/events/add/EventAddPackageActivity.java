@@ -1,6 +1,7 @@
 package eventcoordinator2017.myevent.ui.events.add;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -19,10 +20,11 @@ import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import java.util.List;
 
 import eventcoordinator2017.myevent.R;
-import eventcoordinator2017.myevent.databinding.ActivityEventAddBudgetBinding;
+import eventcoordinator2017.myevent.app.Constants;
+import eventcoordinator2017.myevent.databinding.ActivityEventAddPackageBinding;
 import eventcoordinator2017.myevent.databinding.DialogBudgetBinding;
 import eventcoordinator2017.myevent.model.data.Package;
-import eventcoordinator2017.myevent.ui.eventsPackage.PackagesListAdapter;
+import eventcoordinator2017.myevent.ui.pack.PackActivity;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -30,7 +32,7 @@ import eventcoordinator2017.myevent.ui.eventsPackage.PackagesListAdapter;
 
 public class EventAddPackageActivity extends MvpActivity<EventAddView, EventAddPresenter> implements EventAddView {
 
-    ActivityEventAddBudgetBinding binding;
+    ActivityEventAddPackageBinding binding;
     PackagesListAdapter packagesListAdapter;
 
     @Override
@@ -107,6 +109,8 @@ public class EventAddPackageActivity extends MvpActivity<EventAddView, EventAddP
     @Override
     public void onPackageClicked(Package aPackage) {
         showAlert(aPackage.getPackageName());
+        Intent i = new Intent(this, PackActivity.class);
+        i.putExtra(Constants.ID, aPackage.getPackageId());
     }
 
     @Override
@@ -116,10 +120,10 @@ public class EventAddPackageActivity extends MvpActivity<EventAddView, EventAddP
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(budgetBinding.getRoot());
         dialog.setCancelable(false);
-        if(!budget.equals("")){
+        if (!budget.equals("")) {
             budgetBinding.budget.setText(budget);
             budgetBinding.budget.setSelection(budget.length());
-        }else{
+        } else {
             budgetBinding.budget.setText("");
         }
         budgetBinding.proceed.setOnClickListener(new View.OnClickListener() {
@@ -133,7 +137,7 @@ public class EventAddPackageActivity extends MvpActivity<EventAddView, EventAddP
     }
 
     @Override
-    public void clearBudget(){
+    public void clearBudget() {
         askForBudget(binding.eventBudget.getText().toString());
     }
 

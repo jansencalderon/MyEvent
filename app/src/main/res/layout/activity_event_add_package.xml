@@ -8,7 +8,6 @@
             name="view"
             type="eventcoordinator2017.myevent.ui.events.add.EventAddView" />
 
-
     </data>
 
     <LinearLayout
