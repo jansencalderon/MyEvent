@@ -25,6 +25,7 @@ import eventcoordinator2017.myevent.model.data.Item;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
+import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
 import eventcoordinator2017.myevent.ui.events.add.EventAddPackageActivity;
 import eventcoordinator2017.myevent.utils.PaletteBitmap;
 import eventcoordinator2017.myevent.utils.PaletteBitmapTranscoder;
@@ -99,7 +100,8 @@ public class PackActivity extends MvpActivity<PackView, PackPresenter> implement
                 tempEvent.setPackageId(aPackage.getPackageId());
             }
         });
-        startActivity(new Intent(this,EventAddPackageActivity.class));
+        startActivity(new Intent(this,EventAddActivity.class));
+        finish();
     }
 
 

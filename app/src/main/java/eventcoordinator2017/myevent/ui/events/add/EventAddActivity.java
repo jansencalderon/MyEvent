@@ -26,6 +26,7 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
@@ -44,6 +45,7 @@ import java.util.List;
 import java.util.Locale;
 
 import eventcoordinator2017.myevent.R;
+import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddBinding;
 import eventcoordinator2017.myevent.databinding.DialogBudgetBinding;
 import eventcoordinator2017.myevent.model.data.Package;
@@ -108,6 +110,18 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
             binding.eventFromTime.setText(tempEvent.getEventTimeFrom());
             binding.eventToDate.setText(tempEvent.getEventDateTo());
             binding.eventToTime.setText(tempEvent.getEventTimeTo());
+            binding.eventBudget.setText(tempEvent.getBudget());
+            binding.tagGroup.setTags(tempEvent.getEventTags().split(","));
+            if (tempEvent.getPackageId() != 0) {
+                Package aPackage = realm.where(Package.class).equalTo(Constants.PACKAGE_ID, tempEvent.getPackageId()).findFirst();
+                binding.setAPackage(aPackage);
+                Glide.with(this).load(Constants.URL_IMAGE+aPackage.getImageDirectory()).into(binding.packageImage);
+                binding.packageCard.setVisibility(View.VISIBLE);
+                binding.addPackage.setVisibility(View.GONE);
+            }else {
+                binding.addPackage.setVisibility(View.VISIBLE);
+                binding.packageCard.setVisibility(View.GONE);
+            }
 
         }
 
@@ -252,7 +266,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                         binding.eventToDate.getText().toString(),
                         binding.eventToTime.getText().toString(),
                         eventLat, eventLng
-                        ,binding.eventBudget.getText().toString());
+                        , binding.eventBudget.getText().toString());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
