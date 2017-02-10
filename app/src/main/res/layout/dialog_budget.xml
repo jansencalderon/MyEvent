@@ -42,7 +42,9 @@
                 android:inputType="number"
                 android:textSize="32sp"
                 android:textColor="@color/darkGray"
-                android:textColorHint="@color/lightestGray" />
+                android:textColorHint="@color/lightestGray">
+                <requestFocus/>
+            </EditText>
         </LinearLayout>
 
         <Button

@@ -1,7 +1,9 @@
 package eventcoordinator2017.myevent.ui.events.add;
 
+
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
@@ -9,6 +11,7 @@ import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.model.data.Package;
+import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -59,25 +62,35 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
         packageListCall.enqueue(new Callback<List<Package>>() {
             @Override
             public void onResponse(Call<List<Package>> call, final Response<List<Package>> response) {
-                getView().stopLoading();
-                final Realm realm = Realm.getDefaultInstance();
-                realm.executeTransactionAsync(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        realm.copyToRealmOrUpdate(response.body());
-                    }
-                }, new Realm.Transaction.OnSuccess() {
-                    @Override
-                    public void onSuccess() {
-                        realm.close();
-                    }
-                }, new Realm.Transaction.OnError() {
-                    @Override
-                    public void onError(Throwable error) {
-                        realm.close();
-                        Log.e(TAG, "onError: Unable to save USER", error);
-                    }
-                });
+                if (!response.body().isEmpty()) {
+                    getView().stopLoading();
+                    final Realm realm = Realm.getDefaultInstance();
+                    realm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.delete(Package.class);
+                            realm.copyToRealmOrUpdate(response.body());
+                        }
+                    }, new Realm.Transaction.OnSuccess() {
+                        @Override
+                        public void onSuccess() {
+                            realm.close();
+                        }
+                    }, new Realm.Transaction.OnError() {
+                        @Override
+                        public void onError(Throwable error) {
+                            realm.close();
+                            Log.e(TAG, "onError: Unable to save USER", error);
+                        }
+                    });
+                } else {
+                    realm.executeTransactionAsync(new Realm.Transaction() {
+                        @Override
+                        public void execute(Realm realm) {
+                            realm.delete(Package.class);
+                        }
+                    });
+                }
             }
 
             @Override
@@ -94,16 +107,37 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
         packages(App.getInstance().getApiInterface().getPackages(""));
     }
 
-    public void toBudget(final String eventName, final String eventDescription, String[] tags, final String eventLocation,
-                         final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventLat, final String eventLng) {
+    public void toBudget(final String eventName, final String eventDescription, final String[] tags, String eventLocation,
+                         final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventLat, final String eventLng, final String eventBudget) {
+        eventLocation = "NULL";
         final String joined = TextUtils.join("", tags).trim();
         if (eventName.equals("") || eventDescription.equals("") || eventLocation.equals("") || fromDate.equals("") || fromTime.equals("") ||
-                toDate.equals("") || toTime.equals("") || joined.equals("")) {
+                toDate.equals("") || toTime.equals("") || joined.equals("") || eventBudget.equals("")) {
             getView().showAlert("Fill up all fields");
-        } else if (eventLat.equals("") || eventLng.equals("")) {
+        } /*else if (eventLat.equals("") || eventLng.equals("")) {
             getView().showAlert("Please select valid location");
-        } else {
+        } */ else {
+            final Realm realm = Realm.getDefaultInstance();
+            realm.executeTransactionAsync(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    realm.delete(TempEvent.class);
+                    TempEvent tempEvent = new TempEvent();
+                    tempEvent.setEventId(1);
+                    tempEvent.setEventName(eventName);
+                    tempEvent.setEventDescription(eventDescription);
+                    tempEvent.setEventTags(joined);
+                    tempEvent.setEventDateFrom(fromDate);
+                    tempEvent.setEventDateTo(toDate);
+                    tempEvent.setEventTimeFrom(fromTime);
+                    tempEvent.setEventTimeTo(toTime);
+                    tempEvent.setBudget(eventBudget);
+                    realm.copyToRealmOrUpdate(tempEvent);
 
+                }
+            });
+            realm.close();
+            getView().onNext();
         }
 
     }

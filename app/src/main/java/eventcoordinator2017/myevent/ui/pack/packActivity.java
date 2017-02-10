@@ -1,26 +1,44 @@
 package eventcoordinator2017.myevent.ui.pack;
 
+import android.annotation.TargetApi;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.graphics.Palette;
+import android.view.MenuItem;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.ImageViewTarget;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityPackBinding;
+import eventcoordinator2017.myevent.model.data.Category;
+import eventcoordinator2017.myevent.model.data.Item;
 import eventcoordinator2017.myevent.model.data.Package;
+import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
+import eventcoordinator2017.myevent.ui.events.add.EventAddPackageActivity;
+import eventcoordinator2017.myevent.utils.PaletteBitmap;
+import eventcoordinator2017.myevent.utils.PaletteBitmapTranscoder;
 import io.realm.Realm;
 
 /**
  * Created by Sen on 2/6/2017.
  */
 
-public class PackActivity extends MvpActivity<PackView,PackPresenter> implements PackView{
+public class PackActivity extends MvpActivity<PackView, PackPresenter> implements PackView {
     ActivityPackBinding binding;
     private Realm realm;
+    private Package aPackage;
+    private List<Category> categoryList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,17 +53,71 @@ public class PackActivity extends MvpActivity<PackView,PackPresenter> implements
 
         Intent i = getIntent();
         int id = i.getIntExtra(Constants.ID, -1);
-        if(id != -1){
-            Package aPackage = realm.where(Package.class).equalTo(Constants.PACKAGE_ID,id).findFirst();
+        if (id != -1) {
+            aPackage = realm.where(Package.class).equalTo(Constants.PACKAGE_ID, id).findFirst();
             binding.setAPackage(aPackage);
         }
+
+        categoryList = aPackage.getCategory();
+
+        binding.viewpager.setAdapter(new PackPageFragmentAdapter(getSupportFragmentManager(), this, categoryList));
+        binding.slidingTabs.setupWithViewPager(binding.viewpager);
+
+
+        binding.collapsingToolBar.setTitleEnabled(false);
+        binding.collapsingToolBar.setTitle(aPackage.getPackageName());
+        binding.collapsingToolBar.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.transparent));
+        binding.collapsingToolBar.setScrimVisibleHeightTrigger(104);
+
+        Glide.with(this).load(Constants.URL_IMAGE + aPackage.getImageDirectory()).asBitmap()
+                .transcode(new PaletteBitmapTranscoder(this), PaletteBitmap.class)
+                .into(new ImageViewTarget<PaletteBitmap>(binding.packageImage) {
+
+                    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+                    @Override
+                    protected void setResource(PaletteBitmap resource) {
+                        binding.packageImage.setImageBitmap(resource.bitmap);
+                        int colorP = resource.palette.getMutedColor(ContextCompat.getColor(PackActivity.this, R.color.colorPrimary));
+                        int colorD = resource.palette.getDarkMutedColor(ContextCompat.getColor(PackActivity.this, R.color.colorPrimaryDark));
+
+                        binding.collapsingToolBar.setStatusBarScrimColor(colorP);
+                        binding.collapsingToolBar.setContentScrimColor(colorD);
+                    }
+                });
+        ;
 
     }
 
 
+    @Override
+    public void onAvail(final Package aPackage){
+        final Realm realm = Realm.getDefaultInstance();
+        final TempEvent tempEvent = realm.where(TempEvent.class).findFirst();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                tempEvent.setPackageId(aPackage.getPackageId());
+            }
+        });
+        startActivity(new Intent(this,EventAddPackageActivity.class));
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                startActivity(new Intent(this, EventAddPackageActivity.class));
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     @NonNull
     @Override
     public PackPresenter createPresenter() {
-        return null;
+        return new PackPresenter();
     }
 }

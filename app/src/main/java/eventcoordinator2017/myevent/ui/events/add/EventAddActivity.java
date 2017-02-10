@@ -1,7 +1,9 @@
 package eventcoordinator2017.myevent.ui.events.add;
 
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -13,9 +15,12 @@ import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
@@ -40,7 +45,12 @@ import java.util.Locale;
 
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddBinding;
+import eventcoordinator2017.myevent.databinding.DialogBudgetBinding;
 import eventcoordinator2017.myevent.model.data.Package;
+import eventcoordinator2017.myevent.model.data.TempEvent;
+import eventcoordinator2017.myevent.ui.events.EventsActivity;
+import eventcoordinator2017.myevent.ui.main.MainActivity;
+import io.realm.Realm;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -59,12 +69,16 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     private static final LatLngBounds BOUNDS_MANILA = new LatLngBounds(
             new LatLng(13.570972, 120.022153), new LatLng(15.138226, 121.857090));
 
+    private Realm realm;
+    private TempEvent tempEvent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_event_add);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_event_add);
         binding.setView(getMvpView());
+        realm = Realm.getDefaultInstance();
 
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null)
@@ -85,6 +99,19 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
         binding.eventLocation.setAdapter(mAdapter);
         binding.eventLocation.setOnItemClickListener(AutocompleteClickListener);
+
+        tempEvent = realm.where(TempEvent.class).findFirst();
+        if (tempEvent != null) {
+            binding.eventDescription.setText(tempEvent.getEventDescription());
+            binding.eventName.setText(tempEvent.getEventName());
+            binding.eventFromDate.setText(tempEvent.getEventDateFrom());
+            binding.eventFromTime.setText(tempEvent.getEventTimeFrom());
+            binding.eventToDate.setText(tempEvent.getEventDateTo());
+            binding.eventToTime.setText(tempEvent.getEventTimeTo());
+
+        }
+
+
     }
 
     @NonNull
@@ -105,13 +132,39 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     }
 
     @Override
-    public void askForBudget(String budget) {
+    public void onPackageAvail(Package aPackage) {
 
     }
 
     @Override
-    public void clearBudget() {
+    public void askForBudget(String budget) {
+        final DialogBudgetBinding budgetBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_budget, null, false);
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(budgetBinding.getRoot());
+        dialog.setCancelable(false);
+        if (!budget.equals("")) {
+            budgetBinding.budget.setText(budget);
+            budgetBinding.budget.setSelection(budget.length());
+        } else {
+            budgetBinding.budget.setText("");
+        }
+        budgetBinding.proceed.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.eventBudget.setText(budgetBinding.budget.getText().toString());
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(budgetBinding.budget.getWindowToken(), 0);
+                dialog.dismiss();
+            }
+        });
 
+        dialog.show();
+    }
+
+    @Override
+    public void clearBudget() {
+        askForBudget(binding.eventBudget.getText().toString());
     }
 
     @Override
@@ -150,9 +203,9 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 @Override
                 public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                     if (id == binding.eventFromTime.getId()) {
-                        binding.eventFromTime.setText(selectedHour + ":" + selectedMinute +":00");
+                        binding.eventFromTime.setText(selectedHour + ":" + selectedMinute + ":00");
                     } else {
-                        binding.eventToTime.setText(selectedHour + ":" + selectedMinute +":00");
+                        binding.eventToTime.setText(selectedHour + ":" + selectedMinute + ":00");
                     }
                 }
             }, hour, minute, true);//Yes 24 hour time
@@ -163,7 +216,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void onNext() {
-        startActivity(new Intent(this,EventAddPackageActivity.class));
+        startActivity(new Intent(this, EventAddPackageActivity.class));
+        finish();
     }
 
     @Override
@@ -182,34 +236,14 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Cancel Event Creation");
-                builder.setMessage("Are you sure?");
-                builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing but close the dialog
-                        onBackPressed();
-                    }
-                });
-                builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        // Do nothing
-                        dialog.dismiss();
-                    }
-                });
-                AlertDialog alert = builder.create();
-                alert.show();
+                onBackPressed();
                 return true;
             case R.id.next:
-/*                presenter.toBudget(binding.eventName.getText().toString(),
+                presenter.toBudget(binding.eventName.getText().toString(),
                         binding.eventDescription.getText().toString(),
                         binding.tagGroup.getTags(),
                         binding.eventLocation.getText().toString(),
@@ -217,8 +251,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                         binding.eventFromTime.getText().toString(),
                         binding.eventToDate.getText().toString(),
                         binding.eventToTime.getText().toString(),
-                        eventLat, eventLng);*/
-                onNext();
+                        eventLat, eventLng
+                        ,binding.eventBudget.getText().toString());
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -238,6 +272,44 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     public void onClick(View view) {
         int id = view.getId();
         onDateClicked(id);
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Cancel Event Creation");
+        builder.setMessage("Are you sure?");
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing but close the dialog
+                final Realm realm = Realm.getDefaultInstance();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.delete(TempEvent.class);
+                    }
+                });
+                realm.close();
+                navigateUpTo(new Intent(EventAddActivity.this, EventsActivity.class));
+            }
+        });
+        builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+
+                // Do nothing
+                dialog.dismiss();
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        realm.close();
     }
 
 

@@ -6,6 +6,7 @@ package eventcoordinator2017.myevent.app;
 
 public class Constants {
 
+    public static final String URL_IMAGE = "http://eventcoordinator.000webhostapp.com/images/";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
     public static final String FIRST_NAME = "firstname";

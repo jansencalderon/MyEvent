@@ -29,6 +29,9 @@ public class Package extends RealmObject {
     @SerializedName("package_price")
     @Expose
     private int packagePrice;
+    @SerializedName("image_directory")
+    @Expose
+    private String imageDirectory;
     @SerializedName("category")
     @Expose
     private RealmList<Category> category;
@@ -89,5 +92,13 @@ public class Package extends RealmObject {
 
     public void setFormattedPrice(String formattedPrice) {
         this.formattedPrice = formattedPrice;
+    }
+
+    public String getImageDirectory() {
+        return imageDirectory;
+    }
+
+    public void setImageDirectory(String imageDirectory) {
+        this.imageDirectory = imageDirectory;
     }
 }

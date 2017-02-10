@@ -5,10 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import eventcoordinator2017.myevent.R;
+import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ItemPackageBinding;
 import eventcoordinator2017.myevent.model.data.Package;
 
@@ -41,7 +44,9 @@ public class PackagesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         PackageViewHolder packageViewHolder = (PackageViewHolder) holder;
         packageViewHolder.itemPackageBinding.setAPackage(list.get(position));
         packageViewHolder.itemPackageBinding.setView(eventsView);
-
+        Glide.with(holder.itemView.getContext())
+                .load(Constants.URL_IMAGE + list.get(position).getImageDirectory())
+                .into(packageViewHolder.itemPackageBinding.packageImage);
     }
 
     public class PackageViewHolder extends RecyclerView.ViewHolder {
@@ -70,7 +75,6 @@ public class PackagesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         this.loading = loading;
         notifyDataSetChanged();
     }
-
 
 
     @Override
