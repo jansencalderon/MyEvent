@@ -22,7 +22,7 @@ import io.realm.Realm;
 
 public class PackPageFragment extends Fragment {
     public static final String ARG_PAGE = "ARG_PAGE";
-    public static final String ARG_PACKAGE_ID = "package-id";
+    public static final String ARG_PACKAGE_ID = "packages-id";
     public static final String ARG_CATEGORY_ID = "category-id";
 
     private int mPage;

@@ -1,4 +1,4 @@
-package eventcoordinator2017.myevent.ui.events.add;
+package eventcoordinator2017.myevent.ui.events.add.location;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
@@ -14,18 +14,19 @@ import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ItemPackageBinding;
 import eventcoordinator2017.myevent.model.data.Package;
+import eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageView;
 
 /**
  * Created by Sen on 1/26/2017.
  */
 
-public class PackagesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class EventLocationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private EventAddView eventsView;
+    private EventAddPackageView eventsView;
     private List<Package> list;
     private boolean loading;
 
-    public PackagesListAdapter(EventAddView eventsView) {
+    public EventLocationListAdapter(EventAddPackageView eventsView) {
         this.eventsView = eventsView;
         list = new ArrayList<>();
 

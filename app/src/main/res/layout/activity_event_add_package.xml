@@ -6,7 +6,7 @@
 
         <variable
             name="view"
-            type="eventcoordinator2017.myevent.ui.events.add.EventAddView" />
+            type="eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageView" />
 
     </data>
 
@@ -15,14 +15,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
+        <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_collapseMode="pin"
-            app:title="Add Package" />
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorPrimary"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:layout_collapseMode="pin"
+                app:title="Add Package" />
+        </android.support.design.widget.AppBarLayout>
 
         <LinearLayout
             android:id="@+id/eventBudgetInfo"
@@ -33,9 +38,10 @@
 
             <TextView
                 android:layout_width="wrap_content"
-                android:text="Budget For Event"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_height="wrap_content" />
+                android:text="Budget For Event" />
+
             <LinearLayout
                 android:id="@+id/type"
                 android:layout_width="match_parent"
@@ -48,39 +54,41 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="₱"
-                    android:textSize="24sp"
-                    android:textColor="@color/darkGray" />
+                    android:textColor="@color/darkGray"
+                    android:textSize="24sp" />
 
                 <TextView
+                    android:id="@+id/eventBudget"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:hint="             "
-                    android:id="@+id/eventBudget"
-                    android:textColor="@color/darkGray"
                     android:enabled="false"
-                    android:textSize="32sp"
-                    android:gravity="center" />
+                    android:gravity="center"
+                    android:hint="             "
+                    android:textColor="@color/darkGray"
+                    android:textSize="32sp" />
 
                 <ImageView
                     android:layout_width="30dp"
-                    android:src="@drawable/ic_brush"
+                    android:layout_height="30dp"
                     android:layout_gravity="top"
                     android:onClick="@{()->view.clearBudget()}"
+                    android:src="@drawable/ic_brush"
                     android:tint="@color/colorPrimaryDark"
-                    android:layout_height="30dp" />
+                    android:visibility="gone" />
             </LinearLayout>
+
             <TextView
                 android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Available Packages"
-                android:textColor="@color/colorPrimaryDark"
-                android:layout_height="wrap_content" />
+                android:textColor="@color/colorPrimaryDark" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
-                android:paddingBottom="10dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10dp"
+                android:paddingBottom="10dp" />
         </LinearLayout>
     </LinearLayout>
 </layout>

@@ -15,13 +15,13 @@ public class Event extends RealmObject{
     @PrimaryKey
     @SerializedName("event_id")
     @Expose
-    private int eventId;
+    private Integer eventId;
     @SerializedName("user_id")
     @Expose
-    private int userId;
+    private Integer userId;
     @SerializedName("package_id")
     @Expose
-    private int packageId;
+    private Integer packageId;
     @SerializedName("event_name")
     @Expose
     private String eventName;
@@ -37,43 +37,43 @@ public class Event extends RealmObject{
     @SerializedName("event_date_to")
     @Expose
     private String eventDateTo;
-    @SerializedName("loc_name")
+    @SerializedName("loc_id")
     @Expose
-    private String locName;
-    @SerializedName("loc_lat")
-    @Expose
-    private double locLat;
-    @SerializedName("loc_long")
-    @Expose
-    private double locLong;
+    private Integer locId;
     @SerializedName("image_directory")
     @Expose
     private String imageDirectory;
+    @SerializedName("user")
+    @Expose
+    private User user;
+    @SerializedName("location")
+    @Expose
+    private Location location;
     @SerializedName("packages")
     @Expose
     private Package packages;
 
-    public int getEventId() {
+    public Integer getEventId() {
         return eventId;
     }
 
-    public void setEventId(int eventId) {
+    public void setEventId(Integer eventId) {
         this.eventId = eventId;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public int getPackageId() {
+    public Integer getPackageId() {
         return packageId;
     }
 
-    public void setPackageId(int packageId) {
+    public void setPackageId(Integer packageId) {
         this.packageId = packageId;
     }
 
@@ -117,28 +117,12 @@ public class Event extends RealmObject{
         this.eventDateTo = eventDateTo;
     }
 
-    public String getLocName() {
-        return locName;
+    public Integer getLocId() {
+        return locId;
     }
 
-    public void setLocName(String locName) {
-        this.locName = locName;
-    }
-
-    public double getLocLat() {
-        return locLat;
-    }
-
-    public void setLocLat(double locLat) {
-        this.locLat = locLat;
-    }
-
-    public double getLocLong() {
-        return locLong;
-    }
-
-    public void setLocLong(double locLong) {
-        this.locLong = locLong;
+    public void setLocId(Integer locId) {
+        this.locId = locId;
     }
 
     public String getImageDirectory() {
@@ -149,6 +133,22 @@ public class Event extends RealmObject{
         this.imageDirectory = imageDirectory;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     public Package getPackages() {
         return packages;
     }
@@ -156,4 +156,5 @@ public class Event extends RealmObject{
     public void setPackages(Package packages) {
         this.packages = packages;
     }
+
 }

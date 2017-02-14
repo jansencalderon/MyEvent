@@ -1,23 +1,11 @@
-package eventcoordinator2017.myevent.ui.events.add;
+package eventcoordinator2017.myevent.ui.events.add.packages;
 
-import android.app.Dialog;
-import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
@@ -27,9 +15,9 @@ import java.util.List;
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddPackageBinding;
-import eventcoordinator2017.myevent.databinding.DialogBudgetBinding;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
+import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
 import eventcoordinator2017.myevent.ui.pack.PackActivity;
 import io.realm.Realm;
 
@@ -37,7 +25,7 @@ import io.realm.Realm;
  * Created by Mark Jansen Calderon on 1/26/2017.
  */
 
-public class EventAddPackageActivity extends MvpActivity<EventAddView, EventAddPresenter> implements EventAddView {
+public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, EventAddPackagePresenter> implements EventAddPackageView {
 
     ActivityEventAddPackageBinding binding;
     PackagesListAdapter packagesListAdapter;
@@ -64,6 +52,7 @@ public class EventAddPackageActivity extends MvpActivity<EventAddView, EventAddP
 
 
         tempEvent = realm.where(TempEvent.class).findFirst();
+        binding.eventBudget.setText(tempEvent.getBudget());
         if (tempEvent != null) {
             presenter.setQuery(tempEvent.getBudget());
         }
@@ -72,8 +61,8 @@ public class EventAddPackageActivity extends MvpActivity<EventAddView, EventAddP
 
     @NonNull
     @Override
-    public EventAddPresenter createPresenter() {
-        return new EventAddPresenter();
+    public EventAddPackagePresenter createPresenter() {
+        return new EventAddPackagePresenter();
     }
 
 

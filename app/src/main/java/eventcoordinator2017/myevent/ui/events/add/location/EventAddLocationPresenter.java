@@ -1,9 +1,8 @@
-package eventcoordinator2017.myevent.ui.events.add;
+package eventcoordinator2017.myevent.ui.events.add.location;
 
 
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
@@ -13,6 +12,7 @@ import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
+import eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -25,12 +25,12 @@ import retrofit2.Response;
  * Created by Mark Jansen Calderon on 1/26/2017.
  */
 
-public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> {
+public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventAddPackageView> {
 
     private Realm realm;
     private User user;
     private RealmResults<Package> packageRealmResults;
-    private static final String TAG = EventAddPresenter.class.getSimpleName();
+    private static final String TAG = EventAddLocationPresenter.class.getSimpleName();
     private String query;
 
     public void onStart() {

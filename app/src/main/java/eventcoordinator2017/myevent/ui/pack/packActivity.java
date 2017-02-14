@@ -7,7 +7,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.graphics.Palette;
 import android.view.MenuItem;
 
 import com.bumptech.glide.Glide;
@@ -21,12 +20,10 @@ import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityPackBinding;
 import eventcoordinator2017.myevent.model.data.Category;
-import eventcoordinator2017.myevent.model.data.Item;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
-import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
-import eventcoordinator2017.myevent.ui.events.add.EventAddPackageActivity;
+import eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageActivity;
 import eventcoordinator2017.myevent.utils.PaletteBitmap;
 import eventcoordinator2017.myevent.utils.PaletteBitmapTranscoder;
 import io.realm.Realm;
@@ -115,6 +112,12 @@ public class PackActivity extends MvpActivity<PackView, PackPresenter> implement
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(this, EventAddPackageActivity.class));
+        super.onBackPressed();
     }
 
     @NonNull

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
 
@@ -14,8 +14,8 @@
             type="eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageView" />
 
         <variable
-            name="aPackage"
-            type="eventcoordinator2017.myevent.model.data.Package" />
+            name="loc"
+            type="eventcoordinator2017.myevent.model.data.Location" />
 
         <variable
             name="contentVisible"
@@ -23,8 +23,7 @@
 
     </data>
 
-    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.v7.widget.CardView
         android:id="@+id/eventCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -41,7 +40,7 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/packageImage"
+                android:id="@+id/locImage"
                 android:layout_width="80dp"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/packageInfoLayout"
@@ -53,21 +52,21 @@
                 android:id="@+id/packageInfoLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toEndOf="@+id/packageImage"
+                android:layout_toEndOf="@+id/locImage"
                 android:orientation="vertical"
                 android:padding="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{StringUtils.toCurrency(aPackage.packagePrice)}'
+                    android:text='@{loc.locSetup}'
                     android:textColor="@color/black"
                     android:textSize="14sp"/>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@{aPackage.packageName}"
+                    android:text="@{loc.locName}"
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -75,7 +74,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{`Best for `+aPackage.packageType}'
+                    android:text='@{`Setup: `+loc.locName}'
                     android:textColor="@color/black"
                     android:textSize="14sp" />
 

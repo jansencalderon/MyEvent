@@ -20,6 +20,7 @@ public class TempEvent extends RealmObject {
     private int eventId;
     private int userId;
     private int packageId;
+    private int locationId;
     private String eventName;
     private String eventDescription;
     private String eventTags;
@@ -27,9 +28,6 @@ public class TempEvent extends RealmObject {
     private String eventTimeFrom;
     private String eventDateTo;
     private String eventTimeTo;
-    private String locName;
-    private double locLat;
-    private double locLong;
     private String imageUri;
     private String budget;
 
@@ -114,30 +112,6 @@ public class TempEvent extends RealmObject {
         this.eventTimeTo = eventTimeTo;
     }
 
-    public String getLocName() {
-        return locName;
-    }
-
-    public void setLocName(String locName) {
-        this.locName = locName;
-    }
-
-    public double getLocLat() {
-        return locLat;
-    }
-
-    public void setLocLat(double locLat) {
-        this.locLat = locLat;
-    }
-
-    public double getLocLong() {
-        return locLong;
-    }
-
-    public void setLocLong(double locLong) {
-        this.locLong = locLong;
-    }
-
     public String getImageUri() {
         return imageUri;
     }
@@ -154,5 +128,11 @@ public class TempEvent extends RealmObject {
         this.budget = budget;
     }
 
+    public int getLocationId() {
+        return locationId;
+    }
 
+    public void setLocationId(int locationId) {
+        this.locationId = locationId;
+    }
 }

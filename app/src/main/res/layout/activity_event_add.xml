@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--suppress ALL -->
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
@@ -14,6 +14,10 @@
         <variable
             name="aPackage"
             type="eventcoordinator2017.myevent.model.data.Package" />
+
+        <variable
+            name="location"
+            type="eventcoordinator2017.myevent.model.data.Location" />
 
         <variable
             name="contentVisible"
@@ -306,14 +310,26 @@
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="10dp"
                     android:clickable="true"
-                    android:orientation="vertical"
-                    android:visibility="gone">
+                    android:orientation="vertical">
 
                     <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:gravity="center"
                         android:orientation="vertical">
+
+                        <ImageView
+                            android:id="@+id/removePackage"
+                            android:layout_width="20dp"
+                            android:layout_margin="10dp"
+                            android:layout_height="20dp"
+                            android:layout_alignParentTop="true"
+                            android:layout_alignParentEnd="true"
+                            android:background="@drawable/rounded_button_accent"
+                            android:gravity="center"
+                            android:src="@drawable/ic_close"
+                            android:text="ADD PACKAGE"
+                            android:textColor="@color/white" />
 
                         <ImageView
                             android:id="@+id/packageImage"
@@ -350,7 +366,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text='@{`Best for `+aPackage.packageType}'
+                                android:text='@{`Best for `+aPackage.packageType+`s`}'
                                 android:textColor="@color/black"
                                 android:textSize="14sp" />
 
