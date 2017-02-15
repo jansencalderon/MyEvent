@@ -35,5 +35,5 @@ public class Constants {
     public static String EVENT_ID = "event_id";
     public static String PACKAGE_ID = "packageId";
     public static String ID ="id";
-    public static String LOCATION_ID = "locationId";
+    public static String LOCATION_ID = "locId";
 }

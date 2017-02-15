@@ -1,4 +1,4 @@
-package eventcoordinator2017.myevent.ui.events.add.location;
+package eventcoordinator2017.myevent.ui.events.add.venue;
 
 
 import android.text.TextUtils;
@@ -9,10 +9,10 @@ import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
+import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
-import eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -25,11 +25,11 @@ import retrofit2.Response;
  * Created by Mark Jansen Calderon on 1/26/2017.
  */
 
-public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventAddPackageView> {
+public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventAddLocationView> {
 
     private Realm realm;
     private User user;
-    private RealmResults<Package> packageRealmResults;
+    private RealmResults<Location> locationRealmResults;
     private static final String TAG = EventAddLocationPresenter.class.getSimpleName();
     private String query;
 
@@ -37,38 +37,37 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
         realm = Realm.getDefaultInstance();
         user = App.getUser();
 
-        packageRealmResults = realm.where(Package.class).
-                findAllSortedAsync("packageId", Sort.ASCENDING);
-        packageRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Package>>() {
+        locationRealmResults = realm.where(Location.class).
+                findAllSortedAsync("locId", Sort.ASCENDING);
+        locationRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Location>>() {
             @Override
-            public void onChange(RealmResults<Package> element) {
+            public void onChange(RealmResults<Location> element) {
                 filterList();
             }
         });
 
-        getView().askForBudget("");
-        loadPackageList();
+        loadList();
     }
 
     public void onStop() {
-        if (packageRealmResults.isValid()) {
-            packageRealmResults.removeChangeListeners();
+        if (locationRealmResults.isValid()) {
+            locationRealmResults.removeChangeListeners();
         }
         realm.close();
     }
 
-    private void packages(Call<List<Package>> packageListCall) {
+    private void locations(Call<List<Location>> listCall) {
         getView().startLoading();
-        packageListCall.enqueue(new Callback<List<Package>>() {
+        listCall.enqueue(new Callback<List<Location>>() {
             @Override
-            public void onResponse(Call<List<Package>> call, final Response<List<Package>> response) {
+            public void onResponse(Call<List<Location>> call, final Response<List<Location>> response) {
                 if (!response.body().isEmpty()) {
                     getView().stopLoading();
                     final Realm realm = Realm.getDefaultInstance();
                     realm.executeTransactionAsync(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            realm.delete(Package.class);
+                            realm.delete(Location.class);
                             realm.copyToRealmOrUpdate(response.body());
                         }
                     }, new Realm.Transaction.OnSuccess() {
@@ -87,14 +86,14 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
                     realm.executeTransactionAsync(new Realm.Transaction() {
                         @Override
                         public void execute(Realm realm) {
-                            realm.delete(Package.class);
+                            realm.delete(Location.class);
                         }
                     });
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Package>> call, Throwable t) {
+            public void onFailure(Call<List<Location>> call, Throwable t) {
                 Log.e(TAG, "onFailure: Error calling login api", t);
                 getView().stopLoading();
                 getView().showAlert("Error Connecting to Server");
@@ -103,8 +102,8 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
         });
     }
 
-    void loadPackageList() {
-        packages(App.getInstance().getApiInterface().getPackages(""));
+    void loadList() {
+        locations(App.getInstance().getApiInterface().getLocations(""));
     }
 
     public void updateEvent(final String eventName, final String eventDescription, final String[] tags,
@@ -145,20 +144,19 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
     }
 
     private void filterList() {
-        if (packageRealmResults.isLoaded() && packageRealmResults.isValid()) {
-            List<Package> packageList;
+        if (locationRealmResults.isLoaded() && locationRealmResults.isValid()) {
+            List<Location> list;
             if (query != null && !query.isEmpty()) {
-                RealmResults<Package> packages = packageRealmResults.where()
-                        .lessThanOrEqualTo("packagePrice", Integer.parseInt(query))
+                RealmResults<Location> locations = locationRealmResults.where()
+                        .lessThanOrEqualTo("locCapacity", Integer.parseInt(query))
                         .findAll();
-
-                packageList = realm.copyFromRealm(packages);
+                list = realm.copyFromRealm(locations);
 
             } else {
-                packageList = realm.copyFromRealm(packageRealmResults);
+                list = realm.copyFromRealm(locationRealmResults);
             }
 
-            getView().setPackages(packageList);
+            getView().setList(list);
 
         }
     }

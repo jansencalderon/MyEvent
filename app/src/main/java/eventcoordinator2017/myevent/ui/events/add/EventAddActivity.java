@@ -36,6 +36,7 @@ import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageActivity;
+import eventcoordinator2017.myevent.ui.events.add.venue.EventAddLocationActivity;
 import io.realm.Realm;
 
 /**
@@ -55,7 +56,6 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_event_add);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_event_add);
         binding.setView(getMvpView());
         realm = Realm.getDefaultInstance();
@@ -80,12 +80,12 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
             binding.eventToTime.setText(tempEvent.getEventTimeTo());
             binding.eventBudget.setText(tempEvent.getBudget());
             binding.tagGroup.setTags(tempEvent.getEventTags().split(","));
-            if (tempEvent.getPackageId() != 0) {
-                Package aPackage = realm.where(Package.class).equalTo(Constants.PACKAGE_ID, tempEvent.getPackageId()).findFirst();
-                binding.setAPackage(aPackage);
-                Glide.with(this).load(Constants.URL_IMAGE + aPackage.getImageDirectory()).into(binding.packageImage);
+            if (tempEvent.getaPackage() != null) {
                 binding.packageCard.setVisibility(View.VISIBLE);
                 binding.addPackage.setVisibility(View.GONE);
+                Package aPackage = tempEvent.getaPackage();
+                binding.setAPackage(aPackage);
+                Glide.with(this).load(Constants.URL_IMAGE + tempEvent.getaPackage().getImageDirectory()).centerCrop().into(binding.packageImage);
                 binding.removePackage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -93,6 +93,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                             @Override
                             public void execute(Realm realm) {
                                 tempEvent.setPackageId(0);
+                                tempEvent.setaPackage(null);
                             }
                         });
                         binding.addPackage.setVisibility(View.VISIBLE);
@@ -104,13 +105,28 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 binding.packageCard.setVisibility(View.GONE);
             }
 
-            if (tempEvent.getLocationId() != 0) {
-                Location location = realm.where(Location.class).equalTo(Constants.LOCATION_ID, tempEvent.getLocationId()).findFirst();
+            if (tempEvent.getLocation() != null) {
+                Location location = tempEvent.getLocation();
                 binding.setLocation(location);
-
                 binding.addLocation.setVisibility(View.GONE);
+                Glide.with(this).load(Constants.URL_IMAGE + tempEvent.getLocation().getLocImage()).centerCrop().into(binding.locImage);
+                binding.removeLocation.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        realm.executeTransaction(new Realm.Transaction() {
+                            @Override
+                            public void execute(Realm realm) {
+                                tempEvent.setLocationId(0);
+                                tempEvent.setLocation(null);
+                            }
+                        });
+                        binding.addLocation.setVisibility(View.VISIBLE);
+                        binding.locationCard.setVisibility(View.GONE);
+                    }
+                });
             } else {
                 binding.addLocation.setVisibility(View.VISIBLE);
+                binding.locationCard.setVisibility(View.GONE);
             }
 
         }
@@ -118,14 +134,41 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
         binding.addPackage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                presenter.updateEvent(binding.eventName.getText().toString(),
-                        binding.eventDescription.getText().toString(),
-                        binding.tagGroup.getTags(),
-                        binding.eventFromDate.getText().toString(),
-                        binding.eventFromTime.getText().toString(),
-                        binding.eventToDate.getText().toString(),
-                        binding.eventToTime.getText().toString(),
-                        binding.eventBudget.getText().toString());
+                if(tempEvent.getaPackage()!=null){
+                    presenter.updateEvent(
+                            binding.eventName.getText().toString(),
+                            binding.eventDescription.getText().toString(),
+                            binding.tagGroup.getTags(),
+                            binding.eventFromDate.getText().toString(),
+                            binding.eventFromTime.getText().toString(),
+                            binding.eventToDate.getText().toString(),
+                            binding.eventToTime.getText().toString(),
+                            binding.eventBudget.getText().toString(),
+                            "pack");
+                }
+                else{
+                    onAddPackage();
+                }
+            }
+        });
+
+        binding.addLocation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(tempEvent.getLocation()!=null){
+                    presenter.updateEvent(
+                            binding.eventName.getText().toString(),
+                            binding.eventDescription.getText().toString(),
+                            binding.tagGroup.getTags(),
+                            binding.eventFromDate.getText().toString(),
+                            binding.eventFromTime.getText().toString(),
+                            binding.eventToDate.getText().toString(),
+                            binding.eventToTime.getText().toString(),
+                            binding.eventBudget.getText().toString(),
+                            "loc");
+                }else {
+                    onAddLocation();
+                }
             }
         });
 
@@ -234,6 +277,19 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void onNext() {
+        startActivity(new Intent(this, EventAddPackageActivity.class));
+        finish();
+    }
+
+    @Override
+    public void onAddLocation() {
+        startActivity(new Intent(this, EventAddLocationActivity.class));
+        finish();
+    }
+
+
+    @Override
+    public void onAddPackage() {
         startActivity(new Intent(this, EventAddPackageActivity.class));
         finish();
     }

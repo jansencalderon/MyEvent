@@ -46,8 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/packageInfoLayout"
                 android:layout_alignTop="@id/packageInfoLayout"
-                android:scaleType="centerCrop"
-                android:src="@drawable/package_sample" />
+                android:scaleType="centerCrop" />
 
             <LinearLayout
                 android:id="@+id/packageInfoLayout"

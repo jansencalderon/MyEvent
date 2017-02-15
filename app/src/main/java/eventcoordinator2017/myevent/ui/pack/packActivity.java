@@ -95,6 +95,7 @@ public class PackActivity extends MvpActivity<PackView, PackPresenter> implement
             @Override
             public void execute(Realm realm) {
                 tempEvent.setPackageId(aPackage.getPackageId());
+                tempEvent.setaPackage(aPackage);
             }
         });
         startActivity(new Intent(this,EventAddActivity.class));

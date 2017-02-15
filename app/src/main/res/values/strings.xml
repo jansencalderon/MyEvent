@@ -21,7 +21,6 @@
     <string name="oops">Oops, something went wrong</string>
 
 
-
     <!-- Verify -->
     <string name="verification_code">CODE</string>
     <string name="verify_text">An email was sent to your registered email address, please input the verification code below</string>

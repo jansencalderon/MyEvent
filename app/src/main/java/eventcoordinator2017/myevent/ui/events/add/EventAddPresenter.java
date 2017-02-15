@@ -108,7 +108,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
     }
 
     public void updateEvent(final String eventName, final String eventDescription, final String[] tags,
-                            final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventBudget) {
+                            final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventBudget, final String type) {
         final String joined = TextUtils.join("", tags).trim();
         if (eventName.equals("") || eventDescription.equals("") || fromDate.equals("") || fromTime.equals("") ||
                 toDate.equals("") || toTime.equals("") || joined.equals("") || eventBudget.equals("")) {
@@ -134,7 +134,11 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                 }
             });
             realm.close();
-            getView().onNext();
+            if(type.equals("loc")){
+                getView().onAddLocation();
+            }else if(type.equals("pack")){
+                getView().onAddPackage();
+            }
         }
 
     }

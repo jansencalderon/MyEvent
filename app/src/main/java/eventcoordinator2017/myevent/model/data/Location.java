@@ -42,7 +42,9 @@ public class Location extends RealmObject {
     @SerializedName("loc_capacity")
     @Expose
     private Integer locCapacity;
-
+    @SerializedName("loc_image")
+    @Expose
+    private String locImage;
 
     public Integer getLocId() {
         return locId;
@@ -53,7 +55,7 @@ public class Location extends RealmObject {
     }
 
     public String getLocName() {
-        return locName;
+        return locName.trim();
     }
 
     public void setLocName(String locName) {
@@ -61,7 +63,7 @@ public class Location extends RealmObject {
     }
 
     public String getLocAddress() {
-        return locAddress;
+        return locAddress.trim();
     }
 
     public void setLocAddress(String locAddress) {
@@ -109,7 +111,7 @@ public class Location extends RealmObject {
     }
 
     public String getLocSetup() {
-        return locSetup;
+        return locSetup.trim();
     }
 
     public void setLocSetup(String locSetup) {
@@ -124,5 +126,11 @@ public class Location extends RealmObject {
         this.locCapacity = locCapacity;
     }
 
+    public String getLocImage() {
+        return locImage;
+    }
 
+    public void setLocImage(String locImage) {
+        this.locImage = locImage;
+    }
 }

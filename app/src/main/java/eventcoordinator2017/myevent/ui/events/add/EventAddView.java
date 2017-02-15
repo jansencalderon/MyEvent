@@ -31,6 +31,10 @@ public interface EventAddView extends MvpView{
 
     void onNext();
 
+    void onAddLocation();
+
+    void onAddPackage();
+
     void startLoading();
 
     void stopLoading();

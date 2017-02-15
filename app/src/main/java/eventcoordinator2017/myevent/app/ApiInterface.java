@@ -4,6 +4,7 @@ package eventcoordinator2017.myevent.app;
 import java.util.List;
 
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.response.LoginResponse;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
@@ -52,6 +53,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(Endpoints.GET_PACKAGES)
     Call<List<Package>> getPackages(@Field("") String ah);
+
+    @FormUrlEncoded
+    @POST(Endpoints.GET_LOCATIONS)
+    Call<List<Location>> getLocations(@Field("") String ah);
 
 
 

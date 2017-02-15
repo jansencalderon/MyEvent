@@ -1,11 +1,9 @@
-package eventcoordinator2017.myevent.ui.location;
+package eventcoordinator2017.myevent.ui.venue;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +17,11 @@ import eventcoordinator2017.myevent.databinding.ItemTextBinding;
 
 public class LocationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private ArrayList<String> list;
+    private List<String> list;
     private boolean loading;
 
-    public LocationListAdapter() {
-        list = new ArrayList<>();
+    public LocationListAdapter(List<String> list) {
+        this.list = list;
     }
 
 
@@ -37,7 +35,7 @@ public class LocationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        viewHolder.itemTextBinding.textContent.setText(list.get(position));
+        viewHolder.itemTextBinding.textContent.setText(list.get(position).trim());
 
     }
 

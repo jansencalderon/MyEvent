@@ -30,6 +30,8 @@ public class TempEvent extends RealmObject {
     private String eventTimeTo;
     private String imageUri;
     private String budget;
+    private Package aPackage;
+    private Location location;
 
 
     public int getEventId() {
@@ -134,5 +136,21 @@ public class TempEvent extends RealmObject {
 
     public void setLocationId(int locationId) {
         this.locationId = locationId;
+    }
+
+    public Package getaPackage() {
+        return aPackage;
+    }
+
+    public void setaPackage(Package aPackage) {
+        this.aPackage = aPackage;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

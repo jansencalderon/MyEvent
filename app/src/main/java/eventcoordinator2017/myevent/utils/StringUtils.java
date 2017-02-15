@@ -13,4 +13,8 @@ public class StringUtils {
 
         return format.format(s);
     }
+
+    public static String trim(String s){
+        return s.trim();
+    }
 }
