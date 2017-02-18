@@ -13,7 +13,7 @@
             type="eventcoordinator2017.myevent.ui.profile.ProfileView" />
     </data>
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -47,36 +47,56 @@
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:title=""
-                        app:layout_collapseMode="pin"/>
+                        app:layout_collapseMode="pin"
+                        app:title="" />
+
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:layout_width="100dp"
-                        android:src="@drawable/ic_user"
+                        android:layout_height="100dp"
                         android:layout_gravity="center"
-                        android:layout_height="100dp" />
+                        android:src="@drawable/accent" />
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:text="@{user.fullName}"
-                        android:layout_margin="16dp"
-                        android:textSize="24sp"
+                        android:layout_height="wrap_content"
                         android:layout_gravity="center"
+                        android:layout_marginBottom="16dp"
+                        android:text="@{user.fullName}"
                         android:textColor="@color/white"
-                        android:layout_height="wrap_content" />
+                        android:textSize="18sp" />
                 </LinearLayout>
             </android.support.design.widget.CollapsingToolbarLayout>
 
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.NestedScrollView
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:clipToPadding="false"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v7.widget.RecyclerView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="EVENTS TODAY"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="10dp" />
+
+                <include layout="@layout/no_result" />
+            </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
-    </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

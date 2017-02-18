@@ -1,13 +1,23 @@
 package eventcoordinator2017.myevent.ui.events.add.venue;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import java.util.List;
@@ -15,11 +25,10 @@ import java.util.List;
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddLocationBinding;
+import eventcoordinator2017.myevent.databinding.DialogFilterLocationBinding;
 import eventcoordinator2017.myevent.model.data.Location;
-import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
-import eventcoordinator2017.myevent.ui.pack.PackActivity;
 import eventcoordinator2017.myevent.ui.venue.LocationActivity;
 import io.realm.Realm;
 
@@ -27,12 +36,18 @@ import io.realm.Realm;
  * Created by Mark Jansen Calderon on 2/14/2017.
  */
 
-public class EventAddLocationActivity extends MvpActivity<EventAddLocationView,EventAddLocationPresenter> implements EventAddLocationView{
+public class EventAddLocationActivity extends MvpActivity<EventAddLocationView, EventAddLocationPresenter> implements EventAddLocationView {
 
     private ActivityEventAddLocationBinding binding;
     private Realm realm;
     private EventLocationListAdapter locationListAdapter;
     private TempEvent tempEvent;
+    private String filterCapacity ="", filterSetup ="", filterType ="";
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +69,12 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView,E
 
 
         tempEvent = realm.where(TempEvent.class).findFirst();
-        binding.eventBudget.setText(tempEvent.getBudget());
         if (tempEvent != null) {
             presenter.setQuery(tempEvent.getBudget());
         }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @NonNull
@@ -67,9 +84,88 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView,E
     }
 
     @Override
+    public void filter() {
+        final Dialog dialogFilter = new Dialog(this);
+        final DialogFilterLocationBinding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_filter_location, null, false);
+        dialogFilter.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogFilter.setCancelable(false);
+        dialogFilter.setContentView(binding.getRoot());
+
+        if ((!filterSetup.equals("")))
+            binding.filterSetup.setText(filterSetup);
+        if (!filterType.equals(""))
+            binding.filterVenueType.setText(filterType);
+        if (!filterCapacity.equals(""))
+            binding.filterCapacity.setText(filterCapacity);
+
+        binding.filterSetup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(EventAddLocationActivity.this)
+                        .title("Setup")
+                        .items("Indoor",
+                                "Outdoor")
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                binding.filterSetup.setText(text);
+                                filterSetup = binding.filterSetup.getText().toString();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        binding.filterVenueType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(EventAddLocationActivity.this)
+                        .title("Venue Types")
+                        .items("Open Ground",
+                                "Private Estate",
+                                "Conference Room",
+                                "Co-Working Space",
+                                "Event Space",
+                                "Function Room",
+                                "Multipurpose Hall",
+                                "Conference Room")
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                binding.filterVenueType.setText(text);
+                                filterType = binding.filterVenueType.getText().toString();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        binding.filterApply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                filterCapacity = binding.filterCapacity.getText().toString();
+                presenter.setApplyFilter(filterCapacity, filterType, filterSetup);
+                dialogFilter.dismiss();
+            }
+        });
+
+        binding.cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogFilter.dismiss();
+            }
+        });
+
+        dialogFilter.show();
+
+
+    }
+
+    @Override
     public void onNext() {
 
     }
+
 
     @Override
     public void startLoading() {
@@ -78,6 +174,18 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView,E
 
     @Override
     public void stopLoading() {
+
+    }
+
+    @Override
+    public void clearFilter() {
+        /*if(!filterSetup.equals("")||!filterCapacity.equals("")||!filterType.equals("")){
+            binding.clearFilter.setEnabled(false);
+        }*/
+        filterCapacity = "";
+        filterSetup = "";
+        filterType = "";
+        presenter.setApplyFilter(filterCapacity, filterType, filterSetup);
 
     }
 
@@ -102,8 +210,13 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView,E
 
     @Override
     protected void onStop() {
-        super.onStop();
+        super.onStop();// ATTENTION: This was auto-generated to implement the App Indexing API.
+// See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
         presenter.onStop();
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.disconnect();
     }
 
     @Override
@@ -123,4 +236,29 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView,E
         finish();
     }
 
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("EventAddLocation Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
 }

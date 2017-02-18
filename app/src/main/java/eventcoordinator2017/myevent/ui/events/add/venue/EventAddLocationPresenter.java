@@ -106,7 +106,7 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
         locations(App.getInstance().getApiInterface().getLocations(""));
     }
 
-    public void updateEvent(final String eventName, final String eventDescription, final String[] tags,
+  /*  public void updateEvent(final String eventName, final String eventDescription, final String[] tags,
                             final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventBudget) {
         final String joined = TextUtils.join("", tags).trim();
         if (eventName.equals("") || eventDescription.equals("") || fromDate.equals("") || fromTime.equals("") ||
@@ -136,20 +136,35 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
             getView().onNext();
         }
 
-    }
+    }*/
 
     void setQuery(String query) {
         this.query = query;
         filterList();
     }
 
+    void setApplyFilter(String capacity, String venueType, String setup) {
+        if (locationRealmResults.isLoaded() && locationRealmResults.isValid()) {
+            List<Location> list;
+            if(capacity.equals("")){
+                capacity = "999999";
+            }
+            RealmResults<Location> locations = locationRealmResults.where()
+                    .greaterThanOrEqualTo("locCapacity", Integer.parseInt(capacity))
+                    .contains("locVenueType", venueType)
+                    .contains("locSetup", setup)
+                    .findAll();
+            list = realm.copyFromRealm(locations);
+            getView().setList(list);
+
+        }
+    }
+
     private void filterList() {
         if (locationRealmResults.isLoaded() && locationRealmResults.isValid()) {
             List<Location> list;
             if (query != null && !query.isEmpty()) {
-                RealmResults<Location> locations = locationRealmResults.where()
-                        .lessThanOrEqualTo("locCapacity", Integer.parseInt(query))
-                        .findAll();
+                RealmResults<Location> locations = locationRealmResults.where().findAll();
                 list = realm.copyFromRealm(locations);
 
             } else {

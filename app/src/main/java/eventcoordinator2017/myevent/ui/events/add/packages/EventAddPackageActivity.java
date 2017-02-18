@@ -1,13 +1,18 @@
 package eventcoordinator2017.myevent.ui.events.add.packages;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import java.util.List;
@@ -15,9 +20,12 @@ import java.util.List;
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddPackageBinding;
+import eventcoordinator2017.myevent.databinding.DialogFilterLocationBinding;
+import eventcoordinator2017.myevent.databinding.DialogFilterPackagesBinding;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
+import eventcoordinator2017.myevent.ui.events.add.venue.EventAddLocationActivity;
 import eventcoordinator2017.myevent.ui.pack.PackActivity;
 import io.realm.Realm;
 
@@ -31,6 +39,7 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
     PackagesListAdapter packagesListAdapter;
     private Realm realm;
     private TempEvent tempEvent;
+    private String filterType ="", filterSort ="";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,9 +61,9 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
 
 
         tempEvent = realm.where(TempEvent.class).findFirst();
-        binding.eventBudget.setText(tempEvent.getBudget());
         if (tempEvent != null) {
             presenter.setQuery(tempEvent.getBudget());
+           // binding.eventBudget.setText(tempEvent.getBudget());
         }
     }
 
@@ -97,34 +106,82 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
     }
 
     @Override
+    public void filter() {
+        final Dialog dialogFilter = new Dialog(this);
+        final DialogFilterPackagesBinding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_filter_packages, null, false);
+        dialogFilter.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialogFilter.setCancelable(false);
+        dialogFilter.setContentView(binding.getRoot());
+        if (!filterType.equals(""))
+            binding.filterType.setText(filterType);
+
+
+        binding.filterType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(EventAddPackageActivity.this)
+                        .title("Package Types")
+                        .items("Birthday", "Debut", "Wedding", "Party")
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                binding.filterType.setText(text);
+                                filterType = binding.filterType.getText().toString();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        binding.filterSort.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(EventAddPackageActivity.this)
+                        .title("Package Types")
+                        .items("Name", "Price (High to Low)", "Price (Low to High)")
+                        .itemsCallback(new MaterialDialog.ListCallback() {
+                            @Override
+                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                binding.filterSort.setText(text);
+                                filterSort = binding.filterSort.getText().toString();
+                            }
+                        })
+                        .show();
+            }
+        });
+
+        binding.filterApply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                presenter.setApplyFilter(filterType, filterSort, tempEvent.getBudget());
+                dialogFilter.dismiss();
+            }
+        });
+
+        binding.cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialogFilter.dismiss();
+            }
+        });
+
+        dialogFilter.show();
+
+
+    }
+    @Override
+    public void clearFilter() {
+        filterSort = "";
+        filterType = "";
+        presenter.setApplyFilter(filterType, filterSort,tempEvent.getBudget());
+
+    }
+
+    @Override
     public void onPackageAvail(Package aPackage) {
         showAlert(aPackage.getPackageName());
     }
 
-    @Override
-    public void askForBudget(String budget) {
-
-    }
-
-    @Override
-    public void clearBudget() {
-
-    }
-
-    @Override
-    public void onPhotoClicked() {
-
-    }
-
-    @Override
-    public void onDateClicked(int id) {
-
-    }
-
-    @Override
-    public void onNext() {
-
-    }
 
     @Override
     public void startLoading() {

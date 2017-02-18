@@ -9,5 +9,9 @@ import eventcoordinator2017.myevent.model.data.Location;
  */
 
 public interface LocationView extends MvpView {
-    void onAvail(Location location);
+    void onAvail();
+
+    void openOnGoogleMaps();
+
+    void openOnWaze();
 }

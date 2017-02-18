@@ -4,26 +4,35 @@ import android.app.ProgressDialog;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
+import java.util.List;
+
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.databinding.ActivityProfileBinding;
+import eventcoordinator2017.myevent.databinding.NoResultBinding;
+import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
+import eventcoordinator2017.myevent.ui.events.EventsListAdapter;
 import io.realm.Realm;
 
 /**
  * Created by Mark Jansen Calderon on 1/11/2017.
  */
 
-public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> implements ProfileView{
+public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> implements ProfileView {
 
     private ProgressDialog progressDialog;
     private ActivityProfileBinding binding;
     private Realm realm;
+    private EventsListAdapter eventListAdapter;
+    private NoResultBinding noResultBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +50,10 @@ public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> 
 
         binding.setUser(realm.where(User.class).findFirst());
 
+        presenter.onStart();
+
+        binding.recyclerView.setAdapter(eventListAdapter);
+        binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
     }
 
@@ -55,7 +68,6 @@ public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> 
     }
 
 
-
     /***
      * End of MvpViewStateActivity
      ***/
@@ -64,33 +76,36 @@ public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> 
     /***
      * Start of ProfileView
      ***/
-
     @Override
-    public void showAlert(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-    }
-
-
-    @Override
-    public void onEdit(){
+    public void onEdit() {
         Toast.makeText(this, "Edit Me", Toast.LENGTH_SHORT).show();
     }
 
+
     @Override
-    public void startLoading() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(ProfileActivity.this);
-            progressDialog.setCancelable(false);
-            progressDialog.setMessage("Signing up...");
-        }
-        progressDialog.show();
+    public void showAlert(String s) {
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void stopLoading() {
-        if (progressDialog != null) progressDialog.dismiss();
+
     }
 
+    @Override
+    public void startLoading() {
+
+    }
+
+    @Override
+    public void setEvents(List<Event> eventList) {
+        if(eventList.isEmpty()){
+            binding.recyclerView.setVisibility(View.GONE);
+        }else {
+            binding.recyclerView.setVisibility(View.VISIBLE);
+            eventListAdapter.setEvents(eventList);
+        }
+    }
 
     /***
      * End of ProfileView
@@ -121,5 +136,11 @@ public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> 
     protected void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        presenter.onStop();
     }
 }

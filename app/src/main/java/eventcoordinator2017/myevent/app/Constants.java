@@ -36,4 +36,6 @@ public class Constants {
     public static String PACKAGE_ID = "packageId";
     public static String ID ="id";
     public static String LOCATION_ID = "locId";
+
+    public static String EDIT = "editKey";
 }

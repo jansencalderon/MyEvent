@@ -10,7 +10,9 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -31,6 +33,7 @@ import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddBinding;
 import eventcoordinator2017.myevent.databinding.DialogBudgetBinding;
+import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
@@ -52,6 +55,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     private Realm realm;
     private TempEvent tempEvent;
+    private String TAG = EventAddActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +73,13 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
         binding.eventFromDate.setOnClickListener(this);
         binding.eventFromTime.setOnClickListener(this);
 
-
-        tempEvent = realm.where(TempEvent.class).findFirst();
+        int eventId = getIntent().getIntExtra((Constants.EVENT_ID), -1);
+        if (eventId != -1) {
+            Event event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
+            binding.eventName.setText(event.getEventName());
+        } else {
+            tempEvent = realm.where(TempEvent.class).findFirst();
+        }
         if (tempEvent != null) {
             binding.eventDescription.setText(tempEvent.getEventDescription());
             binding.eventName.setText(tempEvent.getEventName());
@@ -129,12 +138,17 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 binding.locationCard.setVisibility(View.GONE);
             }
 
+        } else {
+            binding.locationCard.setVisibility(View.GONE);
+            binding.packageCard.setVisibility(View.GONE);
         }
 
         binding.addPackage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(tempEvent.getaPackage()!=null){
+                if (tempEvent != null && (tempEvent.getaPackage() != null || tempEvent.getLocation() != null)) {
+                    onAddPackage();
+                } else {
                     presenter.updateEvent(
                             binding.eventName.getText().toString(),
                             binding.eventDescription.getText().toString(),
@@ -145,17 +159,18 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                             binding.eventToTime.getText().toString(),
                             binding.eventBudget.getText().toString(),
                             "pack");
-                }
-                else{
-                    onAddPackage();
+                    Log.d(TAG, "Create new tempEvent and pick Pack");
                 }
             }
+
         });
 
         binding.addLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(tempEvent.getLocation()!=null){
+                if (tempEvent != null && (tempEvent.getLocation() != null || tempEvent.getaPackage() != null)) {
+                    onAddLocation();
+                } else {
                     presenter.updateEvent(
                             binding.eventName.getText().toString(),
                             binding.eventDescription.getText().toString(),
@@ -166,8 +181,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                             binding.eventToTime.getText().toString(),
                             binding.eventBudget.getText().toString(),
                             "loc");
-                }else {
-                    onAddLocation();
+                    Log.d(TAG, "Create new tempEvent and pick Loc");
                 }
             }
         });
@@ -276,6 +290,12 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     }
 
     @Override
+    public void onPackageAdd() {
+        startActivity(new Intent(this, EventAddPackageActivity.class));
+        finish();
+    }
+
+    @Override
     public void onNext() {
         startActivity(new Intent(this, EventAddPackageActivity.class));
         finish();
@@ -315,6 +335,9 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.next:
+                onNext();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -359,6 +382,14 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
         AlertDialog alert = builder.create();
         alert.show();
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.event_add, menu);
+        return true;
+    }
+
 
     @Override
     protected void onDestroy() {

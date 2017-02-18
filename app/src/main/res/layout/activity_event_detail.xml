@@ -5,17 +5,27 @@
     <data>
 
         <import type="android.view.View" />
+
         <import type="eventcoordinator2017.myevent.utils.DateTimeUtils" />
+
         <variable
             name="event"
             type="eventcoordinator2017.myevent.model.data.Event" />
+
+        <variable
+            name="user"
+            type="eventcoordinator2017.myevent.model.data.User" />
+
+        <variable
+            name="location"
+            type="eventcoordinator2017.myevent.model.data.Location" />
 
         <variable
             name="view"
             type="eventcoordinator2017.myevent.ui.events.details.EventDetailView" />
     </data>
 
-    <LinearLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
@@ -49,80 +59,172 @@
                         android:id="@+id/toolbar"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:title=""
-                        app:layout_collapseMode="pin"/>
+                        app:layout_collapseMode="pin"
+                        app:title="" />
 
                     <ImageView
                         android:id="@+id/eventImage"
                         android:layout_width="match_parent"
-                        android:src="@drawable/sample_event"
+                        android:layout_height="150dp"
                         android:scaleType="centerCrop"
-                        android:layout_height="150dp" />
+                        android:src="@drawable/sample_event" />
                 </LinearLayout>
             </android.support.design.widget.CollapsingToolbarLayout>
 
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.widget.NestedScrollView
-            app:layout_behavior="@string/appbar_scrolling_view_behavior"
-            android:clipToPadding="false"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
-                android:padding="10dp"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_height="wrap_content">
+                android:padding="16dp">
+
                 <TextView
                     android:layout_width="wrap_content"
-                    android:text="Jansen's Birthday"
-                    android:textColor="@color/black"
-                    android:textStyle="bold"
+                    android:layout_height="wrap_content"
+                    android:text="@{event.eventName}"
+                    android:textColor="@color/darkGray"
                     android:textSize="20sp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_height="wrap_content" />
+                    android:textStyle="bold" />
+
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text='@{"Event by: "+event.user.fullName}'
+                    android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+                    android:textColor="@color/hyperlink" />
+
+
+                <include
+                    layout="@layout/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="15dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="50 people going"
+                    android:textColor="@color/hyperlink"
+                    android:textSize="16sp" />
+
+                <include
+                    layout="@layout/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="15dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:text="Details"
+                    android:textColor="@color/darkGray"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text='@{DateTimeUtils.toReadable(event.eventDateFrom) +" to "+DateTimeUtils.toReadable(event.eventDateTo)}'
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_height="wrap_content" />
+                    android:textColor="@color/darkGray"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@{event.eventDescription}"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_height="wrap_content" />
+                    android:textColor="@color/darkGray"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@{event.eventTags}"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_height="wrap_content" />
+                    android:textColor="@color/darkGray"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="@{event.packages.packageName}"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_height="wrap_content" />
+                    android:textColor="@color/darkGray"
+                    android:textSize="14sp" />
+
+                <include
+                    layout="@layout/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="10dp" />
+
                 <TextView
                     android:layout_width="wrap_content"
-                    android:text="as"
-                    android:textColor="@color/black"
-                    android:textSize="14sp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@{location.locName}"
+                    android:textColor="@color/hyperlink"
+                    android:textSize="18sp" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="start"
+                    android:text="@{location.locAddress}"
+                    android:textColor="@color/darkGray"
+                    android:textSize="14sp" />
+
 
             </LinearLayout>
         </android.support.v4.widget.NestedScrollView>
-    </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/event_responseLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:background="@color/colorPrimary"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_going"
+                android:gravity="center"
+                android:padding="6dp"
+                android:text="GOING"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_maybe"
+                android:gravity="center"
+                android:padding="6dp"
+                android:text="MAYBE"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:drawableTop="@drawable/ic_ignore"
+                android:gravity="center"
+                android:padding="6dp"
+                android:text="IGNORE"
+
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </android.support.design.widget.CoordinatorLayout>
 </layout>

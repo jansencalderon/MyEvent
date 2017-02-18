@@ -9,6 +9,7 @@ import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
+import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
@@ -46,7 +47,6 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
             }
         });
 
-        getView().askForBudget("");
         loadPackageList();
     }
 
@@ -106,6 +106,7 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
     void loadPackageList() {
         packages(App.getInstance().getApiInterface().getPackages(""));
     }
+/*
 
     public void updateEvent(final String eventName, final String eventDescription, final String[] tags,
                             final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventBudget) {
@@ -138,6 +139,7 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
         }
 
     }
+*/
 
     void setQuery(String query) {
         this.query = query;
@@ -159,6 +161,35 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
             }
 
             getView().setPackages(packageList);
+
+        }
+    }
+
+    public void setApplyFilter(String filterType, String filterSort, String budget) {
+        if (packageRealmResults.isLoaded() && packageRealmResults.isValid()) {
+            List<Package> list;
+            RealmResults<Package> packages = packageRealmResults.where()
+                    .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
+                    .contains("packageType", filterType)
+                    .findAllSorted("packageName", Sort.DESCENDING);
+
+            if (filterSort.equals("Price (High to Low)")) {
+                packages = packageRealmResults.where()
+                        .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
+                        .contains("packageType", filterType)
+                        .findAllSorted("packagePrice", Sort.DESCENDING);
+            }
+
+            if (filterSort.equals("Price (Low To High)")) {
+                packages = packageRealmResults.where()
+                        .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
+                        .contains("packageType", filterType)
+                        .findAllSorted("packagePrice", Sort.ASCENDING);
+            }
+
+
+            list = realm.copyFromRealm(packages);
+            getView().setPackages(list);
 
         }
     }

@@ -42,7 +42,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.1.0'
     compile 'com.squareup.okhttp3:logging-interceptor:3.3.0'
     compile 'me.gujun.android.taggroup:library:1.4@aar'
-
+    compile 'com.afollestad.material-dialogs:core:0.9.3.0'
     compile 'com.hannesdorfmann.mosby:mvp:2.0.1'
     compile 'com.hannesdorfmann.mosby:viewstate:2.0.1'
 

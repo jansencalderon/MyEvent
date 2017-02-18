@@ -11,7 +11,9 @@ import eventcoordinator2017.myevent.model.response.ResultResponse;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 
 /**
  * Created by Cholo Mia on 12/4/2016.
@@ -57,6 +59,10 @@ public interface ApiInterface {
     @FormUrlEncoded
     @POST(Endpoints.GET_LOCATIONS)
     Call<List<Location>> getLocations(@Field("") String ah);
+
+    @Multipart
+    @POST(Endpoints.ADD_EVENT)
+    Call<ResultResponse> addEvent(@Part Part ahk);
 
 
 

@@ -78,7 +78,8 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
                 onBackPressed();
                 return true;
             case R.id.add_event:
-                startActivity(new Intent(EventsActivity.this, EventAddActivity.class));
+                Intent i = new Intent(EventsActivity.this, EventAddActivity.class);
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

@@ -38,8 +38,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
                     android:background="?attr/colorPrimary"
-                    app:title="Home"
-                    app:popupTheme="@style/AppTheme.PopupOverlay" />
+                    app:popupTheme="@style/AppTheme.PopupOverlay"
+                    app:title="Home" />
+
+                <android.support.design.widget.TabLayout
+                    android:id="@+id/sliding_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
             </android.support.design.widget.AppBarLayout>
 
@@ -50,17 +55,11 @@
                 android:orientation="vertical"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-                <include
-                    android:id="@+id/card1"
-                    layout="@layout/item_main_card" />
 
-                <include
-                    android:id="@+id/card2"
-                    layout="@layout/item_main_card" />
-
-                <include
-                    android:id="@+id/card3"
-                    layout="@layout/item_main_card" />
+                <android.support.v4.view.ViewPager
+                    android:id="@+id/viewpager"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
             </LinearLayout>
 
 

@@ -29,86 +29,28 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
 
     private Realm realm;
     private User user;
-    private RealmResults<Package> packageRealmResults;
     private static final String TAG = EventAddPresenter.class.getSimpleName();
-    private String query;
 
     public void onStart() {
         realm = Realm.getDefaultInstance();
         user = App.getUser();
 
-        packageRealmResults = realm.where(Package.class).
-                findAllSortedAsync("packageId", Sort.ASCENDING);
-        packageRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Package>>() {
-            @Override
-            public void onChange(RealmResults<Package> element) {
-                filterList();
-            }
-        });
-
         getView().askForBudget("");
-        loadPackageList();
     }
 
     public void onStop() {
-        if (packageRealmResults.isValid()) {
-            packageRealmResults.removeChangeListeners();
-        }
         realm.close();
     }
 
-    private void packages(Call<List<Package>> packageListCall) {
-        getView().startLoading();
-        packageListCall.enqueue(new Callback<List<Package>>() {
-            @Override
-            public void onResponse(Call<List<Package>> call, final Response<List<Package>> response) {
-                if (!response.body().isEmpty()) {
-                    getView().stopLoading();
-                    final Realm realm = Realm.getDefaultInstance();
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            realm.delete(Package.class);
-                            realm.copyToRealmOrUpdate(response.body());
-                        }
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            realm.close();
-                        }
-                    }, new Realm.Transaction.OnError() {
-                        @Override
-                        public void onError(Throwable error) {
-                            realm.close();
-                            Log.e(TAG, "onError: Unable to save USER", error);
-                        }
-                    });
-                } else {
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            realm.delete(Package.class);
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onFailure(Call<List<Package>> call, Throwable t) {
-                Log.e(TAG, "onFailure: Error calling login api", t);
-                getView().stopLoading();
-                getView().showAlert("Error Connecting to Server");
-
-            }
-        });
-    }
-
-    void loadPackageList() {
-        packages(App.getInstance().getApiInterface().getPackages(""));
-    }
-
-    public void updateEvent(final String eventName, final String eventDescription, final String[] tags,
-                            final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventBudget, final String type) {
+    public void updateEvent(final String eventName,
+                            final String eventDescription,
+                            final String[] tags,
+                            final String fromDate,
+                            final String fromTime,
+                            final String toDate,
+                            final String toTime,
+                            final String eventBudget,
+                            final String type) {
         final String joined = TextUtils.join("", tags).trim();
         if (eventName.equals("") || eventDescription.equals("") || fromDate.equals("") || fromTime.equals("") ||
                 toDate.equals("") || toTime.equals("") || joined.equals("") || eventBudget.equals("")) {
@@ -134,36 +76,14 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                 }
             });
             realm.close();
-            if(type.equals("loc")){
+            if (type.equals("loc")) {
                 getView().onAddLocation();
-            }else if(type.equals("pack")){
+            } else if (type.equals("pack")) {
                 getView().onAddPackage();
             }
         }
 
     }
 
-    void setQuery(String query) {
-        this.query = query;
-        filterList();
-    }
 
-    private void filterList() {
-        if (packageRealmResults.isLoaded() && packageRealmResults.isValid()) {
-            List<Package> packageList;
-            if (query != null && !query.isEmpty()) {
-                RealmResults<Package> packages = packageRealmResults.where()
-                        .lessThanOrEqualTo("packagePrice", Integer.parseInt(query))
-                        .findAll();
-
-                packageList = realm.copyFromRealm(packages);
-
-            } else {
-                packageList = realm.copyFromRealm(packageRealmResults);
-            }
-
-            getView().setPackages(packageList);
-
-        }
-    }
 }

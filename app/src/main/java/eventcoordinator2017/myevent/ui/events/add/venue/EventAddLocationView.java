@@ -12,7 +12,11 @@ import eventcoordinator2017.myevent.model.data.Location;
 
 public interface EventAddLocationView extends MvpView{
 
+    void clearFilter();
+
     void showAlert(String message);
+
+    void filter();
 
     void onNext();
 

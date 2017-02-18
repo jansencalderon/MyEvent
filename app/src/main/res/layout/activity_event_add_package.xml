@@ -29,6 +29,7 @@
                 app:title="Add Package" />
         </android.support.design.widget.AppBarLayout>
 
+
         <LinearLayout
             android:id="@+id/eventBudgetInfo"
             android:layout_width="match_parent"
@@ -36,45 +37,32 @@
             android:orientation="vertical"
             android:padding="@dimen/activity_horizontal_margin">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Budget For Event" />
-
             <LinearLayout
-                android:id="@+id/type"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:padding="10dp">
+                android:padding="@dimen/activity_horizontal_margin">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₱"
-                    android:textColor="@color/darkGray"
-                    android:textSize="24sp" />
+                    android:background="@drawable/rounded_slight_accent"
+                    android:onClick="@{()->view.filter()}"
+                    android:padding="6dp"
+                    android:text="Filter Results"
+                    android:textColor="@color/white" />
 
                 <TextView
-                    android:id="@+id/eventBudget"
+                    android:id="@+id/clearFilter"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:gravity="center"
-                    android:hint="             "
-                    android:textColor="@color/darkGray"
-                    android:textSize="32sp" />
-
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:layout_gravity="top"
-                    android:onClick="@{()->view.clearBudget()}"
-                    android:src="@drawable/ic_brush"
-                    android:tint="@color/colorPrimaryDark"
-                    android:visibility="gone" />
+                    android:layout_marginStart="10dp"
+                    android:background="@drawable/rounded_button_gray"
+                    android:onClick="@{()->view.clearFilter()}"
+                    android:padding="6dp"
+                    android:text="Clear Filters"
+                    android:textColor="@color/white" />
             </LinearLayout>
 
             <TextView

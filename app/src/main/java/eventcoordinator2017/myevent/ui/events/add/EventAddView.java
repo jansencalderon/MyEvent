@@ -29,6 +29,8 @@ public interface EventAddView extends MvpView{
 
     void onDateClicked(int id);
 
+    void onPackageAdd();
+
     void onNext();
 
     void onAddLocation();

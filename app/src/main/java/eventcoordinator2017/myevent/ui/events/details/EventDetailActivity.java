@@ -13,6 +13,7 @@ import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventDetailBinding;
 import eventcoordinator2017.myevent.databinding.ActivityEventsBinding;
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -21,6 +22,7 @@ import eventcoordinator2017.myevent.model.data.Event;
 public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetailPresenter> implements EventDetailView{
 
     ActivityEventDetailBinding binding;
+    private int EventId;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +50,11 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.add_event:
+                Intent i = new Intent(EventDetailActivity.this, EventAddActivity.class);
+                i.putExtra(Constants.EVENT_ID,EventId);
+                startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

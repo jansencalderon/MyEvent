@@ -102,6 +102,10 @@ public class DateTimeUtils {
         return convertedDate;
     }
 
+    public static String dateToday() {
+        Date date  = new Date();
+        return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
+    }
 
 
 }
