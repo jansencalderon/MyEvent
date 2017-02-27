@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
@@ -68,6 +69,11 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
             Glide.with(this).load(Constants.URL_IMAGE + location.getLocImage()).into(binding.locationImage);
         }
 
+        TempEvent tempEvent = realm.where(TempEvent.class).findFirst();
+        if(tempEvent==null){
+            binding.selectVenue.setVisibility(View.GONE);
+        }
+
 
     }
 
@@ -106,7 +112,7 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                startActivity(new Intent(this, EventAddLocationActivity.class));
+                onBackPressed();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -117,7 +123,7 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
     @Override
     public void onBackPressed() {
         startActivity(new Intent(this, EventAddLocationActivity.class));
-        super.onBackPressed();
+        finish();
     }
     @NonNull
     @Override

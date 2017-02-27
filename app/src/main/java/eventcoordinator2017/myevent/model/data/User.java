@@ -66,6 +66,7 @@ public class User extends RealmObject {
     private String verificationCode;
 
     private String fullName;
+    private String token;
 
     public int getUserId() {
         return userId;
@@ -209,5 +210,13 @@ public class User extends RealmObject {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
     }
 }

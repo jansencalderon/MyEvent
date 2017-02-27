@@ -239,6 +239,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_margin="10dp"
+            android:id="@+id/selectVenue"
             android:background="@drawable/rounded_button_accent"
             android:onClick="@{()->view.onAvail()}"
             android:text="SELECT VENUE"

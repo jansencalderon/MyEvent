@@ -5,6 +5,8 @@ import android.app.Application;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import java.util.concurrent.TimeUnit;
+
 import eventcoordinator2017.myevent.model.data.User;
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
@@ -60,7 +62,6 @@ public class App extends Application {
             Gson gson = new GsonBuilder()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
                     .create();
-
             String url = Endpoints.API_URL;
             retrofit = new Retrofit.Builder()
                     .baseUrl(url)
@@ -83,6 +84,52 @@ public class App extends Application {
         User user = realm.where(User.class).findFirst();
 
         return user;
+    }
+
+    //upload image
+
+
+    private OkHttpClient.Builder getOkHttpClientImage() {
+        if (httpClient == null) {
+            // setup logs for debugging of http request
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            // set your desired log level
+            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+            httpClient = new OkHttpClient.Builder();
+            // add your other interceptors …
+
+            httpClient.connectTimeout(60, TimeUnit.SECONDS);
+            httpClient.readTimeout(60,TimeUnit.SECONDS);
+            httpClient.writeTimeout(60,TimeUnit.SECONDS);
+
+            // add logging as last interceptor
+            httpClient.addInterceptor(logging);  // <-- this is the important line!
+        }
+        return httpClient;
+    }
+
+    private Retrofit getClientUploadImage() {
+        if (retrofit == null) {
+
+            Gson gson = new GsonBuilder()
+                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    .create();
+
+            String url = Endpoints.IMAGE_UPLOAD;
+            retrofit = new Retrofit.Builder()
+                    .baseUrl(url)
+                    .addConverterFactory(GsonConverterFactory.create(gson))
+                    .client(getOkHttpClientImage().build())
+                    .build();
+        }
+        return retrofit;
+    }
+    public ApiInterface uploadImage() {
+        if (apiInterface == null) {
+            apiInterface = getClientUploadImage().create(ApiInterface.class);
+        }
+        return apiInterface;
     }
 
 

@@ -19,9 +19,9 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
     private static final String TAG = LoginPresenter.class.getSimpleName();
 
     public void login(String email, final String password) {
-        if (email.isEmpty()||email.equals("")) {
+        if (email.isEmpty() || email.equals("")) {
             getView().showAlert("Please enter email");
-        } else if (password.isEmpty()||password.equals("")) {
+        } else if (password.isEmpty() || password.equals("")) {
             getView().showAlert("Please enter Password");
         } else {
             getView().startLoading();
@@ -32,41 +32,42 @@ public class LoginPresenter extends MvpNullObjectBasePresenter<LoginView> {
                                                final Response<LoginResponse> response) {
                             getView().stopLoading();
                             if (response.isSuccessful()) {
-                                try{
-                                switch (response.body().getResult()){
-                                    case Constants.SUCCESS:
-                                        final Realm realm = Realm.getDefaultInstance();
-                                        realm.executeTransactionAsync(new Realm.Transaction() {
-                                            @Override
-                                            public void execute(Realm realm) {
-                                                User user = response.body().getUser();
-                                                realm.copyToRealmOrUpdate(user);
-                                            }
-                                        }, new Realm.Transaction.OnSuccess() {
-                                            @Override
-                                            public void onSuccess() {
-                                                realm.close();
-                                                getView().onLoginSuccess();
-                                            }
-                                        }, new Realm.Transaction.OnError() {
-                                            @Override
-                                            public void onError(Throwable error) {
-                                                realm.close();
-                                                Log.e(TAG, "onError: Unable to save USER", error);
-                                                getView().showAlert("Error Saving API Response");
-                                            }
-                                        });
-                                        break;
-                                    case Constants.NOT_EXIST:
-                                        getView().showAlert("Email does not exist");
-                                    case Constants.WRONG_PASSWORD:
-                                        getView().showAlert("Wrong Password");
-                                        break;
-                                    default:
-                                        getView().showAlert(String.valueOf(R.string.oops));
-                                        break;
+                                try {
+                                    switch (response.body().getResult()) {
+                                        case Constants.SUCCESS:
+                                            final Realm realm = Realm.getDefaultInstance();
+                                            realm.executeTransactionAsync(new Realm.Transaction() {
+                                                @Override
+                                                public void execute(Realm realm) {
+                                                    User user = response.body().getUser();
+                                                    realm.copyToRealmOrUpdate(user);
+                                                }
+                                            }, new Realm.Transaction.OnSuccess() {
+                                                @Override
+                                                public void onSuccess() {
+                                                    realm.close();
+                                                    getView().onLoginSuccess();
+                                                }
+                                            }, new Realm.Transaction.OnError() {
+                                                @Override
+                                                public void onError(Throwable error) {
+                                                    realm.close();
+                                                    Log.e(TAG, "onError: Unable to save USER", error);
+                                                    getView().showAlert("Error Saving API Response");
+                                                }
+                                            });
+                                            break;
+                                        case Constants.NOT_EXIST:
+                                            getView().showAlert("Email does not exist");
+                                        case Constants.WRONG_PASSWORD:
+                                            getView().showAlert("Wrong Password");
+                                            break;
+                                        default:
+                                            getView().showAlert(String.valueOf(R.string.oops));
+                                            break;
 
-                                }}catch (NullPointerException e){
+                                    }
+                                } catch (NullPointerException e) {
                                     e.printStackTrace();
                                     getView().showAlert("Oops");
                                 }

@@ -3,6 +3,7 @@ package eventcoordinator2017.myevent.model.data;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -52,6 +53,8 @@ public class Event extends RealmObject{
     @SerializedName("packages")
     @Expose
     private Package packages;
+    @SerializedName("guests")
+    private RealmList<User> guests;
 
     public Integer getEventId() {
         return eventId;
@@ -157,4 +160,12 @@ public class Event extends RealmObject{
         this.packages = packages;
     }
 
+
+    public RealmList<User> getGuests() {
+        return guests;
+    }
+
+    public void setGuests(RealmList<User> guests) {
+        this.guests = guests;
+    }
 }

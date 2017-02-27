@@ -11,6 +11,7 @@ public class Endpoints {
     //public static final String BASE_URL = "http://127.0.0.1:8000";
 
     public static final String API_URL = BASE_URL + "/src/v1/";
+    public static final String IMAGE_UPLOAD = BASE_URL + "/src/v1/upload.php";
 
     public static final String LOGIN = "loginUser";
 
@@ -24,4 +25,8 @@ public class Endpoints {
     public static final String GET_PACKAGES ="getPackages";
     public static final String GET_LOCATIONS ="getAllLocations";
     public static final String ADD_EVENT = "addEvent";
+    public static final String UPLOAD_IMAGE = "uploadImage";
+
+    public static final String SAVE_USER_TOKEN = "saveUserToken";
+    public static final String DELETE_USER_TOKEN = "deleteUserToken";
 }

@@ -17,10 +17,6 @@ public interface EventAddView extends MvpView{
 
     void showAlert(String message);
 
-    void onPackageClicked(Package aPackage);
-
-    void onPackageAvail(Package aPackage);
-
     void askForBudget(String budget);
 
     void clearBudget();
@@ -28,10 +24,6 @@ public interface EventAddView extends MvpView{
     void onPhotoClicked();
 
     void onDateClicked(int id);
-
-    void onPackageAdd();
-
-    void onNext();
 
     void onAddLocation();
 
@@ -42,4 +34,6 @@ public interface EventAddView extends MvpView{
     void stopLoading();
 
     void setPackages(List<Package> packageList);
+
+    void onInviteGuests();
 }

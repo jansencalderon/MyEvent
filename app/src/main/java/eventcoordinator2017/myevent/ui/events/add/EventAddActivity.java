@@ -1,13 +1,20 @@
 package eventcoordinator2017.myevent.ui.events.add;
 
+import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.databinding.DataBindingUtil;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -24,6 +31,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -37,10 +46,20 @@ import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
+import eventcoordinator2017.myevent.model.response.ResultResponse;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
+import eventcoordinator2017.myevent.ui.events.add.guests.GuestsActivity;
 import eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageActivity;
 import eventcoordinator2017.myevent.ui.events.add.venue.EventAddLocationActivity;
+import eventcoordinator2017.myevent.ui.login.LoginActivity;
+import eventcoordinator2017.myevent.ui.main.MainActivity;
+import eventcoordinator2017.myevent.utils.PermissionsActivity;
+import eventcoordinator2017.myevent.utils.PermissionsChecker;
 import io.realm.Realm;
+import okhttp3.Request;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -50,12 +69,18 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     ActivityEventAddBinding binding;
 
+    public static final int PICK_IMAGE = 100;
+    private int PICK_IMAGE_REQUEST = 1;
+    private static final String[] PERMISSIONS_READ_STORAGE = new String[]{Manifest.permission.READ_EXTERNAL_STORAGE};
+    PermissionsChecker checker;
     //manipulated strings
     private String eventLat, eventLng, eventFromDate, eventFromTime;
 
     private Realm realm;
     private TempEvent tempEvent;
     private String TAG = EventAddActivity.class.getSimpleName();
+    private File eventImage;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +88,12 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
         binding = DataBindingUtil.setContentView(this, R.layout.activity_event_add);
         binding.setView(getMvpView());
         realm = Realm.getDefaultInstance();
+        presenter.onStart();
+
+        /**
+         * Permission Checker Initialized
+         */
+        checker = new PermissionsChecker(this);
 
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null)
@@ -138,6 +169,12 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 binding.locationCard.setVisibility(View.GONE);
             }
 
+            try {
+                Glide.with(this).load(new File(tempEvent.getImageUri())).error(R.drawable.ic_gallery).into(binding.eventImage);
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+
         } else {
             binding.locationCard.setVisibility(View.GONE);
             binding.packageCard.setVisibility(View.GONE);
@@ -202,16 +239,6 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     }
 
     @Override
-    public void onPackageClicked(Package aPackage) {
-
-    }
-
-    @Override
-    public void onPackageAvail(Package aPackage) {
-
-    }
-
-    @Override
     public void askForBudget(String budget) {
         final DialogBudgetBinding budgetBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_budget, null, false);
         final Dialog dialog = new Dialog(this);
@@ -244,7 +271,17 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void onPhotoClicked() {
-        showAlert("Photo");
+        if (checker.lacksPermissions(PERMISSIONS_READ_STORAGE)) {
+            startPermissionsActivity(PERMISSIONS_READ_STORAGE);
+        } else {
+            // File System.
+            final Intent galleryIntent = new Intent();
+            galleryIntent.setType("image/*");
+            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
+
+            // Chooser of file system options.
+            startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), PICK_IMAGE_REQUEST);
+        }
     }
 
     @Override
@@ -290,15 +327,28 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     }
 
     @Override
-    public void onPackageAdd() {
-        startActivity(new Intent(this, EventAddPackageActivity.class));
-        finish();
-    }
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-    @Override
-    public void onNext() {
-        startActivity(new Intent(this, EventAddPackageActivity.class));
-        finish();
+            Uri uri = data.getData();
+            String[] projection = {MediaStore.Images.Media.DATA};
+            Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            cursor.moveToFirst();
+            String s = cursor.getString(column_index);
+            cursor.close();
+            eventImage = new File(s);
+            Glide.with(this)
+                    .load(uri)
+                    .centerCrop()
+                    .error(R.drawable.ic_gallery)
+                    .into(binding.eventImage);
+
+        } else {
+
+            Log.d(TAG, "Selecting Image Error");
+        }
     }
 
     @Override
@@ -316,17 +366,52 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void startLoading() {
-
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Creating event");
+        progressDialog.show();
     }
 
     @Override
     public void stopLoading() {
-
+        if (progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 
     @Override
     public void setPackages(List<Package> packageList) {
 
+    }
+
+    @Override
+    public void onInviteGuests() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Event Creation Successful");
+        builder.setMessage("Invite guests now?");
+        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                startActivity(new Intent(EventAddActivity.this, GuestsActivity.class));
+                finish();
+            }
+        });
+        builder.setNegativeButton("SKIP", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+                final Realm realm = Realm.getDefaultInstance();
+                realm.executeTransaction(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.delete(TempEvent.class);
+                    }
+                });
+                realm.close();
+                navigateUpTo(new Intent(EventAddActivity.this, EventsActivity.class));
+            }
+        });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
 
@@ -336,14 +421,26 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
             case android.R.id.home:
                 onBackPressed();
                 return true;
-            case R.id.next:
-                onNext();
+            case R.id.create:
+                if (!getIntent().getBooleanExtra(Constants.FROM_INVITE_GUESTS, false)) {
+                    if (eventImage != null) {
+                        presenter.createEvent(eventImage, binding.eventName.getText().toString());
+                    } else {
+                        Toast.makeText(this, "Select Event Photo", Toast.LENGTH_SHORT).show();
+                    }
+                    Log.d(TAG, "Create new event");
+                } else {
+                    onInviteGuests();
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
+    private void startPermissionsActivity(String[] permission) {
+        PermissionsActivity.startActivityForResult(this, 0, permission);
+    }
 
     @Override
     public void onClick(View view) {
@@ -395,6 +492,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     protected void onDestroy() {
         super.onDestroy();
         realm.close();
+        presenter.onStop();
     }
 
 

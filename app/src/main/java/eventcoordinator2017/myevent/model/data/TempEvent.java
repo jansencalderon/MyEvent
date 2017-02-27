@@ -7,6 +7,9 @@ package eventcoordinator2017.myevent.model.data;
 
 import android.net.Uri;
 
+import java.util.List;
+
+import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -32,6 +35,7 @@ public class TempEvent extends RealmObject {
     private String budget;
     private Package aPackage;
     private Location location;
+    private RealmList<User> guests;
 
 
     public int getEventId() {
@@ -152,5 +156,14 @@ public class TempEvent extends RealmObject {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+
+    public RealmList<User> getGuests() {
+        return guests;
+    }
+
+    public void setGuests(RealmList<User> guests) {
+        this.guests = guests;
     }
 }

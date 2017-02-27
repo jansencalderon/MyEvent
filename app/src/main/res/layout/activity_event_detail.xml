@@ -16,9 +16,6 @@
             name="user"
             type="eventcoordinator2017.myevent.model.data.User" />
 
-        <variable
-            name="location"
-            type="eventcoordinator2017.myevent.model.data.Location" />
 
         <variable
             name="view"
@@ -169,7 +166,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="@{location.locName}"
+                    android:text="@{event.location.locName}"
                     android:textColor="@color/hyperlink"
                     android:textSize="18sp" />
 
@@ -178,7 +175,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="start"
-                    android:text="@{location.locAddress}"
+                    android:text="@{event.location.locAddress}"
                     android:textColor="@color/darkGray"
                     android:textSize="14sp" />
 
@@ -187,43 +184,49 @@
         </android.support.v4.widget.NestedScrollView>
 
         <LinearLayout
-            android:id="@+id/event_responseLayout"
+            android:id="@+id/event_response_panel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/colorPrimary"
             android:orientation="horizontal">
 
             <TextView
+                android:id="@+id/going"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-
                 android:layout_weight="1"
+                android:background="@color/lightGray"
                 android:drawableTop="@drawable/ic_going"
                 android:gravity="center"
+                android:onClick="@{()->view.onResponseGoing(user)}"
                 android:padding="6dp"
                 android:text="GOING"
                 android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/maybe"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/lightGray"
                 android:drawableTop="@drawable/ic_maybe"
                 android:gravity="center"
+                android:onClick="@{()->view.onResponseMaybe(user)}"
                 android:padding="6dp"
                 android:text="MAYBE"
                 android:textColor="@color/white" />
 
             <TextView
+                android:id="@+id/ignore"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
+                android:background="@color/lightGray"
                 android:drawableTop="@drawable/ic_ignore"
                 android:gravity="center"
+                android:onClick="@{()->view.onResponseIgnore(user)}"
                 android:padding="6dp"
                 android:text="IGNORE"
-
                 android:textColor="@color/white" />
         </LinearLayout>
     </android.support.design.widget.CoordinatorLayout>
