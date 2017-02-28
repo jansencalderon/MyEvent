@@ -5,10 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import eventcoordinator2017.myevent.R;
+import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ItemEventBinding;
 import eventcoordinator2017.myevent.model.data.Event;
 
@@ -48,6 +51,11 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         EventViewHolder eventViewHolder = (EventViewHolder) holder;
         eventViewHolder.itemEventBinding.setEvent(eventList.get(position));
         eventViewHolder.itemEventBinding.setView(eventsView);
+        Glide.with(eventViewHolder.itemView.getContext())
+                .load(Constants.URL_IMAGE+eventList.get(position).getImageDirectory())
+                .centerCrop()
+                .error(R.drawable.ic_gallery)
+                .into(eventViewHolder.itemEventBinding.eventImage);
 
     }
 

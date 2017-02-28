@@ -35,5 +35,5 @@ public interface EventAddView extends MvpView{
 
     void setPackages(List<Package> packageList);
 
-    void onInviteGuests();
+    void onInviteGuests(int i);
 }

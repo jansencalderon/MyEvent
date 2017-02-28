@@ -123,7 +123,7 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
     @Override
     public void onEventClicked(Event event) {
         Intent intent = new Intent(this, EventDetailActivity.class);
-        intent.putExtra(Constants.EVENT_ID, event.getEventId());
+        intent.putExtra(Constants.ID, event.getEventId());
         startActivity(intent);
     }
     @Override

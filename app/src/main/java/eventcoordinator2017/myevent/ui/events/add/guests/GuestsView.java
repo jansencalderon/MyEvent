@@ -13,6 +13,8 @@ import eventcoordinator2017.myevent.model.data.User;
 public interface GuestsView extends MvpView {
 
 
+    void onAdd();
+
     void showAlert(String s);
 
     void startLoading();

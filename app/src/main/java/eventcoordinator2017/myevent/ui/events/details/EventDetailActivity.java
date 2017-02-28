@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NavUtils;
 import android.support.v4.content.ContextCompat;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import eventcoordinator2017.myevent.R;
@@ -17,9 +19,12 @@ import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventDetailBinding;
 import eventcoordinator2017.myevent.databinding.ActivityEventsBinding;
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
+import eventcoordinator2017.myevent.ui.events.add.guests.GuestsActivity;
+import eventcoordinator2017.myevent.ui.venue.LocationActivity;
 import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -49,9 +54,9 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         presenter.onStart();
-        eventId = getIntent().getIntExtra(Constants.EVENT_ID, -1);
+        eventId = getIntent().getIntExtra(Constants.ID, -1);
 
-        if (eventId != -1) {
+        if (eventId == -1) {
             showAlert("No event data");
             finish();
         }
@@ -63,8 +68,23 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
 
         if (user.getUserId() == event.getUserId()) {
             binding.eventResponsePanel.setVisibility(View.GONE);
-
         }
+
+        Glide.with(this)
+                .load(Constants.URL_IMAGE + event.getImageDirectory())
+                .centerCrop()
+                .error(R.drawable.ic_gallery)
+                .into(binding.eventImage);
+    }
+
+    @Override
+    public void onLocationClicked(Location location){
+        startActivity(new Intent(this, LocationActivity.class).putExtra(Constants.ID,location.getLocId()));
+    }
+
+    @Override
+    public void onAdd(){
+        startActivity(new Intent(this, GuestsActivity.class).putExtra(Constants.ID,event.getEventId()));
     }
 
     @Override
@@ -112,7 +132,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                NavUtils.navigateUpFromSameTask(this);
                 return true;
             case R.id.add_event:
                 Intent i = new Intent(EventDetailActivity.this, EventAddActivity.class);

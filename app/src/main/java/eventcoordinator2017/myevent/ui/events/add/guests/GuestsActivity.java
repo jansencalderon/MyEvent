@@ -17,6 +17,7 @@ import java.util.List;
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityAddGuestsBinding;
+import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
@@ -32,6 +33,7 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
     ActivityAddGuestsBinding binding;
     private Realm realm;
     private GuestsListAdapter guestsListAdapter;
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,9 +46,17 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         guestsListAdapter = new GuestsListAdapter();
         binding.recyclerView.setAdapter(guestsListAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        int eventId = getIntent().getIntExtra(Constants.ID, -1);
+        event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
+
+        refreshList(event.getGuests());
 
     }
 
+    @Override
+    public void onAdd() {
+        createPresenter().onAddGuest(binding.query.getText().toString(), event.getEventId() + "");
+    }
 
     @Override
     public void showAlert(String s) {
@@ -68,13 +78,6 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         guestsListAdapter.setList(users);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_guest, menu);
-
-        return true;
-    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -99,7 +102,7 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(this, EventAddActivity.class).putExtra(Constants.FROM_INVITE_GUESTS, true));
+        // startActivity(new Intent(this, EventAddActivity.class).putExtra(Constants.FROM_INVITE_GUESTS, true));
         finish();
     }
 
@@ -119,5 +122,13 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
     protected void onDestroy() {
         super.onDestroy();
         realm.close();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_guest, menu);
+
+        return true;
     }
 }

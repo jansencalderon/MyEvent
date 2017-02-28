@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import eventcoordinator2017.myevent.R;
@@ -20,8 +21,7 @@ import eventcoordinator2017.myevent.model.data.User;
 
 public class GuestsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<User> list;
-    private boolean loading;
+    private List<User> list = new ArrayList<>();
 /*
     public GuestsListAdapter(List<User> list) {
         this.list = list;
@@ -69,11 +69,6 @@ public class GuestsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         notifyDataSetChanged();
     }
 
-
-    public void setLoading(boolean loading) {
-        this.loading = loading;
-        notifyDataSetChanged();
-    }
 
 
     @Override

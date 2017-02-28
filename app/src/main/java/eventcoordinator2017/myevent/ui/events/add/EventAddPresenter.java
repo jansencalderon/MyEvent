@@ -1,6 +1,7 @@
 package eventcoordinator2017.myevent.ui.events.add;
 
 
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -10,6 +11,7 @@ import java.io.File;
 
 import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.app.Constants;
+import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
@@ -83,53 +85,54 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
 
     }
 
-
     void createEvent(final File eventImage, String eventName) {
         final TempEvent tempEvent = realm.where(TempEvent.class).findFirst();
         if (tempEvent == null) {
             getView().showAlert("Fill up fields");
         } else {
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    tempEvent.setImageUri(eventImage.getPath());
-                }
-            });
-            if (tempEvent.getLocationId() == 0) {
-                getView().showAlert("You must choose location for the event");
-            } else if (tempEvent.getPackageId() == 0) {
-                getView().showAlert("You must choose package for the event");
-            } else {
-                // create RequestBody instance from file
-                getView().startLoading();
-                final String eventImageName = eventName.replaceAll("\\s+", "");
-                RequestBody reqFile = RequestBody.create(MediaType.parse("image/*"), eventImage);
-                MultipartBody.Part body = MultipartBody.Part.createFormData("upload", eventImage.getName(), reqFile);
-                RequestBody name = RequestBody.create(MediaType.parse("text/plain"), "upload_test");
-                App.getInstance().uploadImage().uploadImage(body, name).enqueue(new Callback<ResultResponse>() {
+            if (eventImage != null) {
+                realm.executeTransaction(new Realm.Transaction() {
                     @Override
-                    public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
-                        if (response.isSuccessful()) {
-                            if (response.body().getResult().equals(Constants.SUCCESS)) {
-                                createEventStep2(eventImageName);
-                            } else {
-                                getView().showAlert("Uploading Image Failed");
-                            }
-                        } else {
-                            getView().startLoading();
-                            getView().showAlert(response.message() != null ? response.message()
-                                    : "Unknown Error");
-
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<ResultResponse> call, Throwable t) {
-                        Log.e(TAG, "onFailure: Error calling login api", t);
-                        getView().stopLoading();
-                        getView().showAlert("Error Connecting to Server");
+                    public void execute(Realm realm) {
+                        tempEvent.setImageUri(eventImage.getPath());
                     }
                 });
+                if (tempEvent.getLocationId() == 0) {
+                    getView().showAlert("You must choose location for the event");
+                } else if (tempEvent.getPackageId() == 0) {
+                    getView().showAlert("You must choose package for the event");
+                } else {
+                    // create RequestBody instance from file
+                    getView().startLoading();
+                    RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), eventImage);
+                    MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", eventImage.getName(), requestFile);
+                    App.getInstance().uploadImage().uploadImage(body).enqueue(new Callback<ResultResponse>() {
+                        @Override
+                        public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
+                            if (response.isSuccessful()) {
+                                if (response.body().getResult().equals(Constants.SUCCESS)) {
+                                    createEventStep2(eventImage.getName());
+                                } else {
+                                    getView().showAlert("Uploading Image Failed");
+                                }
+                            } else {
+                                getView().startLoading();
+                                getView().showAlert(response.message() != null ? response.message()
+                                        : "Unknown Error");
+
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResultResponse> call, Throwable t) {
+                            Log.e(TAG, "onFailure: Error calling login api", t);
+                            getView().stopLoading();
+                            getView().showAlert("Error Connecting to Server");
+                        }
+                    });
+                }
+            } else {
+                createEventStep2("No Image Yet");
             }
         }
 
@@ -137,7 +140,9 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
 
     private void createEventStep2(String eventImageName) {
         TempEvent tempEvent = realm.where(TempEvent.class).findFirst();
-        App.getInstance().getApiInterface().createEvent(tempEvent.getUserId() + ""
+        User user = realm.where(User.class).findFirst();
+        App.getInstance().getApiInterface().createEvent(
+                user.getUserId() + ""
                 , tempEvent.getaPackage().getPackageId() + ""
                 , tempEvent.getEventName()
                 , tempEvent.getEventDateFrom() + " " + tempEvent.getEventTimeFrom()
@@ -146,15 +151,34 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                 , tempEvent.getEventTags()
                 , tempEvent.getLocation().getLocId() + ""
                 , eventImageName)
-                .enqueue(new Callback<ResultResponse>() {
+                .enqueue(new Callback<Event>() {
                     @Override
-                    public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
+                    public void onResponse(Call<Event> call, final Response<Event> response) {
                         getView().stopLoading();
                         if (response.isSuccessful()) {
-                            if (response.body().getResult().equals(Constants.SUCCESS)) {
-                                getView().onInviteGuests();
+                            if (response.body().getEventId() != null) {
+                                final Realm realm = Realm.getDefaultInstance();
+                                realm.executeTransactionAsync(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+                                        realm.copyToRealmOrUpdate(response.body());
+                                    }
+                                }, new Realm.Transaction.OnSuccess() {
+                                    @Override
+                                    public void onSuccess() {
+                                        realm.delete(TempEvent.class);
+                                        realm.close();
+                                        getView().onInviteGuests(response.body().getEventId());
+                                    }
+                                }, new Realm.Transaction.OnError() {
+                                    @Override
+                                    public void onError(Throwable error) {
+                                        realm.close();
+                                        Log.e(TAG, "onError: Unable to save Event", error);
+                                    }
+                                });
                             } else {
-                                getView().showAlert("Uploading Image Failed");
+                                getView().showAlert("Creating Event Failed");
                             }
                         } else {
                             getView().showAlert(response.message() != null ? response.message()
@@ -164,11 +188,18 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                     }
 
                     @Override
-                    public void onFailure(Call<ResultResponse> call, Throwable t) {
+                    public void onFailure(Call<Event> call, Throwable t) {
                         Log.e(TAG, "onFailure: Error calling login api", t);
                         getView().stopLoading();
                         getView().showAlert("Error Connecting to Server");
                     }
                 });
     }
+
+    @NonNull
+    private RequestBody createPartFromString(String descriptionString) {
+        return RequestBody.create(
+                MediaType.parse("multipart/form-data"), descriptionString);
+    }
+
 }

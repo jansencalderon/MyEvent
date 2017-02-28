@@ -34,6 +34,7 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
     ActivityLocationBinding binding;
     private Location location;
     private Realm realm;
+    private TempEvent tempEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +46,6 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null)
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
 
         Intent i = getIntent();
@@ -69,8 +69,8 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
             Glide.with(this).load(Constants.URL_IMAGE + location.getLocImage()).into(binding.locationImage);
         }
 
-        TempEvent tempEvent = realm.where(TempEvent.class).findFirst();
-        if(tempEvent==null){
+        tempEvent = realm.where(TempEvent.class).findFirst();
+        if (tempEvent == null) {
             binding.selectVenue.setVisibility(View.GONE);
         }
 
@@ -78,7 +78,7 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
     }
 
     @Override
-    public void onAvail(){
+    public void onAvail() {
         final Realm realm = Realm.getDefaultInstance();
         final TempEvent tempEvent = realm.where(TempEvent.class).findFirst();
         realm.executeTransaction(new Realm.Transaction() {
@@ -89,21 +89,21 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
                 realm.close();
             }
         });
-        startActivity(new Intent(this,EventAddActivity.class));
+        startActivity(new Intent(this, EventAddActivity.class));
         finish();
     }
 
     @Override
-    public void openOnGoogleMaps(){
-        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.getLocLat(),location.getLocLong());
+    public void openOnGoogleMaps() {
+        String uri = String.format(Locale.ENGLISH, "geo:%f,%f", location.getLocLat(), location.getLocLong());
         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
         startActivity(intent);
 
     }
 
     @Override
-    public void openOnWaze(){
-        final String url = String.format(Locale.ENGLISH, "waze://?ll=%f,%f&navigate=yes", location.getLocLat(),location.getLocLong());
+    public void openOnWaze() {
+        final String url = String.format(Locale.ENGLISH, "waze://?ll=%f,%f&navigate=yes", location.getLocLat(), location.getLocLong());
         final Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
         startActivity(intent);
     }
@@ -122,9 +122,14 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
 
     @Override
     public void onBackPressed() {
-        startActivity(new Intent(this, EventAddLocationActivity.class));
-        finish();
+        if (tempEvent == null) {
+            finish();
+        } else {
+            startActivity(new Intent(this, EventAddLocationActivity.class));
+            finish();
+        }
     }
+
     @NonNull
     @Override
     public LocationPresenter createPresenter() {

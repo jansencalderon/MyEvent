@@ -99,9 +99,9 @@ public class App extends Application {
             httpClient = new OkHttpClient.Builder();
             // add your other interceptors …
 
-            httpClient.connectTimeout(60, TimeUnit.SECONDS);
-            httpClient.readTimeout(60,TimeUnit.SECONDS);
-            httpClient.writeTimeout(60,TimeUnit.SECONDS);
+            httpClient.connectTimeout(120, TimeUnit.SECONDS);
+            httpClient.readTimeout(120,TimeUnit.SECONDS);
+            httpClient.writeTimeout(120,TimeUnit.SECONDS);
 
             // add logging as last interceptor
             httpClient.addInterceptor(logging);  // <-- this is the important line!

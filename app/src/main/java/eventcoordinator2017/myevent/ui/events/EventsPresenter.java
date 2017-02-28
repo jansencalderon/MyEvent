@@ -63,6 +63,7 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
                 realm.executeTransactionAsync(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
+                        realm.delete(Event.class);
                         realm.copyToRealmOrUpdate(response.body());
                     }
                 }, new Realm.Transaction.OnSuccess() {

@@ -51,6 +51,7 @@ import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import eventcoordinator2017.myevent.ui.events.add.guests.GuestsActivity;
 import eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageActivity;
 import eventcoordinator2017.myevent.ui.events.add.venue.EventAddLocationActivity;
+import eventcoordinator2017.myevent.ui.events.details.EventDetailActivity;
 import eventcoordinator2017.myevent.ui.login.LoginActivity;
 import eventcoordinator2017.myevent.ui.main.MainActivity;
 import eventcoordinator2017.myevent.utils.PermissionsActivity;
@@ -170,7 +171,12 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
             }
 
             try {
-                Glide.with(this).load(new File(tempEvent.getImageUri())).error(R.drawable.ic_gallery).into(binding.eventImage);
+                Glide.with(this)
+                        .load(new File(tempEvent.getImageUri()))
+                        .error(R.drawable.ic_gallery)
+                        .centerCrop()
+                        .into(binding.eventImage);
+                eventImage = new File(tempEvent.getImageUri());
             } catch (NullPointerException e) {
                 e.printStackTrace();
             }
@@ -384,8 +390,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     }
 
     @Override
-    public void onInviteGuests() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+    public void onInviteGuests(int i) {
+       /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Event Creation Successful");
         builder.setMessage("Invite guests now?");
         builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
@@ -411,7 +417,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
             }
         });
         AlertDialog alert = builder.create();
-        alert.show();
+        alert.show();*/
+        startActivity(new Intent(this, EventDetailActivity.class).putExtra(Constants.ID, i));
     }
 
 
@@ -422,16 +429,18 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 onBackPressed();
                 return true;
             case R.id.create:
-                if (!getIntent().getBooleanExtra(Constants.FROM_INVITE_GUESTS, false)) {
-                    if (eventImage != null) {
-                        presenter.createEvent(eventImage, binding.eventName.getText().toString());
+                /*if (!getIntent().getBooleanExtra(Constants.FROM_INVITE_GUESTS, false)) {
+                    *//*if (eventImage != null) {
+
                     } else {
                         Toast.makeText(this, "Select Event Photo", Toast.LENGTH_SHORT).show();
-                    }
-                    Log.d(TAG, "Create new event");
+                    }*//*
+
                 } else {
-                    onInviteGuests();
-                }
+                    //onInviteGuests();
+                }*/
+                presenter.createEvent(eventImage, binding.eventName.getText().toString());
+                Log.d(TAG, "Create new event");
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

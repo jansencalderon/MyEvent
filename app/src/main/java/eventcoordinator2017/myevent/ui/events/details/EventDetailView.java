@@ -3,6 +3,7 @@ package eventcoordinator2017.myevent.ui.events.details;
 import com.hannesdorfmann.mosby.mvp.MvpView;
 
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
 import retrofit2.Response;
@@ -13,6 +14,10 @@ import retrofit2.Response;
 
 public interface EventDetailView extends MvpView{
 
+    void onLocationClicked(Location location);
+
+    void onAdd();
+
     void showAlert(String s);
 
     void onResponseGoing(User user);
@@ -20,7 +25,6 @@ public interface EventDetailView extends MvpView{
     void onResponseMaybe(User user);
 
     void onResponseIgnore(User user);
-
 
     void onResponseSuccessful(String userResponse);
 }

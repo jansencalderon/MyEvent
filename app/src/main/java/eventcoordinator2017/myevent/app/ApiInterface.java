@@ -70,12 +70,12 @@ public interface ApiInterface {
     Call<List<Location>> getLocations(@Field("") String ah);
 
     @Multipart
-    @POST
-    Call<ResultResponse> uploadImage(@Part MultipartBody.Part image, @Part("name") RequestBody name);
+    @POST("upload.php")
+    Call<ResultResponse> uploadImage(@Part MultipartBody.Part image);
 
     @FormUrlEncoded
     @POST(Endpoints.ADD_EVENT)
-    Call<ResultResponse> createEvent(@Field(Constants.EVENT_USER_ID) String user_id,
+    Call<Event> createEvent(@Field(Constants.EVENT_USER_ID) String user_id,
                                      @Field(Constants.EVENT_PACKAGE_ID) String package_id,
                                      @Field(Constants.EVENT_NAME) String event_name,
                                      @Field(Constants.EVENT_DATE_FROM) String event_date_from,

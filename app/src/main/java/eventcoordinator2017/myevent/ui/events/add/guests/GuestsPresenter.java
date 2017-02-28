@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
+import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
 import io.realm.Realm;
@@ -25,12 +26,12 @@ public class GuestsPresenter extends MvpNullObjectBasePresenter<GuestsView> {
     private Realm realm;
     private List<User> users = new ArrayList<>();
     private String TAG = GuestsPresenter.class.getSimpleName();
-    private TempEvent tempEvent;
+    private Event event;
 
     public void onStart() {
         realm = Realm.getDefaultInstance();
-        tempEvent = realm.where(TempEvent.class).findFirst();
-        if (tempEvent != null) {
+        event = realm.where(Event.class).findFirst();
+        if (event != null) {
             users = realm.where(TempEvent.class).findFirst().getGuests();
             if (users.size() > 0) {
                 getView().refreshList(users);
@@ -70,11 +71,11 @@ public class GuestsPresenter extends MvpNullObjectBasePresenter<GuestsView> {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
                 if (response.isSuccessful()) {
-                    if (tempEvent != null) {
+                    if (event != null) {
                         realm.executeTransaction(new Realm.Transaction() {
                             @Override
                             public void execute(Realm realm) {
-                                update(tempEvent, realm);
+                                update(event, realm);
                             }
                         });
                     }
@@ -96,10 +97,10 @@ public class GuestsPresenter extends MvpNullObjectBasePresenter<GuestsView> {
         });
     }
 
-    public static void update(TempEvent tempEvent, Realm realm) {
+    public static void update(Event event, Realm realm) {
         //do update stuff
         User user = realm.copyToRealmOrUpdate(new User());
-        tempEvent.getGuests().add(user);
+        event.getGuests().add(user);
 
     }
 

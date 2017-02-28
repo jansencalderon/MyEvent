@@ -52,7 +52,7 @@ public class PackActivity extends MvpActivity<PackView, PackPresenter> implement
         Intent i = getIntent();
         int id = i.getIntExtra(Constants.ID, -1);
         if (id != -1) {
-            aPackage = realm.where(Package.class).equalTo(Constants.PACKAGE_ID, id).findFirst();
+            aPackage = realm.copyFromRealm(realm.where(Package.class).equalTo(Constants.PACKAGE_ID, id).findFirst());
             binding.setAPackage(aPackage);
         }
 
