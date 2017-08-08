@@ -1,11 +1,15 @@
 package eventcoordinator2017.myevent.ui.profile;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
+import java.io.File;
 import java.util.List;
 
+import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
@@ -14,6 +18,9 @@ import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,66 +39,85 @@ public class ProfilePresenter extends MvpNullObjectBasePresenter<ProfileView> {
     public void onStart() {
         realm = Realm.getDefaultInstance();
         user = App.getUser();
-        loadEventList();
-
-        eventRealmResults = realm.where(Event.class).findAllSorted("eventId", Sort.ASCENDING);
-        eventRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Event>>() {
-            @Override
-            public void onChange(RealmResults<Event> element) {
-                if (eventRealmResults.isLoaded() && eventRealmResults.isValid()) {
-                    List<Event> eventList;
-                    eventList = realm.copyFromRealm(eventRealmResults.where()
-                            .equalTo("userId", user.getUserId())
-                            .equalTo("eventDateFrom", DateTimeUtils.dateToday())
-                            .findAll());
-                    getView().setEvents(eventList);
-                }
-            }
-        });
     }
 
-    void loadEventList() {
-        events(App.getInstance().getApiInterface().getUserEvents(user.getUserId()));
+
+    public void updateUserWithImage(File image, String userId, String firstName, String lastName, String contact, String birthday, String address) {
+        if (firstName.equals("") || lastName.equals("") || birthday.equals("") || contact.equals("") || address.equals("")) {
+            getView().showAlert("Fill-up all fields");
+        } else {
+            getView().startLoading();
+            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), image);
+            MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", image.getName(), requestFile);
+            App.getInstance().getApiInterface().updateUserWithImage(body,
+                    createPartFromString(userId), createPartFromString(firstName), createPartFromString(lastName), createPartFromString(contact)
+                    , createPartFromString(birthday), createPartFromString(address))
+                    .enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, final Response<User> response) {
+                            getView().stopLoading();
+                            if (response.isSuccessful() && response.body().getUserId() == user.getUserId()) {
+                                realm.executeTransaction(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+                                        realm.copyToRealmOrUpdate(response.body());
+                                        getView().finishAct();
+                                    }
+                                });
+                            } else {
+                                getView().showAlert("Oops something went wrong");
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+                            Log.e(TAG, "onFailure: Error calling login api", t);
+                            getView().stopLoading();
+                            getView().showAlert("Error Connecting to Server");
+                        }
+                    });
+        }
     }
 
-    private void events(Call<List<Event>> eventListCall) {
-        getView().startLoading();
-        eventListCall.enqueue(new Callback<List<Event>>() {
-            @Override
-            public void onResponse(Call<List<Event>> call, final Response<List<Event>> response) {
-                getView().stopLoading();
-                final Realm realm = Realm.getDefaultInstance();
-                realm.executeTransactionAsync(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        realm.copyToRealmOrUpdate(response.body());
-                    }
-                }, new Realm.Transaction.OnSuccess() {
-                    @Override
-                    public void onSuccess() {
-                        realm.close();
-                    }
-                }, new Realm.Transaction.OnError() {
-                    @Override
-                    public void onError(Throwable error) {
-                        realm.close();
-                        Log.e(TAG, "onError: Unable to save USER", error);
-                    }
-                });
-            }
+    public void updateUser(String userId, String firstName, String lastName, String contact, String birthday, String address) {
+        if (firstName.equals("") || lastName.equals("") || birthday.equals("") || contact.equals("") || address.equals("")) {
+            getView().showAlert("Fill-up all fields");
+        } else {
+            getView().startLoading();
+            App.getInstance().getApiInterface().updateUser(userId, firstName, lastName, contact, birthday, address)
+                    .enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, final Response<User> response) {
+                            getView().stopLoading();
+                            if (response.isSuccessful() && response.body().getUserId() == user.getUserId()) {
+                                realm.executeTransaction(new Realm.Transaction() {
+                                    @Override
+                                    public void execute(Realm realm) {
+                                        realm.copyToRealmOrUpdate(response.body());
+                                        getView().finishAct();
+                                    }
+                                });
+                            } else {
+                                getView().showAlert("Oops something went wrong");
+                            }
+                        }
 
-            @Override
-            public void onFailure(Call<List<Event>> call, Throwable t) {
-                Log.e(TAG, "onFailure: Error calling login api", t);
-                getView().stopLoading();
-                getView().showAlert("Error Connecting to Server");
-
-            }
-        });
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+                            Log.e(TAG, "onFailure: Error calling login api", t);
+                            getView().stopLoading();
+                            getView().showAlert("Error Connecting to Server");
+                        }
+                    });
+        }
     }
 
-    public void getEvents() {
+    ;
 
+    @NonNull
+    private RequestBody createPartFromString(String descriptionString) {
+        return RequestBody.create(
+                MediaType.parse("multipart/form-data"), descriptionString);
     }
 
     public void onStop() {

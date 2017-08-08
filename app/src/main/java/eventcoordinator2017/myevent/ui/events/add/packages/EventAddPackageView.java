@@ -26,5 +26,7 @@ public interface EventAddPackageView extends MvpView {
 
     void stopLoading();
 
+    void checkResult(int count);
+
     void setPackages(List<Package> packageList);
 }

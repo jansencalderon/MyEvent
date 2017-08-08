@@ -4,6 +4,7 @@ import com.hannesdorfmann.mosby.mvp.MvpView;
 
 import java.util.List;
 
+import eventcoordinator2017.myevent.model.data.Guest;
 import eventcoordinator2017.myevent.model.data.User;
 
 /**
@@ -13,7 +14,11 @@ import eventcoordinator2017.myevent.model.data.User;
 public interface GuestsView extends MvpView {
 
 
+    void onClick(Guest guest);
+
     void onAdd();
+
+    void clearEmail();
 
     void showAlert(String s);
 
@@ -21,5 +26,5 @@ public interface GuestsView extends MvpView {
 
     void stopLoading();
 
-    void refreshList(List<User> users);
+    void refreshList(List<Guest> guests);
 }

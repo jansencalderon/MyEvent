@@ -147,7 +147,7 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
         if (locationRealmResults.isLoaded() && locationRealmResults.isValid()) {
             List<Location> list;
             if(capacity.equals("")){
-                capacity = "999999";
+                capacity = "0";
             }
             RealmResults<Location> locations = locationRealmResults.where()
                     .greaterThanOrEqualTo("locCapacity", Integer.parseInt(capacity))
@@ -166,12 +166,12 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
             if (query != null && !query.isEmpty()) {
                 RealmResults<Location> locations = locationRealmResults.where().findAll();
                 list = realm.copyFromRealm(locations);
-
             } else {
                 list = realm.copyFromRealm(locationRealmResults);
             }
 
             getView().setList(list);
+            getView().checkResult(list.size());
 
         }
     }

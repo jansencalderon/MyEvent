@@ -1,7 +1,6 @@
 package eventcoordinator2017.myevent.ui.events.add;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -10,7 +9,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DatabaseUtils;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.os.Bundle;
@@ -32,7 +30,6 @@ import com.bumptech.glide.Glide;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -46,21 +43,14 @@ import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
-import eventcoordinator2017.myevent.model.response.ResultResponse;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
-import eventcoordinator2017.myevent.ui.events.add.guests.GuestsActivity;
 import eventcoordinator2017.myevent.ui.events.add.packages.EventAddPackageActivity;
 import eventcoordinator2017.myevent.ui.events.add.venue.EventAddLocationActivity;
 import eventcoordinator2017.myevent.ui.events.details.EventDetailActivity;
-import eventcoordinator2017.myevent.ui.login.LoginActivity;
-import eventcoordinator2017.myevent.ui.main.MainActivity;
 import eventcoordinator2017.myevent.utils.PermissionsActivity;
 import eventcoordinator2017.myevent.utils.PermissionsChecker;
+import eventcoordinator2017.myevent.utils.StringUtils;
 import io.realm.Realm;
-import okhttp3.Request;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -82,6 +72,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     private String TAG = EventAddActivity.class.getSimpleName();
     private File eventImage;
     private ProgressDialog progressDialog;
+    private String realBudget = "";
+    private String eventUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,20 +105,30 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
             tempEvent = realm.where(TempEvent.class).findFirst();
         }
         if (tempEvent != null) {
+            Glide.with(this)
+                    .load(new File(tempEvent.getImageUri()))
+                    .error(R.drawable.ic_gallery)
+                    .centerCrop()
+                    .into(binding.eventImage);
+            eventImage = new File(tempEvent.getImageUri());
+
             binding.eventDescription.setText(tempEvent.getEventDescription());
             binding.eventName.setText(tempEvent.getEventName());
             binding.eventFromDate.setText(tempEvent.getEventDateFrom());
             binding.eventFromTime.setText(tempEvent.getEventTimeFrom());
             binding.eventToDate.setText(tempEvent.getEventDateTo());
             binding.eventToTime.setText(tempEvent.getEventTimeTo());
-            binding.eventBudget.setText(tempEvent.getBudget());
+            binding.eventBudget.setText(StringUtils.moneyFormat(Integer.parseInt(tempEvent.getBudget())));
+            realBudget = tempEvent.getBudget();
             binding.tagGroup.setTags(tempEvent.getEventTags().split(","));
             if (tempEvent.getaPackage() != null) {
                 binding.packageCard.setVisibility(View.VISIBLE);
                 binding.addPackage.setVisibility(View.GONE);
                 Package aPackage = tempEvent.getaPackage();
                 binding.setAPackage(aPackage);
-                Glide.with(this).load(Constants.URL_IMAGE + tempEvent.getaPackage().getImageDirectory()).centerCrop().into(binding.packageImage);
+                Glide.with(this)
+                        .load(Constants.URL_IMAGE + tempEvent.getaPackage().getImageDirectory())
+                        .into(binding.packageImage);
                 binding.removePackage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -150,7 +152,9 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 Location location = tempEvent.getLocation();
                 binding.setLocation(location);
                 binding.addLocation.setVisibility(View.GONE);
-                Glide.with(this).load(Constants.URL_IMAGE + tempEvent.getLocation().getLocImage()).centerCrop().into(binding.locImage);
+                Glide.with(this)
+                        .load(Constants.URL_IMAGE + tempEvent.getLocation().getLocImage())
+                        .into(binding.locImage);
                 binding.removeLocation.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -170,16 +174,6 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 binding.locationCard.setVisibility(View.GONE);
             }
 
-            try {
-                Glide.with(this)
-                        .load(new File(tempEvent.getImageUri()))
-                        .error(R.drawable.ic_gallery)
-                        .centerCrop()
-                        .into(binding.eventImage);
-                eventImage = new File(tempEvent.getImageUri());
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
 
         } else {
             binding.locationCard.setVisibility(View.GONE);
@@ -200,7 +194,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                             binding.eventFromTime.getText().toString(),
                             binding.eventToDate.getText().toString(),
                             binding.eventToTime.getText().toString(),
-                            binding.eventBudget.getText().toString(),
+                            realBudget,
+                            eventUri,
                             "pack");
                     Log.d(TAG, "Create new tempEvent and pick Pack");
                 }
@@ -222,7 +217,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                             binding.eventFromTime.getText().toString(),
                             binding.eventToDate.getText().toString(),
                             binding.eventToTime.getText().toString(),
-                            binding.eventBudget.getText().toString(),
+                            realBudget,
+                            eventUri,
                             "loc");
                     Log.d(TAG, "Create new tempEvent and pick Loc");
                 }
@@ -245,7 +241,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     }
 
     @Override
-    public void askForBudget(String budget) {
+    public void askForBudget(final String budget) {
         final DialogBudgetBinding budgetBinding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_budget, null, false);
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -260,7 +256,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
         budgetBinding.proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                binding.eventBudget.setText(budgetBinding.budget.getText().toString());
+                realBudget = budgetBinding.budget.getText().toString();
+                binding.eventBudget.setText(StringUtils.moneyFormat(Integer.parseInt(budgetBinding.budget.getText().toString())));
                 InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(budgetBinding.budget.getWindowToken(), 0);
                 dialog.dismiss();
@@ -272,7 +269,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void clearBudget() {
-        askForBudget(binding.eventBudget.getText().toString());
+        askForBudget(realBudget);
     }
 
     @Override
@@ -345,11 +342,13 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
             String s = cursor.getString(column_index);
             cursor.close();
             eventImage = new File(s);
+            eventUri = eventImage.getPath();
             Glide.with(this)
                     .load(uri)
                     .centerCrop()
                     .error(R.drawable.ic_gallery)
                     .into(binding.eventImage);
+
 
         } else {
 
@@ -372,8 +371,11 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void startLoading() {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Creating event");
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage("Creating event");
+            progressDialog.setCancelable(false);
+        }
         progressDialog.show();
     }
 
@@ -391,34 +393,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void onInviteGuests(int i) {
-       /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Event Creation Successful");
-        builder.setMessage("Invite guests now?");
-        builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                startActivity(new Intent(EventAddActivity.this, GuestsActivity.class));
-                finish();
-            }
-        });
-        builder.setNegativeButton("SKIP", new DialogInterface.OnClickListener() {
-
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Do nothing
-                final Realm realm = Realm.getDefaultInstance();
-                realm.executeTransaction(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        realm.delete(TempEvent.class);
-                    }
-                });
-                realm.close();
-                navigateUpTo(new Intent(EventAddActivity.this, EventsActivity.class));
-            }
-        });
-        AlertDialog alert = builder.create();
-        alert.show();*/
         startActivity(new Intent(this, EventDetailActivity.class).putExtra(Constants.ID, i));
+        finish();
     }
 
 
@@ -429,17 +405,11 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 onBackPressed();
                 return true;
             case R.id.create:
-                /*if (!getIntent().getBooleanExtra(Constants.FROM_INVITE_GUESTS, false)) {
-                    *//*if (eventImage != null) {
-
-                    } else {
-                        Toast.makeText(this, "Select Event Photo", Toast.LENGTH_SHORT).show();
-                    }*//*
-
+                if (tempEvent != null) {
+                    presenter.createEvent(eventImage, binding.eventName.getText().toString());
                 } else {
-                    //onInviteGuests();
-                }*/
-                presenter.createEvent(eventImage, binding.eventName.getText().toString());
+                    showAlert("Fill up fields");
+                }
                 Log.d(TAG, "Create new event");
                 return true;
             default:

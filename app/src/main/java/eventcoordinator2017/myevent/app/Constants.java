@@ -78,4 +78,5 @@ public class Constants {
     public static final String RESPONSE_MAYBE = "M" ;
 
     public static final String VIEW_ONLY = "viewOnly";
+    public static final String FIREBASE = "firebase";
 }

@@ -4,10 +4,15 @@ import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NavUtils;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
@@ -15,18 +20,21 @@ import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import java.util.List;
 
 import eventcoordinator2017.myevent.R;
+import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventsBinding;
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
 import eventcoordinator2017.myevent.ui.events.details.EventDetailActivity;
+import io.realm.Realm;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
  */
 
-public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> implements EventsView, SwipeRefreshLayout.OnRefreshListener {
+public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> implements EventsView, SwipeRefreshLayout.OnRefreshListener, AdapterView.OnItemSelectedListener{
 
     ActivityEventsBinding binding;
     private User user;
@@ -50,6 +58,16 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
 
         binding.recyclerView.setAdapter(eventListAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        Spinner dropdown = binding.spinner;
+        dropdown.setOnItemSelectedListener(this);
+        String[] items = new String[]{
+                "All",
+                "Past",
+                "Future"
+        };
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, items);
+        dropdown.setAdapter(adapter);
 
     }
 
@@ -78,21 +96,18 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
                 onBackPressed();
                 return true;
             case R.id.add_event:
+                final Realm realm = Realm.getDefaultInstance();
+                realm.beginTransaction();
+                realm.delete(TempEvent.class);
+                realm.commitTransaction();
+                realm.close();
+
                 Intent i = new Intent(EventsActivity.this, EventAddActivity.class);
                 startActivity(i);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.event, menu);
-
-
-        return true;
     }
 
     @Override
@@ -113,6 +128,18 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
     @Override
     public void setEvents(List<Event> eventList) {
         eventListAdapter.setEvents(eventList);
+        checkResult(eventList.size());
+    }
+
+
+    public void checkResult(int count) {
+        binding.noResult.resultText.setText("You have no hosted events yet");
+        binding.noResult.resultImage.setImageResource(R.drawable.ic_calendar);
+        if (count > 0) {
+            binding.noResult.noResultLayout.setVisibility(View.GONE);
+        } else {
+            binding.noResult.noResultLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -126,9 +153,38 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
         intent.putExtra(Constants.ID, event.getEventId());
         startActivity(intent);
     }
+
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.event, menu);
+
+
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavUtils.navigateUpFromSameTask(this);
+    }
+
     @Override
     protected void onStop() {
         super.onStop();
         presenter.onStop();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        String item = parent.getItemAtPosition(position).toString();
+        presenter.filterList(item);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
     }
 }

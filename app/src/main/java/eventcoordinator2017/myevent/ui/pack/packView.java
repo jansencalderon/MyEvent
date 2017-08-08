@@ -10,5 +10,5 @@ import eventcoordinator2017.myevent.model.data.Package;
 
 public interface PackView extends MvpView {
 
-    void onAvail(Package aPackage);
+    void onAvail(int packageId);
 }

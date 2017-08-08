@@ -14,6 +14,12 @@ import retrofit2.Response;
 
 public interface EventDetailView extends MvpView{
 
+    void onViewGuests(Event event);
+
+    void eventBy(User user);
+
+    void editEvent(Event event);
+
     void onLocationClicked(Location location);
 
     void onAdd();
@@ -27,4 +33,10 @@ public interface EventDetailView extends MvpView{
     void onResponseIgnore(User user);
 
     void onResponseSuccessful(String userResponse);
+
+    void setEvent(Event event);
+
+    void startLoading();
+
+    void stopLoading();
 }

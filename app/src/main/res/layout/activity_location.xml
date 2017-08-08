@@ -52,8 +52,7 @@
                     android:minHeight="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                    app:title="@{location.locName}"
-                    app:titleMarginTop="13dp" />
+                    app:title="@{location.locName}"/>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -101,11 +100,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:text="Navigate with: " />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="6dp"
                     android:orientation="horizontal">
 
                     <LinearLayout

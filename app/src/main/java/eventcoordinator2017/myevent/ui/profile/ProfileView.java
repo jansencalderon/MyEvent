@@ -21,5 +21,11 @@ public interface ProfileView extends MvpView{
 
     void stopLoading();
 
-    void setEvents(List<Event> eventList);
+    void finishAct();
+
+    void onBirthdayClicked();
+
+    void onPhotoClicked();
+
+    void finish();
 }

@@ -38,7 +38,7 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
             @Override
             public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
                 if(response.isSuccessful()){
-                    if(response.body().equals(Constants.SUCCESS)){
+                    if(response.body().getResult().equals(Constants.SUCCESS)){
                         getView().onResponseSuccessful(userResponse);
                     }else getView().showAlert("Failed");
                 }else
@@ -60,4 +60,27 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
     }
 
 
+    public void getEventData(String event_id) {
+        getView().startLoading();
+        App.getInstance().getApiInterface().getSingleEvent(event_id).enqueue(new Callback<Event>() {
+            @Override
+            public void onResponse(Call<Event> call, Response<Event> response) {
+                getView().stopLoading();
+                if(response.isSuccessful()){
+                    if(response.body().getEventId()!=null){
+                        getView().setEvent(response.body());
+                    }else getView().showAlert("Failed");
+                }else
+                    getView().showAlert(response.message() != null ? response.message()
+                            : "Unknown Error");
+            }
+
+            @Override
+            public void onFailure(Call<Event> call, Throwable t) {
+                getView().stopLoading();
+                Log.e(TAG, "onFailure: Error calling login api", t);
+                getView().showAlert("Error Connecting to Server");
+            }
+        });
+    }
 }

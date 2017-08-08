@@ -50,12 +50,15 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                             final String toDate,
                             final String toTime,
                             final String eventBudget,
+                            final String eventUri,
                             final String type) {
-        final String joined = TextUtils.join("", tags).trim();
+        final String joined = TextUtils.join(",", tags).trim();
         if (eventName.equals("") || eventDescription.equals("") || fromDate.equals("") || fromTime.equals("") ||
                 toDate.equals("") || toTime.equals("") || joined.equals("") || eventBudget.equals("")) {
             getView().showAlert("Fill up all fields");
-        } else {
+        } else if(eventUri == null){
+            getView().showAlert("Pick event photo");
+        }else {
             final Realm realm = Realm.getDefaultInstance();
             realm.executeTransactionAsync(new Realm.Transaction() {
                 @Override
@@ -71,6 +74,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                     tempEvent.setEventTimeFrom(fromTime);
                     tempEvent.setEventTimeTo(toTime);
                     tempEvent.setBudget(eventBudget);
+                    tempEvent.setImageUri(eventUri);
                     realm.copyToRealmOrUpdate(tempEvent);
 
                 }
@@ -116,7 +120,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                                     getView().showAlert("Uploading Image Failed");
                                 }
                             } else {
-                                getView().startLoading();
+                                getView().stopLoading();
                                 getView().showAlert(response.message() != null ? response.message()
                                         : "Unknown Error");
 
@@ -166,7 +170,9 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                                 }, new Realm.Transaction.OnSuccess() {
                                     @Override
                                     public void onSuccess() {
+                                        realm.beginTransaction();
                                         realm.delete(TempEvent.class);
+                                        realm.commitTransaction();
                                         realm.close();
                                         getView().onInviteGuests(response.body().getEventId());
                                     }

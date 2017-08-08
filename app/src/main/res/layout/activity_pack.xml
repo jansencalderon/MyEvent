@@ -62,7 +62,7 @@
                     android:gravity="center"
                     app:layout_collapseMode="parallax"
                     android:layout_gravity="center"
-                    android:text='@{StringUtils.toCurrency(aPackage.packagePrice)}'
+                    android:text='@{`₱ `+StringUtils.moneyFormat(aPackage.packagePrice)}'
                     android:layout_height="wrap_content" />
 
                 <!--app:layout_collapseMode="parallax"-->
@@ -96,9 +96,10 @@
             android:text="AVAIL THIS PACKAGE"
             android:textSize="16sp"
             android:textColor="@color/white"
+            android:id="@+id/selectPackage"
             android:layout_margin="10dp"
             android:background="@drawable/rounded_button_accent"
-            android:onClick="@{()->view.onAvail(aPackage)}"
+            android:onClick="@{()->view.onAvail(aPackage.packageId)}"
             android:layout_height="wrap_content" />
     </android.support.design.widget.CoordinatorLayout>
 </layout>

@@ -13,7 +13,7 @@ import java.util.List;
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ItemGuestBinding;
-import eventcoordinator2017.myevent.model.data.User;
+import eventcoordinator2017.myevent.model.data.Guest;
 
 /**
  * Created by Sen on 1/26/2017.
@@ -21,13 +21,15 @@ import eventcoordinator2017.myevent.model.data.User;
 
 public class GuestsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private List<User> list = new ArrayList<>();
+    private List<Guest> list = new ArrayList<>();
+    private GuestsView guestsView;
 /*
-    public GuestsListAdapter(List<User> list) {
+    public GuestsListAdapter(List<Guest> list) {
         this.list = list;
     }*/
 
-    public GuestsListAdapter() {
+    public GuestsListAdapter(GuestsView guestsView) {
+        this.guestsView = guestsView;
     }
 
     @Override
@@ -40,16 +42,18 @@ public class GuestsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ViewHolder viewHolder = (ViewHolder) holder;
-        User guest = list.get(position);
+        Guest guest = list.get(position);
         viewHolder.itemGuestBinding.setGuest(guest);
+        viewHolder.itemGuestBinding.setView(guestsView);
         Glide.with(viewHolder.itemView.getContext())
-                .load(Constants.URL_IMAGE+guest.getImage())
-                .error(R.drawable.ic_gallery);
+                .load(Constants.URL_IMAGE + guest.getImage())
+                .error(R.drawable.ic_mood)
+                .into(viewHolder.itemGuestBinding.userImage);
 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private ItemGuestBinding  itemGuestBinding;
+        private ItemGuestBinding itemGuestBinding;
 
         public ViewHolder(ItemGuestBinding itemGuestBinding) {
             super(itemGuestBinding.getRoot());
@@ -58,7 +62,7 @@ public class GuestsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
 
-    public void setList(List<User> list) {
+    public void setList(List<Guest> list) {
         this.list.clear();
         this.list.addAll(list);
         notifyDataSetChanged();
@@ -68,7 +72,6 @@ public class GuestsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         list.clear();
         notifyDataSetChanged();
     }
-
 
 
     @Override

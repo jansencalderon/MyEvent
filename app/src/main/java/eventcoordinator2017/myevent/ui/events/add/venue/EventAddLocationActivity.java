@@ -1,6 +1,7 @@
 package eventcoordinator2017.myevent.ui.events.add.venue;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
@@ -39,7 +40,8 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView, 
     private Realm realm;
     private EventLocationListAdapter locationListAdapter;
     private TempEvent tempEvent;
-    private String filterCapacity ="", filterSetup ="", filterType ="";
+    private String filterCapacity = "", filterSetup = "", filterType = "";
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,10 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView, 
         if (tempEvent != null) {
             presenter.setQuery(tempEvent.getBudget());
         }
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setMessage("Loading Packages..");
     }
 
     @NonNull
@@ -158,19 +164,29 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView, 
 
     @Override
     public void startLoading() {
+        if (progressDialog != null) {
+            progressDialog.show();
+        }
+    }
 
+    @Override
+    public void checkResult(int count) {
+        binding.noResult.resultText.setText("No Result for Filters\nTry others");
+        binding.noResult.resultImage.setImageResource(R.drawable.ic_no);
+        if (count > 0) {
+            binding.noResult.noResultLayout.setVisibility(View.GONE);
+        } else {
+            binding.noResult.noResultLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void stopLoading() {
-
+        if (progressDialog != null) progressDialog.dismiss();
     }
 
     @Override
     public void clearFilter() {
-        /*if(!filterSetup.equals("")||!filterCapacity.equals("")||!filterType.equals("")){
-            binding.clearFilter.setEnabled(false);
-        }*/
         filterCapacity = "";
         filterSetup = "";
         filterType = "";
@@ -194,6 +210,7 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView, 
     @Override
     public void setList(List<Location> list) {
         locationListAdapter.setLocations(list);
+        checkResult(list.size());
     }
 
 

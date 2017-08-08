@@ -14,8 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.v4.app.NotificationCompat;
@@ -73,22 +71,7 @@ public class NotificationUtils {
         final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
                 + "://" + mContext.getPackageName() + "/raw/notification");
 
-        if (!TextUtils.isEmpty(imageUrl)) {
-
-            if (imageUrl != null && imageUrl.length() > 4 && Patterns.WEB_URL.matcher(imageUrl).matches()) {
-
-                Bitmap bitmap = getBitmapFromURL(imageUrl);
-
-                if (bitmap != null) {
-                    showBigNotification(bitmap, mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-                } else {
-                    showSmallNotification(mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-                }
-            }
-        } else {
-            showSmallNotification(mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
-            playNotificationSound();
-        }
+        showSmallNotification(mBuilder, icon, title, message, timeStamp, resultPendingIntent, alarmSound);
     }
 
 
@@ -153,18 +136,6 @@ public class NotificationUtils {
         } catch (IOException e) {
             e.printStackTrace();
             return null;
-        }
-    }
-
-    // Playing notification sound
-    public void playNotificationSound() {
-        try {
-            Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
-                    + "://" + mContext.getPackageName() + "/raw/notification");
-            Ringtone r = RingtoneManager.getRingtone(mContext, alarmSound);
-            r.play();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

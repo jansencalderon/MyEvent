@@ -1,5 +1,6 @@
 package eventcoordinator2017.myevent.ui.main;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
@@ -9,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -16,17 +18,34 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 import eventcoordinator2017.myevent.R;
+import eventcoordinator2017.myevent.app.App;
+import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityMainBinding;
+import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
+import eventcoordinator2017.myevent.model.response.ResultResponse;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import eventcoordinator2017.myevent.ui.login.LoginActivity;
+import eventcoordinator2017.myevent.ui.pack.PackPageFragmentAdapter;
 import eventcoordinator2017.myevent.ui.profile.ProfileActivity;
+import eventcoordinator2017.myevent.ui.register.RegisterActivity;
+import eventcoordinator2017.myevent.utils.SharedPreferencesUtil;
 import io.realm.Realm;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class MainActivity extends MvpActivity<MainView, MainPresenter> implements MainView, NavigationView.OnNavigationItemSelectedListener {
@@ -38,6 +57,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private ProgressDialog progressDialog;
+    private List<String> strings = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +67,6 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setView(getMvpView());
         presenter.onStart();
-
         setSupportActionBar(binding.toolbar);
 
 
@@ -60,7 +80,6 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
 
         //display data
-        presenter.displayUserInfo();
         binding.navigationView.getHeaderView(0).findViewById(R.id.viewProfile).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -68,7 +87,72 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             }
         });
 
+        strings.add("Today");
+        strings.add("Upcoming");
         binding.navigationView.getMenu().getItem(0).setChecked(true);
+        binding.viewpager.setAdapter(new MainPageFragmentAdapter(getSupportFragmentManager(), this, strings));
+        binding.viewpager.setOffscreenPageLimit(strings.size());
+        binding.slidingTabs.setupWithViewPager(binding.viewpager);
+        binding.swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                presenter.getEvents();
+            }
+        });
+
+
+        sendTokenToServer();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        final Realm realm = Realm.getDefaultInstance();
+        User user = realm.where(User.class).findFirst();
+        if (user != null)
+            displayUserData(user);
+        realm.close();
+    }
+
+    private void sendTokenToServer() {
+        User user = App.getUser();
+        final SharedPreferencesUtil sharedPreferencesUtil = new SharedPreferencesUtil(this, Constants.FIREBASE);
+        Boolean sent = sharedPreferencesUtil.getBooleanValue(Constants.FIREBASE + "_sent", false);
+        String token = sharedPreferencesUtil.getStringValue(Constants.FIREBASE + "_token", "");
+        if (!sent) {
+            if (!token.equals("")) {
+                App.getInstance().getApiInterface().saveUserToken(user.getUserId() + "", token).enqueue(new Callback<ResultResponse>() {
+                    @Override
+                    public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
+                        if (response.body().equals(Constants.SUCCESS)) {
+                            sharedPreferencesUtil.putBooleanValue(Constants.FIREBASE + "_sent", true);
+                        } else {
+                            Log.e(TAG, "Token Not Updated");
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResultResponse> call, Throwable t) {
+                        Log.d(TAG, t.toString());
+                    }
+                });
+            } else {
+                Log.e(TAG, "No Token Yet");
+            }
+        } else {
+            Log.e(TAG, "Token is already sent");
+        }
+    }
+
+
+    @Override
+    public void startLoading() {
+        binding.swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void stopLoading() {
+        binding.swipeRefreshLayout.setRefreshing(false);
     }
 
 
@@ -80,12 +164,31 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void displayUserData(User user) {
-        TextView email = (TextView) binding.navigationView.getHeaderView(0).findViewById(R.id.email);
+       // TextView email = (TextView) binding.navigationView.getHeaderView(0).findViewById(R.id.email);
         TextView name = (TextView) binding.navigationView.getHeaderView(0).findViewById(R.id.name);
-        email.setText(user.getEmail());
+        CircleImageView circleImageView = (CircleImageView) binding.navigationView.getHeaderView(0).findViewById(R.id.userImage);
+       // email.setText(user.getEmail());
         name.setText(user.getFullName());
+        Glide.with(this)
+                .load(Constants.URL_IMAGE+user.getImage())
+                .error(R.drawable.ic_gallery)
+                .into(circleImageView);
     }
 
+    @Override
+    public void showAlert(String s) {
+        Toast.makeText(this, s, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void setEvents(List<Event> eventToday, List<Event> eventUpcoming) {
+        binding.viewpager.setAdapter(new MainPageFragmentAdapter(getSupportFragmentManager(), this, strings));
+    }
+
+    @Override
+    public void refreshList() {
+
+    }
 
 
     @Override
@@ -129,7 +232,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         if (id == R.id.home) {
 
         } else if (id == R.id.events) {
-           startActivity(new Intent(this, EventsActivity.class));
+            startActivity(new Intent(this, EventsActivity.class));
             binding.navigationView.getMenu().getItem(0).setChecked(true);
         } else if (id == R.id.logout) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);

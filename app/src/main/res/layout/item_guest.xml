@@ -7,22 +7,26 @@
         <import type="android.view.View" />
         <variable
             name="guest"
-            type="eventcoordinator2017.myevent.model.data.User"/>
+            type="eventcoordinator2017.myevent.model.data.Guest"/>
+        <variable
+            name="view"
+            type="eventcoordinator2017.myevent.ui.events.add.guests.GuestsView"/>
     </data>
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:onClick="@{()->view.onClick(guest)}"
         android:background="?selectableItemBackground"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/userImage"
-            android:layout_margin="10dp"
+            android:layout_margin="6dp"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_gallery" />
+            android:src="@drawable/ic_mood" />
 
         <LinearLayout
             android:id="@+id/content"

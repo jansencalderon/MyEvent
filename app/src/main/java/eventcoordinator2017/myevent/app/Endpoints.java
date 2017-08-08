@@ -28,4 +28,6 @@ public class Endpoints {
 
     public static final String SAVE_USER_TOKEN = "saveUserToken";
     public static final String DELETE_USER_TOKEN = "deleteUserToken";
+    public static final String GET_ALL_EVENTS = "getAllEvents";
+    public static final String GET_SINGLE_EVENT = "getEventById" ;
 }

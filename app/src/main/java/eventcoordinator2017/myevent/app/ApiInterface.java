@@ -4,6 +4,7 @@ package eventcoordinator2017.myevent.app;
 import java.util.List;
 
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.model.data.Guest;
 import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.User;
@@ -46,6 +47,27 @@ public interface ApiInterface {
                                   @Field(Constants.ADDRESS) String address
     );
 
+
+    @Multipart
+    @POST("updateUserWithImage")
+    Call<User> updateUserWithImage(@Part MultipartBody.Part image,
+                                   @Part(Constants.USER_ID) RequestBody user_id,
+                                   @Part(Constants.FIRST_NAME) RequestBody first_name,
+                                   @Part(Constants.LAST_NAME) RequestBody last_name,
+                                   @Part(Constants.CONTACT) RequestBody contact,
+                                   @Part(Constants.BIRTHDAY) RequestBody birthday,
+                                   @Part(Constants.ADDRESS) RequestBody address);
+
+
+    @FormUrlEncoded
+    @POST("updateUser")
+    Call<User> updateUser(@Field(Constants.USER_ID) String user_id,
+                          @Field(Constants.FIRST_NAME) String first_name,
+                          @Field(Constants.LAST_NAME) String last_name,
+                          @Field(Constants.CONTACT) String contact,
+                          @Field(Constants.BIRTHDAY) String birthday,
+                          @Field(Constants.ADDRESS) String address);
+
     @FormUrlEncoded
     @POST(Endpoints.VERIFY)
     Call<LoginResponse> verify(@Field(Constants.USER_ID) String user_id,
@@ -57,8 +79,16 @@ public interface ApiInterface {
 
 
     @FormUrlEncoded
+    @POST(Endpoints.GET_SINGLE_EVENT)
+    Call<Event> getSingleEvent(@Field("event_id") String event_id);
+
+    @FormUrlEncoded
     @POST(Endpoints.GET_USER_EVENTS)
     Call<List<Event>> getUserEvents(@Field(Constants.USER_ID) int user_id);
+
+    @FormUrlEncoded
+    @POST(Endpoints.GET_ALL_EVENTS)
+    Call<List<Event>> getAllEvents(@Field("") String field);
 
 
     @FormUrlEncoded
@@ -73,17 +103,18 @@ public interface ApiInterface {
     @POST("upload.php")
     Call<ResultResponse> uploadImage(@Part MultipartBody.Part image);
 
+
     @FormUrlEncoded
     @POST(Endpoints.ADD_EVENT)
     Call<Event> createEvent(@Field(Constants.EVENT_USER_ID) String user_id,
-                                     @Field(Constants.EVENT_PACKAGE_ID) String package_id,
-                                     @Field(Constants.EVENT_NAME) String event_name,
-                                     @Field(Constants.EVENT_DATE_FROM) String event_date_from,
-                                     @Field(Constants.EVENT_DATE_TO) String event_date_to,
-                                     @Field(Constants.EVENT_DESCRIPTION) String event_description,
-                                     @Field(Constants.EVENT_TAGS) String event_tags,
-                                     @Field(Constants.EVENT_LOC_ID) String event_loc_id,
-                                     @Field(Constants.EVENT_IMAGE) String event_image);
+                            @Field(Constants.EVENT_PACKAGE_ID) String package_id,
+                            @Field(Constants.EVENT_NAME) String event_name,
+                            @Field(Constants.EVENT_DATE_FROM) String event_date_from,
+                            @Field(Constants.EVENT_DATE_TO) String event_date_to,
+                            @Field(Constants.EVENT_DESCRIPTION) String event_description,
+                            @Field(Constants.EVENT_TAGS) String event_tags,
+                            @Field(Constants.EVENT_LOC_ID) String event_loc_id,
+                            @Field(Constants.EVENT_IMAGE) String event_image);
 
     @FormUrlEncoded
     @POST
@@ -96,30 +127,20 @@ public interface ApiInterface {
                                    @Field(Constants.EVENT_TAGS) String event_tags,
                                    @Field(Constants.EVENT_LOC_ID) String event_loc_id,
                                    @Field(Constants.EVENT_IMAGE) String event_image);
-/*
-    //pangcheck kung nageexist yung email
-    @FormUrlEncoded
-    @POST
-    Call<ResultResponse> checkGuestEmail(@Field("email") String email);
 
-    */
-
-    // pang check ng kung existing yung query pwedeng email o contact
-    // pag existing iadd sha as guest dun sa event_id
-    // tapos magnonotif sa nainvite na user
     @FormUrlEncoded
-    @POST("inviteGuest")
-    Call<User> inviteGuest(@Field("query") String query,
+    @POST("addGuest")
+    Call<Guest> inviteGuest(@Field("query") String query,
                            @Field("event_id") String event_id);
 
     //kukunin lahat ng guest ng event
     @FormUrlEncoded
     @POST("getAllGuestsFromEvent")
-    Call<List<User>> getGuests(@Field("event_id") String event_id);
+    Call<List<Guest>> getGuests(@Field("event_id") String event_id);
 
     //response sa event, M = Maybe G = Going I = Ignore
     @FormUrlEncoded
-    @POST
+    @POST("guestResponse")
     Call<ResultResponse> eventResponse(@Field("user_id") String user_id,
                                        @Field("event_id") String event_id,
                                        @Field("response") String response);

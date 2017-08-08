@@ -92,13 +92,28 @@
                     android:onClick="@{()->view.onPhotoClicked()}"
                     android:src="@drawable/ic_gallery" />
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Basic Information"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="6dp"
+                        android:src="@drawable/ic_create"
+                        android:tint="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Basic Information"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <EditText
                     android:id="@+id/eventName"
@@ -119,7 +134,7 @@
                     android:layout_marginTop="10dp"
                     android:ellipsize="end"
                     android:hint="Description"
-                    android:inputType="text"
+                    android:inputType="textCapSentences"
                     android:maxEms="100"
                     android:padding="10dp"
                     android:textSize="16sp" />
@@ -132,64 +147,67 @@
                     android:splitMotionEvents="true"
                     app:atg_isAppendMode="true" />
 
-
-                <AutoCompleteTextView
-                    android:id="@+id/eventLocation"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:ellipsize="end"
-                    android:hint="Location"
-                    android:padding="10dp"
-                    android:textSize="16sp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Time Slots"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="6dp"
+                        android:src="@drawable/ic_time_slots"
+                        android:tint="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="When"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    android:weightSum="105">
+                    android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="5"
-                        android:padding="6dp"
-                        android:src="@drawable/ic_calendar"
-                        android:tint="@color/lightGray" />
-
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:ems="4"
+                        android:gravity="end"
+                        android:text="FROM" />
 
                     <EditText
                         android:id="@+id/eventFromDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:layout_weight="50"
-                        android:background="@drawable/fields_gray"
+                        android:layout_weight="1"
+                        android:background="@null"
                         android:focusable="false"
+                        android:hint="YYYY-MM-DD"
                         android:inputType="date"
-                        android:padding="10dp"
+                        android:padding="6dp"
                         android:textSize="14sp" />
 
                     <EditText
                         android:id="@+id/eventFromTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="50"
-                        android:background="@drawable/fields_gray"
+                        android:layout_weight="1"
+                        android:background="@null"
                         android:focusable="false"
+                        android:hint="00:00 AM/PM"
                         android:inputType="time"
                         android:maxEms="8"
-                        android:padding="10dp"
+                        android:padding="6dp"
                         android:textSize="14sp" />
 
                 </LinearLayout>
@@ -198,51 +216,67 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="6dp"
-                    android:orientation="horizontal"
-                    android:weightSum="105">
+                    android:orientation="horizontal">
 
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="5"
-                        android:padding="6dp"
-                        android:src="@null"
-                        android:tint="@color/lightestGray" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="10dp"
+                        android:ems="4"
+                        android:gravity="end"
+                        android:text="TO" />
 
                     <EditText
                         android:id="@+id/eventToDate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:layout_weight="50"
-                        android:background="@drawable/fields_gray"
+                        android:layout_weight="1"
+                        android:background="@null"
                         android:focusable="false"
+                        android:hint="YYYY-MM-DD"
                         android:inputType="date"
-                        android:padding="10dp"
+                        android:padding="6dp"
                         android:textSize="14sp" />
 
                     <EditText
                         android:id="@+id/eventToTime"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="50"
-                        android:background="@drawable/fields_gray"
+                        android:layout_weight="1"
+                        android:background="@null"
                         android:focusable="false"
+                        android:hint="00:00 AM/PM"
                         android:inputType="time"
-                        android:maxEms="8"
-                        android:padding="10dp"
+                        android:padding="6dp"
                         android:textSize="14sp" />
 
                 </LinearLayout>
 
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Budgeting"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16sp" />
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="6dp"
+                        android:src="@drawable/ic_budget"
+                        android:tint="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Budgeting"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/type"
@@ -271,24 +305,38 @@
                         android:textColor="@color/darkGray"
                         android:textColorHint="@color/lightGray"
                         android:textSize="24sp" />
-
-                    <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_gravity="top"
-                        android:onClick="@{()->view.clearBudget()}"
-                        android:src="@drawable/ic_brush"
-                        android:tint="@color/colorPrimaryDark" />
                 </LinearLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Package"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16sp" />
+                    android:layout_marginStart="10dp"
+                    android:text="Note: event budget will automatically reflect on package list"
+                    android:textColor="@color/lightGray"
+                    android:textSize="12sp" />
 
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="6dp"
+                        android:src="@drawable/ic_package"
+                        android:tint="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Package"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
                 <Button
                     android:id="@+id/addPackage"
@@ -339,7 +387,7 @@
                         android:layout_alignBottom="@+id/packageInfoLayout"
                         android:layout_alignTop="@id/packageInfoLayout"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_gallery" />
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:id="@+id/packageInfoLayout"
@@ -349,12 +397,6 @@
                         android:orientation="vertical"
                         android:padding="10dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text='@{StringUtils.toCurrency(aPackage.packagePrice)}'
-                            android:textColor="@color/black"
-                            android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -363,6 +405,13 @@
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text='@{`₱ `+StringUtils.moneyFormat(aPackage.packagePrice)}'
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -423,14 +472,28 @@
                         android:layout_alignParentBottom="true" />
                 </RelativeLayout>
 
-
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
-                    android:text="Venue"
-                    android:textColor="@color/colorPrimary"
-                    android:textSize="16sp" />
+                    android:layout_marginTop="20dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="6dp"
+                        android:src="@drawable/ic_loc"
+                        android:tint="@color/colorPrimary" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Venue"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
 
 
                 <Button
@@ -480,25 +543,19 @@
                         android:id="@+id/locImage"
                         android:layout_width="80dp"
                         android:layout_height="wrap_content"
-                        android:layout_alignBottom="@+id/packageInfoLayout"
-                        android:layout_alignTop="@id/packageInfoLayout"
+                        android:layout_alignBottom="@+id/locInfoLayout"
+                        android:layout_alignTop="@id/locInfoLayout"
                         android:scaleType="centerCrop"
-                        android:src="@drawable/ic_gallery" />
+                        android:visibility="gone" />
 
                     <LinearLayout
-                        android:id="@+id/packageInfoLayout"
+                        android:id="@+id/locInfoLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_toEndOf="@+id/locImage"
                         android:orientation="vertical"
                         android:padding="10dp">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text='@{location.locCapacity+ ` persons`}'
-                            android:textColor="@color/black"
-                            android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -507,6 +564,13 @@
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text='@{`Max `+location.locCapacity+ ` persons`}'
+                            android:textColor="@color/black"
+                            android:textSize="12sp" />
 
                         <TextView
                             android:layout_width="wrap_content"

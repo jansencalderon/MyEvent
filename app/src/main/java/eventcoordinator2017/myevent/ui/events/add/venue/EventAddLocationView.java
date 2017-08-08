@@ -22,6 +22,8 @@ public interface EventAddLocationView extends MvpView{
 
     void startLoading();
 
+    void checkResult(int count);
+
     void stopLoading();
 
     void onCardClicked(Location location);

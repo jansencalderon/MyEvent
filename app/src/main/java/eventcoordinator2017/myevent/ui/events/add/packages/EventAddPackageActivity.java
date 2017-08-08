@@ -192,10 +192,21 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
     public void stopLoading() {
 
     }
+    @Override
+    public void checkResult(int count) {
+        binding.noResult.resultText.setText("No Result for Filters\nTry others");
+        binding.noResult.resultImage.setImageResource(R.drawable.ic_no);
+        if (count > 0) {
+            binding.noResult.noResultLayout.setVisibility(View.GONE);
+        } else {
+            binding.noResult.noResultLayout.setVisibility(View.VISIBLE);
+        }
+    }
 
     @Override
     public void setPackages(List<Package> packageList) {
         packagesListAdapter.setPackages(packageList);
+        checkResult(packageList.size());
     }
 
 

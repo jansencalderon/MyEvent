@@ -48,6 +48,9 @@ public class App extends Application {
             logging.setLevel(HttpLoggingInterceptor.Level.BODY);
 
             httpClient = new OkHttpClient.Builder();
+            httpClient.connectTimeout(120, TimeUnit.SECONDS);
+            httpClient.readTimeout(120,TimeUnit.SECONDS);
+            httpClient.writeTimeout(120,TimeUnit.SECONDS);
             // add your other interceptors …
 
             // add logging as last interceptor
@@ -60,7 +63,7 @@ public class App extends Application {
         if (retrofit == null) {
 
             Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss")
                     .create();
             String url = Endpoints.API_URL;
             retrofit = new Retrofit.Builder()
@@ -113,7 +116,7 @@ public class App extends Application {
         if (retrofit == null) {
 
             Gson gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                    .setDateFormat("yyyy-MM-dd HH:mm:ss")
                     .create();
 
             String url = Endpoints.IMAGE_UPLOAD;

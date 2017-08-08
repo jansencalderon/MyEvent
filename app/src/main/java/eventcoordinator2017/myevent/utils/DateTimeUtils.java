@@ -23,19 +23,26 @@ public class DateTimeUtils {
             TimeUnit.SECONDS.toMillis(1));
     private static final List<String> timesString = Arrays.asList("year", "month", "day", "hour", "minute", "second");
 
-    public static String toReadable(String dateToConvert){
-        String convertedDate;
+    public static String toReadable(Date dateToConvert) {
+        /*String convertedDate;
         //String[] arr = dateToConvert.split(" ");
         DateFormat targetFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.US);
         Date date = null;
-        try {
+        *//*try {
             date = targetFormat.parse(dateToConvert);
         } catch (ParseException e) {
             e.printStackTrace();
+        }*/
+        String convertedDate;
+        try {
+
+            SimpleDateFormat formatter = new SimpleDateFormat("E, MMM dd", Locale.US);
+            convertedDate = formatter.format(dateToConvert);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            convertedDate = "";
         }
 
-        SimpleDateFormat formatter = new SimpleDateFormat("E, MMM dd",Locale.US);
-        convertedDate = formatter.format(date);
         return convertedDate.toUpperCase();
     }
 
@@ -103,8 +110,51 @@ public class DateTimeUtils {
     }
 
     public static String dateToday() {
-        Date date  = new Date();
+        Date date = new Date();
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US).format(date);
+    }
+
+    public static String dateTodayToast() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String date = sdfs.format(calendar.getTime()) + " 00:00:00";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        Date converted = null;
+        try {
+            converted = sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return sdf.format(converted);
+    }
+
+    public static Date getDateToday() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String date = sdfs.format(calendar.getTime()) + " 00:00:00";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        ;
+        Date converted = null;
+        try {
+            converted = sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return converted;
+    }
+
+    public static Date getDateTodayEnd() {
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat sdfs = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        String date = sdfs.format(calendar.getTime()) + " 23:59:00";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        Date converted = null;
+        try {
+            converted = sdf.parse(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return converted;
     }
 
 

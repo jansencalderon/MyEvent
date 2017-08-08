@@ -14,6 +14,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import eventcoordinator2017.myevent.app.Constants;
+import eventcoordinator2017.myevent.ui.events.details.EventDetailActivity;
 import eventcoordinator2017.myevent.ui.main.MainActivity;
 import eventcoordinator2017.myevent.utils.NotificationUtils;
 
@@ -32,6 +33,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Also if you intend on generating your own notifications as a result of a received FCM
         // message, here is where that should be initiated.
         Log.e(TAG, "From: " + remoteMessage.getFrom());
+
 
         if (remoteMessage == null)
             return;
@@ -62,10 +64,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             Intent pushNotification = new Intent(Constants.PUSH_NOTIFICATION);
             pushNotification.putExtra("message", message);
             LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
-
-            // play notification sound
-            NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
-            notificationUtils.playNotificationSound();
         } else {
             // If the app is in background, firebase itself handles the notification
         }
@@ -76,44 +74,50 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         try {
             JSONObject data = json.getJSONObject("data");
-
             String title = data.getString("title");
             String message = data.getString("message");
-            boolean isBackground = data.getBoolean("is_background");
-            String imageUrl = data.getString("image");
+            //  boolean isBackground = data.getBoolean("is_background");
+            //  String imageUrl = data.getString("image");
+            String intent = data.getString("intent");
             String timestamp = data.getString("timestamp");
-            JSONObject payload = data.getJSONObject("payload");
+            String event_id = data.getString("event_id");
 
             Log.e(TAG, "title: " + title);
             Log.e(TAG, "message: " + message);
-            Log.e(TAG, "isBackground: " + isBackground);
-            Log.e(TAG, "payload: " + payload.toString());
-            Log.e(TAG, "imageUrl: " + imageUrl);
+            //        Log.e(TAG, "isBackground: " + isBackground);
+            //      Log.e(TAG, "payload: " + payload.toString());
+            //     Log.e(TAG, "imageUrl: " + imageUrl);
             Log.e(TAG, "timestamp: " + timestamp);
 
 
-            if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
+            /*if (!NotificationUtils.isAppIsInBackground(getApplicationContext())) {
                 // app is in foreground, broadcast the push message
                 Intent pushNotification = new Intent(Constants.PUSH_NOTIFICATION);
                 pushNotification.putExtra("message", message);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(pushNotification);
 
-                // play notification sound
-                NotificationUtils notificationUtils = new NotificationUtils(getApplicationContext());
-                notificationUtils.playNotificationSound();
             } else {
                 // app is in background, show the notification in notification tray
                 Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
                 resultIntent.putExtra("message", message);
 
                 // check for image attachment
-                if (TextUtils.isEmpty(imageUrl)) {
-                    showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
-                } else {
-                    // image is present, show notification with image
-                    showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, imageUrl);
-                }
+                //        if (TextUtils.isEmpty(imageUrl)) {
+                showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
+                //          } else {
+                // image is present, show notification with image
+                //          showNotificationMessageWithBigImage(getApplicationContext(), title, message, timestamp, resultIntent, imageUrl);
+                //       }
+            }*/
+            Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+            resultIntent.putExtra("message", message);
+            if((!intent.equals(""))&&intent.equals("event_detail")){
+                resultIntent = new Intent(getApplicationContext(), EventDetailActivity.class);
+                resultIntent.putExtra("from_notif", true);
+                resultIntent.putExtra(Constants.EVENT_ID, event_id);
+                resultIntent.putExtra("message", message);
             }
+            showNotificationMessage(getApplicationContext(), title, message, timestamp, resultIntent);
         } catch (JSONException e) {
             Log.e(TAG, "Json Exception: " + e.getMessage());
         } catch (Exception e) {

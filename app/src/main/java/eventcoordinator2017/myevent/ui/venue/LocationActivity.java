@@ -79,16 +79,10 @@ public class LocationActivity extends MvpActivity<LocationView, LocationPresente
 
     @Override
     public void onAvail() {
-        final Realm realm = Realm.getDefaultInstance();
-        final TempEvent tempEvent = realm.where(TempEvent.class).findFirst();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                tempEvent.setLocation(location);
-                tempEvent.setLocationId(location.getLocId());
-                realm.close();
-            }
-        });
+        realm.beginTransaction();
+        tempEvent.setLocation(location);
+        tempEvent.setLocationId(location.getLocId());
+        realm.commitTransaction();
         startActivity(new Intent(this, EventAddActivity.class));
         finish();
     }

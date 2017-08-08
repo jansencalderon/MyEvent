@@ -11,8 +11,8 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:background="@drawable/regbg"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@drawable/regbg">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -28,8 +28,8 @@
 
             <ImageView
                 android:layout_width="wrap_content"
-                android:visibility="gone"
-                android:layout_height="60dp"/>
+                android:layout_height="60dp"
+                android:visibility="gone" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -53,67 +53,75 @@
                     android:gravity="start"
                     android:text="@string/account_details"
                     android:textColor="@color/white"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <EditText
+
                     android:id="@+id/et_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/group_top"
-                    android:digits="@string/allowed_strings_email"
                     android:hint="@string/email"
                     android:inputType="textEmailAddress"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:textSize="14sp" />
 
                 <EditText
+
                     android:id="@+id/et_password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/group_row"
                     android:hint="@string/password"
                     android:inputType="textPassword"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:textSize="14sp" />
 
                 <EditText
+
                     android:id="@+id/et_confirmPass"
                     android:layout_width="match_parent"
-                    android:background="@drawable/group_bottom"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/group_bottom"
                     android:hint="@string/confirm_password"
                     android:inputType="textPassword"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="14dp"
                     android:gravity="start"
                     android:text="@string/personal_info"
                     android:textColor="@color/white"
-                    android:textSize="20sp" />
+                    android:textSize="14sp" />
 
                 <EditText
+
                     android:id="@+id/et_fName"
-                    android:background="@drawable/group_top"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:digits="@string/allowed_strings"
+                    android:background="@drawable/group_top"
                     android:hint="@string/first_name"
                     android:inputType="textCapWords"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:textSize="14sp" />
 
                 <EditText
+
                     android:id="@+id/et_lName"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/group_row"
-                    android:digits="@string/allowed_strings"
                     android:hint="@string/last_name"
                     android:inputType="textCapWords"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:textSize="14sp" />
 
                 <EditText
+
                     android:id="@+id/et_bday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -122,38 +130,42 @@
                     android:focusable="false"
                     android:hint="@string/birthday"
                     android:onClick="@{()->view.onBirthdayClicked()}"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:textSize="14sp" />
 
                 <EditText
+
                     android:id="@+id/et_contact"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/group_row"
                     android:hint="@string/contact"
                     android:inputType="phone"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:textSize="14sp" />
 
                 <EditText
+
                     android:id="@+id/et_address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/group_bottom"
-                    android:digits="@string/allowed_strings_email"
                     android:hint="@string/address"
                     android:inputType="textCapWords"
-                    android:padding="8dp" />
+                    android:padding="8dp"
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
                     android:layout_marginTop="10dp"
-                    android:gravity="center">
+                    android:gravity="center"
+                    android:visibility="gone">
 
                     <CheckBox
                         android:id="@+id/checkBoxAgree"
                         android:layout_width="25dp"
-                        android:layout_height="25dp"/>
+                        android:layout_height="25dp" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -167,8 +179,8 @@
                     <TextView
                         android:id="@+id/termsandagreement"
                         android:layout_width="wrap_content"
-                        android:layout_marginLeft="6dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
                         android:text="@string/terms_of_use"
                         android:textColor="@color/white"
                         android:textSize="14sp" />

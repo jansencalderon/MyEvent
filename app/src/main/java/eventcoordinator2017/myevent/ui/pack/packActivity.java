@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.ImageViewTarget;
@@ -37,6 +38,7 @@ public class PackActivity extends MvpActivity<PackView, PackPresenter> implement
     private Realm realm;
     private Package aPackage;
     private List<Category> categoryList = new ArrayList<>();
+    private TempEvent tempEvent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,25 +86,25 @@ public class PackActivity extends MvpActivity<PackView, PackPresenter> implement
                 });
         ;
 
+        tempEvent = realm.where(TempEvent.class).findFirst();
+        if (tempEvent == null) {
+            binding.selectPackage.setVisibility(View.GONE);
+        }
     }
 
 
     @Override
-    public void onAvail(final Package aPackage){
+    public void onAvail(int packageId) {
         final Realm realm = Realm.getDefaultInstance();
         final TempEvent tempEvent = realm.where(TempEvent.class).findFirst();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                tempEvent.setPackageId(aPackage.getPackageId());
-                tempEvent.setaPackage(aPackage);
-                realm.close();
-            }
-        });
-        startActivity(new Intent(this,EventAddActivity.class));
+        final Package aPackage = realm.where(Package.class).equalTo(Constants.PACKAGE_ID, packageId).findFirst();
+        realm.beginTransaction();
+        tempEvent.setaPackage(aPackage);
+        tempEvent.setPackageId(aPackage.getPackageId());
+        realm.commitTransaction();
+        startActivity(new Intent(this, EventAddActivity.class));
         finish();
     }
-
 
 
     @Override

@@ -8,9 +8,11 @@ import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
+import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.model.response.LoginResponse;
+import eventcoordinator2017.myevent.utils.DateTimeUtils;
 import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -33,21 +35,23 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
 
     public void onStart() {
         realm = Realm.getDefaultInstance();
-        user = App.getUser();
+        user = realm.copyFromRealm(App.getUser());
 
-        eventRealmResults = realm.where(Event.class).findAllSorted("eventId", Sort.ASCENDING);
+        eventRealmResults = realm.where(Event.class).equalTo("userId", user.getUserId()).findAllSorted("eventId", Sort.DESCENDING);
         eventRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Event>>() {
             @Override
             public void onChange(RealmResults<Event> element) {
-                filterList();
+                getView().setEvents(eventRealmResults);
             }
         });
+
+        getView().setEvents(eventRealmResults);
 
         loadEventList();
     }
 
     public void onStop() {
-        if(eventRealmResults.isValid()){
+        if (eventRealmResults.isValid()) {
             eventRealmResults.removeChangeListeners();
         }
         realm.close();
@@ -63,7 +67,9 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
                 realm.executeTransactionAsync(new Realm.Transaction() {
                     @Override
                     public void execute(Realm realm) {
-                        realm.delete(Event.class);
+                        realm.where(Event.class)
+                                .equalTo("userId", user.getUserId())
+                                .findAll().deleteAllFromRealm();
                         realm.copyToRealmOrUpdate(response.body());
                     }
                 }, new Realm.Transaction.OnSuccess() {
@@ -96,21 +102,21 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
 
     void setQuery(String query) {
         this.query = query;
-        filterList();
     }
 
-    private void filterList() {
+
+    void filterList(String item) {
         if (eventRealmResults.isLoaded() && eventRealmResults.isValid()) {
-            List<Event> eventList;
-            if (query != null && !query.isEmpty()) {
+            List<Event> eventList = eventRealmResults;
+            if (item.equals("All")) {
+                eventList = eventRealmResults;
+            } else if (item.equals("Past")) {
+                eventList = eventRealmResults.where().lessThan("eventDateFrom",DateTimeUtils.getDateToday()).findAll();
+            }else if (item.equals("Future")){
                 eventList = realm.copyFromRealm(eventRealmResults.where()
-                        .contains("eventName", query, Case.INSENSITIVE)
-                        .findAll());
-            } else {
-                eventList = realm.copyFromRealm(eventRealmResults);
+                        .greaterThan("eventDateFrom", DateTimeUtils.getDateTodayEnd()).findAll());
             }
             getView().setEvents(eventList);
         }
     }
-
 }

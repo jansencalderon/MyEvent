@@ -59,7 +59,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text='@{StringUtils.toCurrency(aPackage.packagePrice)}'
+                    android:text='@{`₱ `+StringUtils.moneyFormat(aPackage.packagePrice)}'
                     android:textColor="@color/black"
                     android:textSize="14sp"/>
 
@@ -68,8 +68,7 @@
                     android:layout_height="wrap_content"
                     android:text="@{aPackage.packageName}"
                     android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:textSize="20sp" />
 
                 <TextView
                     android:layout_width="wrap_content"

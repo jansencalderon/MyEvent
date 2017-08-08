@@ -3,6 +3,8 @@ package eventcoordinator2017.myevent.model.data;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -34,10 +36,10 @@ public class Event extends RealmObject{
     private String eventTags;
     @SerializedName("event_date_from")
     @Expose
-    private String eventDateFrom;
+    private Date eventDateFrom;
     @SerializedName("event_date_to")
     @Expose
-    private String eventDateTo;
+    private Date eventDateTo;
     @SerializedName("loc_id")
     @Expose
     private Integer locId;
@@ -54,7 +56,7 @@ public class Event extends RealmObject{
     @Expose
     private Package packages;
     @SerializedName("guests")
-    private RealmList<User> guests;
+    private RealmList<Guest> guests;
 
     public Integer getEventId() {
         return eventId;
@@ -104,19 +106,19 @@ public class Event extends RealmObject{
         this.eventTags = eventTags;
     }
 
-    public String getEventDateFrom() {
+    public Date getEventDateFrom() {
         return eventDateFrom;
     }
 
-    public void setEventDateFrom(String eventDateFrom) {
+    public void setEventDateFrom(Date eventDateFrom) {
         this.eventDateFrom = eventDateFrom;
     }
 
-    public String getEventDateTo() {
+    public Date getEventDateTo() {
         return eventDateTo;
     }
 
-    public void setEventDateTo(String eventDateTo) {
+    public void setEventDateTo(Date eventDateTo) {
         this.eventDateTo = eventDateTo;
     }
 
@@ -161,11 +163,11 @@ public class Event extends RealmObject{
     }
 
 
-    public RealmList<User> getGuests() {
+    public RealmList<Guest> getGuests() {
         return guests;
     }
 
-    public void setGuests(RealmList<User> guests) {
+    public void setGuests(RealmList<Guest> guests) {
         this.guests = guests;
     }
 }
