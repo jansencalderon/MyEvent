@@ -87,9 +87,10 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
             }
         });
 
+        binding.navigationView.getMenu().getItem(0).setChecked(true);
+
         strings.add("Today");
         strings.add("Upcoming");
-        binding.navigationView.getMenu().getItem(0).setChecked(true);
         binding.viewpager.setAdapter(new MainPageFragmentAdapter(getSupportFragmentManager(), this, strings));
         binding.viewpager.setOffscreenPageLimit(strings.size());
         binding.slidingTabs.setupWithViewPager(binding.viewpager);
