@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_alignBottom="@+id/viewProfile"
-            android:background="@drawable/nav_bg"
+            android:background="@drawable/bg_gradient"
             android:contentDescription="nav"
             android:scaleType="centerCrop" />
 
@@ -27,8 +27,7 @@
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="30dp"
-            android:src="@drawable/ic_gallery" />
+            android:layout_marginTop="30dp" />
 
         <LinearLayout
             android:id="@+id/viewProfile"

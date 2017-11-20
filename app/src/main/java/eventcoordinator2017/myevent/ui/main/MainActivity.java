@@ -4,7 +4,6 @@ import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -22,7 +21,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import java.util.ArrayList;
@@ -38,9 +36,7 @@ import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import eventcoordinator2017.myevent.ui.login.LoginActivity;
-import eventcoordinator2017.myevent.ui.pack.PackPageFragmentAdapter;
 import eventcoordinator2017.myevent.ui.profile.ProfileActivity;
-import eventcoordinator2017.myevent.ui.register.RegisterActivity;
 import eventcoordinator2017.myevent.utils.SharedPreferencesUtil;
 import io.realm.Realm;
 import retrofit2.Call;
@@ -59,8 +55,6 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     private GoogleApiClient client;
     private ProgressDialog progressDialog;
     private List<String> strings = new ArrayList<>();
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
