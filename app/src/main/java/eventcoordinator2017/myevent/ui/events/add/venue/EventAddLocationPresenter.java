@@ -51,7 +51,7 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
 
     public void onStop() {
         if (locationRealmResults.isValid()) {
-            locationRealmResults.removeChangeListeners();
+            locationRealmResults.removeAllChangeListeners();
         }
         realm.close();
     }

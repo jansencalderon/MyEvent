@@ -52,7 +52,7 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
 
     public void onStop() {
         if (packageRealmResults.isValid()) {
-            packageRealmResults.removeChangeListeners();
+            packageRealmResults.removeAllChangeListeners();
         }
         realm.close();
     }

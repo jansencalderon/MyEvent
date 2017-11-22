@@ -52,7 +52,7 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
 
     public void onStop() {
         if (eventRealmResults.isValid()) {
-            eventRealmResults.removeChangeListeners();
+            eventRealmResults.removeAllChangeListeners();
         }
         realm.close();
     }

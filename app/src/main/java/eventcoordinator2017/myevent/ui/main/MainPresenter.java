@@ -92,7 +92,7 @@ class MainPresenter extends MvpNullObjectBasePresenter<MainView> {
 
     public void onStop(){
         if (eventRealmResults.isValid()) {
-            eventRealmResults.removeChangeListeners();
+            eventRealmResults.removeAllChangeListeners();
         }
         realm.close();
     }
