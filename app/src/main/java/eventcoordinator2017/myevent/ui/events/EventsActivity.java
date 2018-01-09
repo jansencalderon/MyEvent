@@ -2,6 +2,7 @@ package eventcoordinator2017.myevent.ui.events;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
@@ -13,6 +14,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
@@ -180,6 +182,8 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         String item = parent.getItemAtPosition(position).toString();
         presenter.filterList(item);
+
+        ((TextView) parent.getChildAt(0)).setTextColor(Color.WHITE);
 
     }
 

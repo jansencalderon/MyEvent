@@ -30,6 +30,7 @@
 
             <android.support.design.widget.AppBarLayout
                 android:layout_width="match_parent"
+                android:background="@drawable/bg_gradient"
                 android:layout_height="wrap_content"
                 android:theme="@style/AppTheme.AppBarOverlay">
 
@@ -37,7 +38,6 @@
                     android:id="@+id/toolbar"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="?attr/colorPrimary"
                     app:popupTheme="@style/AppTheme.PopupOverlay"
                     app:title="Home" />
 
@@ -76,6 +76,7 @@
             android:id="@+id/navigationView"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
+            android:theme="@style/Base.ThemeOverlay.AppCompat.Dark"
             android:layout_gravity="start"
             android:fitsSystemWindows="true"
             app:headerLayout="@layout/nav_header_main"

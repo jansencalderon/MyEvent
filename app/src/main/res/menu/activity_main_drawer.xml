@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/home"
+            android:checked="true"
+            android:icon="@drawable/ic_home"
+            android:title="Home" />
+        <item
+            android:id="@+id/events"
+            android:checkable="false"
+            android:icon="@drawable/ic_calendar"
+            android:title="My Events" />
+        <item
+            android:id="@+id/logout"
+            android:checkable="false"
+            android:icon="@drawable/ic_exit"
+            android:title="Logout" />
 
-    <item
-        android:id="@+id/home"
-        android:icon="@drawable/ic_home"
-        android:title="Home"
-        android:checked="true"/>
-    <item
-        android:id="@+id/events"
-        android:icon="@drawable/ic_calendar_check_o"
-        android:title="My Events"
-        android:checkable="false" />
-    <item
-        android:id="@+id/logout"
-        android:icon="@drawable/ic_sign_out"
-        android:title="Logout"
-        android:checkable="false"  />
-
-
+    </group>
 </menu>

@@ -43,14 +43,15 @@
                     android:id="@+id/query"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="email"
+                    android:hint="EMAIL"
                     android:inputType="textEmailAddress" />
 
                 <Button
                     android:id="@+id/add"
                     android:layout_width="wrap_content"
-                    android:layout_height="30dp"
+                    android:layout_height="25dp"
                     android:layout_gravity="end"
+                    android:textSize="12dp"
                     android:layout_marginTop="6dp"
                     android:background="@drawable/rounded_button_solid"
                     android:onClick="@{()->view.onAdd()}"
@@ -63,8 +64,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:text="Guest List:"
+            android:layout_marginStart="16dp"
+            android:text="Guest List"
             android:textSize="16sp" />
 
         <ProgressBar

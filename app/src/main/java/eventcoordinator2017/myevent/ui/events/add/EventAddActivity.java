@@ -1,6 +1,7 @@
 package eventcoordinator2017.myevent.ui.events.add;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -51,6 +52,8 @@ import eventcoordinator2017.myevent.utils.PermissionsActivity;
 import eventcoordinator2017.myevent.utils.PermissionsChecker;
 import eventcoordinator2017.myevent.utils.StringUtils;
 import io.realm.Realm;
+import pl.aprilapps.easyphotopicker.DefaultCallback;
+import pl.aprilapps.easyphotopicker.EasyImage;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -82,6 +85,8 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
         binding.setView(getMvpView());
         realm = Realm.getDefaultInstance();
         presenter.onStart();
+
+
 
         /**
          * Permission Checker Initialized
@@ -256,11 +261,15 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
         budgetBinding.proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                realBudget = budgetBinding.budget.getText().toString();
-                binding.eventBudget.setText(StringUtils.moneyFormat(Integer.parseInt(budgetBinding.budget.getText().toString())));
-                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(budgetBinding.budget.getWindowToken(), 0);
-                dialog.dismiss();
+                if(budgetBinding.budget.getText().toString().equals("")){
+                    showAlert("Please input budget");
+                }else {
+                    realBudget = budgetBinding.budget.getText().toString();
+                    binding.eventBudget.setText(StringUtils.moneyFormat(Integer.parseInt(budgetBinding.budget.getText().toString())));
+                    InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(budgetBinding.budget.getWindowToken(), 0);
+                    dialog.dismiss();
+                }
             }
         });
 
@@ -274,17 +283,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
 
     @Override
     public void onPhotoClicked() {
-        if (checker.lacksPermissions(PERMISSIONS_READ_STORAGE)) {
-            startPermissionsActivity(PERMISSIONS_READ_STORAGE);
-        } else {
-            // File System.
-            final Intent galleryIntent = new Intent();
-            galleryIntent.setType("image/*");
-            galleryIntent.setAction(Intent.ACTION_GET_CONTENT);
-
-            // Chooser of file system options.
-            startActivityForResult(Intent.createChooser(galleryIntent, "Select Picture"), PICK_IMAGE_REQUEST);
-        }
+        EasyImage.openGallery(this, 0);
     }
 
     @Override
@@ -332,28 +331,26 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
-            Uri uri = data.getData();
-            String[] projection = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(uri, projection, null, null, null);
-            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-            cursor.moveToFirst();
-            String s = cursor.getString(column_index);
-            cursor.close();
-            eventImage = new File(s);
-            eventUri = eventImage.getPath();
-            Glide.with(this)
-                    .load(uri)
-                    .centerCrop()
-                    .error(R.drawable.ic_gallery)
-                    .into(binding.eventImage);
+        EasyImage.handleActivityResult(requestCode, resultCode, data, this, new DefaultCallback() {
+            @Override
+            public void onImagePickerError(Exception e, EasyImage.ImageSource source, int type) {
+                //Some error handling
+            }
+
+            @Override
+            public void onImagePicked(File imageFile, EasyImage.ImageSource source, int type) {
+                eventImage = imageFile;
+                eventUri = eventImage.getPath();
+                Glide.with(EventAddActivity.this)
+                        .load(imageFile)
+                        .centerCrop()
+                        .error(R.drawable.ic_gallery)
+                        .into(binding.eventImage);
+            }
 
 
-        } else {
-
-            Log.d(TAG, "Selecting Image Error");
-        }
+        });
     }
 
     @Override

@@ -40,7 +40,9 @@ public class GuestsPresenter extends MvpNullObjectBasePresenter<GuestsView> {
         event.addChangeListener(new RealmChangeListener<RealmModel>() {
             @Override
             public void onChange(RealmModel element) {
-                getView().refreshList(event.getGuests());
+                if(event.isValid()){
+                    getView().refreshList(event.getGuests());
+                }
             }
         });
 

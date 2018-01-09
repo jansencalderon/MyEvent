@@ -91,7 +91,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
 
     }
 
-    private void setEventData(Event event) {
+    private void setEventData(final Event event) {
         this.event = event;
         user = App.getUser();
         binding.setEvent(event);
@@ -129,14 +129,16 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
         mapFragment.getMapAsync(this);
 
         final Event fEvent = event;
-        this.event.addChangeListener(new RealmChangeListener<RealmModel>() {
+        event.addChangeListener(new RealmChangeListener<RealmModel>() {
             @Override
             public void onChange(RealmModel element) {
                 guestList = fEvent.getGuests();
-                if (guestList.size() > 0) {
-                    binding.goingCount.setText(guestList.size() + " people going");
-                } else {
-                    binding.goingCount.setText("No guests invited yet");
+                if(event.isValid()){
+                    if (guestList.size() > 0) {
+                        binding.goingCount.setText(guestList.size() + " people going");
+                    } else {
+                        binding.goingCount.setText("No guests invited yet");
+                    }
                 }
             }
         });
@@ -262,6 +264,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
             NavUtils.navigateUpFromSameTask(this);
         } else {
             NavUtils.navigateUpTo(this, new Intent(EventDetailActivity.this, EventsActivity.class));
+            overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         }
 
     }
@@ -276,11 +279,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
     protected void onDestroy() {
         super.onDestroy();
         realm.close();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
+        realm.removeAllChangeListeners();
         presenter.onStop();
     }
 
