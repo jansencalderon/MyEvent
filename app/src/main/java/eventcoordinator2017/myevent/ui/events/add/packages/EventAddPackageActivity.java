@@ -20,12 +20,10 @@ import java.util.List;
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddPackageBinding;
-import eventcoordinator2017.myevent.databinding.DialogFilterLocationBinding;
 import eventcoordinator2017.myevent.databinding.DialogFilterPackagesBinding;
 import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
-import eventcoordinator2017.myevent.ui.events.add.venue.EventAddLocationActivity;
 import eventcoordinator2017.myevent.ui.pack.PackActivity;
 import io.realm.Realm;
 
@@ -89,6 +87,7 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
     @Override
     public void onBackPressed() {
         startActivity(new Intent(this, EventAddActivity.class));
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
     }
 
@@ -102,6 +101,7 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
         Intent i = new Intent(this, PackActivity.class);
         i.putExtra(Constants.ID, aPackage.getPackageId());
         startActivity(i);
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
     }
 

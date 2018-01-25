@@ -48,6 +48,7 @@
                 app:expandedTitleTextAppearance="@android:color/transparent"
                 app:layout_scrollFlags="scroll|exitUntilCollapsed"
                 app:statusBarScrim="@color/colorPrimary"
+                android:background="@drawable/bg_gradient"
                 app:titleEnabled="false">
 
                 <LinearLayout

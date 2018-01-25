@@ -2,7 +2,6 @@ package eventcoordinator2017.myevent.ui.main.tabs;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
-import java.util.Date;
 import java.util.List;
 
 import eventcoordinator2017.myevent.model.data.Event;

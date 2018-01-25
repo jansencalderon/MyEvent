@@ -22,7 +22,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/colorPrimary"
+            android:background="@drawable/bg_gradient"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:title="Invite Guests" />
 
@@ -36,14 +36,15 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
-                android:padding="10dp"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
                 <EditText
                     android:id="@+id/query"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="EMAIL"
+                    android:background="@drawable/custom_edittext_selector"
+                    android:hint="@string/email"
                     android:inputType="textEmailAddress" />
 
                 <Button

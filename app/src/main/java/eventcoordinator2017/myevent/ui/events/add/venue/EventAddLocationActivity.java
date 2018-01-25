@@ -4,7 +4,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
@@ -15,7 +14,6 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.hannesdorfmann.mosby.mvp.MvpActivity;
 
 import java.util.List;
@@ -204,6 +202,7 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView, 
         Intent i = new Intent(this, LocationActivity.class);
         i.putExtra(Constants.ID, location.getLocId());
         startActivity(i);
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
     }
 
@@ -234,6 +233,7 @@ public class EventAddLocationActivity extends MvpActivity<EventAddLocationView, 
     @Override
     public void onBackPressed() {
         startActivity(new Intent(this, EventAddActivity.class));
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
     }
 

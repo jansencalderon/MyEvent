@@ -1,7 +1,6 @@
 package eventcoordinator2017.myevent.ui.events.add;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -9,11 +8,8 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -441,6 +437,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                 });
                 realm.close();
                 navigateUpTo(new Intent(EventAddActivity.this, EventsActivity.class));
+                overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
             }
         });
         builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
