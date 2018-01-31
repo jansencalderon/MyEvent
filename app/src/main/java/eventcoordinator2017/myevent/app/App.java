@@ -51,12 +51,14 @@ public class App extends Application {
             httpClient.connectTimeout(120, TimeUnit.SECONDS);
             httpClient.readTimeout(120,TimeUnit.SECONDS);
             httpClient.writeTimeout(120,TimeUnit.SECONDS);
-            // add your other interceptors …
 
             // add logging as last interceptor
-            httpClient.addInterceptor(logging);  // <-- this is the important line!
+            httpClient.addNetworkInterceptor(logging);
+            httpClient.addInterceptor(logging);// <-- this is the important line!
         }
         return httpClient;
+
+
     }
 
     private Retrofit getClient() {
@@ -91,7 +93,7 @@ public class App extends Application {
 
     //upload image
 
-
+/*
     private OkHttpClient.Builder getOkHttpClientImage() {
         if (httpClient == null) {
             // setup logs for debugging of http request
@@ -133,7 +135,7 @@ public class App extends Application {
             apiInterface = getClientUploadImage().create(ApiInterface.class);
         }
         return apiInterface;
-    }
+    }*/
 
 
 }

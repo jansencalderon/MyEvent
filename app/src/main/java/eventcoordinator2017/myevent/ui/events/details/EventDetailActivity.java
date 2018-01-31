@@ -15,7 +15,6 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,7 +30,6 @@ import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventDetailBinding;
 import eventcoordinator2017.myevent.databinding.DialogProfileHostBinding;
-import eventcoordinator2017.myevent.databinding.DialogProfileViewBinding;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.Guest;
 import eventcoordinator2017.myevent.model.data.Location;
@@ -39,7 +37,6 @@ import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
 import eventcoordinator2017.myevent.ui.events.add.guests.GuestsActivity;
-import eventcoordinator2017.myevent.ui.register.RegisterActivity;
 import eventcoordinator2017.myevent.ui.venue.LocationActivity;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -84,7 +81,22 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
                 finish();
             } else {
                 event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
-                setEventData(event);
+                event.addChangeListener(new RealmChangeListener<RealmModel>() {
+                    @Override
+                    public void onChange(RealmModel element) {
+                        guestList = event.getGuests();
+                        if (event.isValid()) {
+                            if (guestList.size() > 0) {
+                                binding.goingCount.setText(guestList.size() + " people going");
+                            } else {
+                                binding.goingCount.setText("No guests invited yet");
+                            }
+                        }
+                    }
+                });
+                if (event != null) {
+                    setEventData(realm.copyFromRealm(event));
+                }
             }
         }
 
@@ -92,6 +104,9 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
     }
 
     private void setEventData(final Event event) {
+        if (!event.isValid()) {
+            return;
+        }
         this.event = event;
         user = App.getUser();
         binding.setEvent(event);
@@ -128,20 +143,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        final Event fEvent = event;
-        event.addChangeListener(new RealmChangeListener<RealmModel>() {
-            @Override
-            public void onChange(RealmModel element) {
-                guestList = fEvent.getGuests();
-                if(event.isValid()){
-                    if (guestList.size() > 0) {
-                        binding.goingCount.setText(guestList.size() + " people going");
-                    } else {
-                        binding.goingCount.setText("No guests invited yet");
-                    }
-                }
-            }
-        });
+
     }
 
     @Override
@@ -280,6 +282,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
         super.onDestroy();
         realm.close();
         realm.removeAllChangeListeners();
+        event.removeAllChangeListeners();
         presenter.onStop();
     }
 

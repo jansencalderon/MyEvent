@@ -110,7 +110,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                     getView().startLoading();
                     RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), eventImage);
                     MultipartBody.Part body = MultipartBody.Part.createFormData("uploaded_file", eventImage.getName(), requestFile);
-                    App.getInstance().uploadImage().uploadImage(body).enqueue(new Callback<ResultResponse>() {
+                    App.getInstance().getApiInterface().uploadImage(body).enqueue(new Callback<ResultResponse>() {
                         @Override
                         public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
                             if (response.isSuccessful()) {

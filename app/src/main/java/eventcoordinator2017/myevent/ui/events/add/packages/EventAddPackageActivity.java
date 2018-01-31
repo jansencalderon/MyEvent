@@ -108,7 +108,8 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
     @Override
     public void filter() {
         final Dialog dialogFilter = new Dialog(this);
-        final DialogFilterPackagesBinding binding = DataBindingUtil.inflate(LayoutInflater.from(this), R.layout.dialog_filter_packages, null, false);
+        final DialogFilterPackagesBinding binding = DataBindingUtil.inflate(LayoutInflater.from(this),
+                R.layout.dialog_filter_packages, null, false);
         dialogFilter.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialogFilter.setCancelable(false);
         dialogFilter.setContentView(binding.getRoot());

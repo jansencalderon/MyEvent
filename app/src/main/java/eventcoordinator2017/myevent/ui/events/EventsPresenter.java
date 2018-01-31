@@ -1,25 +1,21 @@
 package eventcoordinator2017.myevent.ui.events;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
 import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
-import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
-import eventcoordinator2017.myevent.model.response.LoginResponse;
 import eventcoordinator2017.myevent.utils.DateTimeUtils;
-import io.realm.Case;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
-import retrofit2.Callback;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 /**
@@ -109,9 +105,9 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
         if (eventRealmResults.isLoaded() && eventRealmResults.isValid()) {
             List<Event> eventList = eventRealmResults;
             if (item.equals("All")) {
-                eventList = eventRealmResults;
+                eventList = realm.copyFromRealm(eventRealmResults);
             } else if (item.equals("Past")) {
-                eventList = eventRealmResults.where().lessThan("eventDateFrom",DateTimeUtils.getDateToday()).findAll();
+                eventList = realm.copyFromRealm(eventRealmResults.where().lessThan("eventDateFrom",DateTimeUtils.getDateToday()).findAll());
             }else if (item.equals("Future")){
                 eventList = realm.copyFromRealm(eventRealmResults.where()
                         .greaterThan("eventDateFrom", DateTimeUtils.getDateTodayEnd()).findAll());
