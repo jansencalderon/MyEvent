@@ -280,9 +280,9 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        realm.close();
         realm.removeAllChangeListeners();
         event.removeAllChangeListeners();
+        realm.close();
         presenter.onStop();
     }
 

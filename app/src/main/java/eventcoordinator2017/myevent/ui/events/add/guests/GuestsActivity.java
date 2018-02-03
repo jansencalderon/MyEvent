@@ -3,10 +3,13 @@ package eventcoordinator2017.myevent.ui.events.add.guests;
 import android.app.Dialog;
 import android.content.ContentResolver;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.Telephony;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eventcoordinator2017.myevent.R;
+import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityAddGuestsBinding;
 import eventcoordinator2017.myevent.databinding.DialogInviteSmsBinding;
@@ -39,29 +43,36 @@ import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import io.realm.Realm;
 
+import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.SEND_SMS;
+
 /**
  * Created by Sen on 2/18/2017.
  */
 
-public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> implements GuestsView,AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
+public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> implements GuestsView, AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
 
     // Initialize variables
+    private static final int REQUEST_READ_CONTACTS = 444;
+    private static final int REQUEST_SEND_SMS = 333;
 
-    AutoCompleteTextView textView=null;
+
+    AutoCompleteTextView textView = null;
     private ArrayAdapter<String> adapter;
 
     // Store contacts values in these arraylist
     public static ArrayList<String> phoneValueArr = new ArrayList<String>();
     public static ArrayList<String> nameValueArr = new ArrayList<String>();
 
-    EditText toNumber=null;
-    String toNumberValue="";
+    EditText toNumber = null;
+    String toNumberValue = "";
 
 
     ActivityAddGuestsBinding binding;
     private Realm realm;
     private GuestsListAdapter guestsListAdapter;
     private Event event;
+    String numberSend;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +82,9 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         realm = Realm.getDefaultInstance();
 
         int eventId = getIntent().getIntExtra(Constants.ID, -1);
+        if (eventId == -1) {
+            finish();
+        }
         event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
 
         setSupportActionBar(binding.toolbar);
@@ -80,8 +94,6 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         binding.recyclerView.setAdapter(guestsListAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-
-
         presenter.onStart(event.getEventId());
 
         binding.inviteSMS.setOnClickListener(new View.OnClickListener() {
@@ -90,7 +102,58 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
                 showSmsDialog();
             }
         });
+
+
     }
+
+    private boolean mayRequestContacts() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (checkSelfPermission(READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        if (shouldShowRequestPermissionRationale(READ_CONTACTS)) {
+            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+        } else {
+            requestPermissions(new String[]{READ_CONTACTS}, REQUEST_READ_CONTACTS);
+        }
+        return false;
+    }
+
+    private boolean maySendSMS() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true;
+        }
+        if (checkSelfPermission(SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        }
+        if (shouldShowRequestPermissionRationale(SEND_SMS)) {
+            requestPermissions(new String[]{SEND_SMS}, REQUEST_SEND_SMS);
+        } else {
+            requestPermissions(new String[]{SEND_SMS}, REQUEST_SEND_SMS);
+        }
+        return false;
+    }
+
+    /**
+     * Callback received when a permissions request has been completed.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                                           int[] grantResults) {
+        if (requestCode == REQUEST_READ_CONTACTS) {
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                readContactData();
+            }
+        }
+        if (requestCode == REQUEST_SEND_SMS){
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "SMS Send Granted", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
 
     @Override
     public void onClick(Guest guest) {
@@ -119,11 +182,83 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         textView.setOnItemSelectedListener(this);
         textView.setOnItemClickListener(this);
 
-        readContactData();
 
-        Dialog dialog = new Dialog(this);
+        String link = "https://eventcoordinator.000webhostapp.com/eventviewer/event_viewer.php?event_id" + event.getEventId();
+        binding.textHello.setText("Hello! You have been invited to " + event.getEventName() + " by " + App.getUser().getFullName());
+        binding.eventLink.setText(link);
+
+        final String toBeSent = "Hello! You have been invited to " + event.getEventName() + " by " + App.getUser().getFullName()
+                + "\n\nLINK: " + link;
+
+        //binding.add.setOnClickListener(BtnAction(textView));
+
+        final Dialog dialog = new Dialog(this);
         dialog.setContentView(binding.getRoot());
         dialog.show();
+
+        binding.add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String NameSel = "";
+                toNumber = textView;
+                NameSel = toNumber.getText().toString();
+
+
+                final String ToNumber = toNumberValue;
+
+
+                if (ToNumber.length() == 0) {
+                    Toast.makeText(getBaseContext(), "Please fill phone number",
+                            Toast.LENGTH_SHORT).show();
+                } else if (textView.getText().toString().equals("")) {
+                    Toast.makeText(getBaseContext(), "Please fill phone number",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getBaseContext(), NameSel + " : " + toNumberValue,
+                            Toast.LENGTH_LONG).show();
+                    try {
+                       /* SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(numberSend, null, toBeSent, null, null);
+                        Toast.makeText(getApplicationContext(), "Message Sent",
+                                Toast.LENGTH_LONG).show();
+
+                        dialog.dismiss();*/
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) // At least KitKat
+                        {
+                            String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(GuestsActivity.this); // Need to change the build to API 19
+
+                            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                            sendIntent.setType("text/plain");
+                            sendIntent.putExtra(Intent.EXTRA_PHONE_NUMBER, numberSend);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, toBeSent);
+
+                            if (defaultSmsPackageName != null)// Can be null in case that there is no default, then the user would be able to choose
+                            // any app that support this intent.
+                            {
+                                sendIntent.setPackage(defaultSmsPackageName);
+                            }
+                            startActivity(sendIntent);
+
+                        } else // For early versions, do what worked for you before.
+                        {
+                            Intent smsIntent = new Intent(android.content.Intent.ACTION_VIEW);
+                            smsIntent.setType("vnd.android-dir/mms-sms");
+                            smsIntent.putExtra("address", numberSend);
+                            smsIntent.putExtra("sms_body", toBeSent);
+                            startActivity(smsIntent);
+                        }
+
+                    } catch (Exception ex) {
+                        Toast.makeText(getApplicationContext(), ex.getMessage().toString(),
+                                Toast.LENGTH_LONG).show();
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
+
+        readContactData();
     }
 
     private View.OnClickListener BtnAction(final AutoCompleteTextView toNumber) {
@@ -131,27 +266,10 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
 
             public void onClick(View v) {
 
-                String NameSel = "";
-                NameSel = toNumber.getText().toString();
-
-
-                final String ToNumber = toNumberValue;
-
-
-                if (ToNumber.length() == 0 ) {
-                    Toast.makeText(getBaseContext(), "Please fill phone number",
-                            Toast.LENGTH_SHORT).show();
-                }
-                else
-                {
-                    Toast.makeText(getBaseContext(), NameSel+" : "+toNumberValue,
-                            Toast.LENGTH_LONG).show();
-                }
 
             }
         };
     }
-
 
 
     @Override
@@ -250,12 +368,12 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
     }
 
 
-
-
     // Read phone contact name and phone numbers
 
     private void readContactData() {
-
+        if (!mayRequestContacts()) {
+            return;
+        }
         try {
 
             /*********** Reading Contacts Name And Number **********/
@@ -278,11 +396,10 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
 
                 Log.i("AutocompleteContacts", "Reading   contacts........");
 
-                int k=0;
+                int k = 0;
                 String name = "";
 
-                while (cur.moveToNext())
-                {
+                while (cur.moveToNext()) {
 
                     String id = cur
                             .getString(cur
@@ -295,8 +412,7 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
                     if (Integer
                             .parseInt(cur
                                     .getString(cur
-                                            .getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0)
-                    {
+                                            .getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
 
                         //Create query to get phone number by contact id
                         Cursor pCur = cr
@@ -304,18 +420,16 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
                                         null,
                                         ContactsContract.CommonDataKinds.Phone.CONTACT_ID
                                                 + " = ?",
-                                        new String[] { id },
+                                        new String[]{id},
                                         null);
-                        int j=0;
+                        int j = 0;
 
                         while (pCur
-                                .moveToNext())
-                        {
+                                .moveToNext()) {
                             // Sometimes get multiple data
-                            if(j==0)
-                            {
+                            if (j == 0) {
                                 // Get Phone number
-                                phoneNumber =""+pCur.getString(pCur
+                                phoneNumber = "" + pCur.getString(pCur
                                         .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
 
                                 // Add contacts names to adapter
@@ -339,7 +453,7 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
 
 
         } catch (Exception e) {
-            Log.i("AutocompleteContacts","Exception : "+ e);
+            Log.i("AutocompleteContacts", "Exception : " + e);
         }
 
 
@@ -367,7 +481,7 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         // TODO Auto-generated method stub
 
         // Get Array index value for selected name
-        int i = nameValueArr.indexOf(""+arg0.getItemAtPosition(arg2));
+        int i = nameValueArr.indexOf("" + arg0.getItemAtPosition(arg2));
 
         // If name exist in name ArrayList
         if (i >= 0) {
@@ -379,13 +493,15 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
                     INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
 
+            numberSend = toNumberValue;
             // Show Alert
-            Toast.makeText(getBaseContext(),
+           /* Toast.makeText(getBaseContext(),
                     "Position:"+arg2+" Name:"+arg0.getItemAtPosition(arg2)+" Number:"+toNumberValue,
-                    Toast.LENGTH_LONG).show();
+                    Toast.LENGTH_LONG).show();*/
+
 
             Log.d("AutocompleteContacts",
-                    "Position:"+arg2+" Name:"+arg0.getItemAtPosition(arg2)+" Number:"+toNumberValue);
+                    "Position:" + arg2 + " Name:" + arg0.getItemAtPosition(arg2) + " Number:" + toNumberValue);
 
         }
 

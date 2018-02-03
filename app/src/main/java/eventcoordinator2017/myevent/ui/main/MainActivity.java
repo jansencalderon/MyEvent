@@ -119,10 +119,14 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                 App.getInstance().getApiInterface().saveUserToken(user.getUserId() + "", token).enqueue(new Callback<ResultResponse>() {
                     @Override
                     public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
-                        if (response.body().equals(Constants.SUCCESS)) {
-                            sharedPreferencesUtil.putBooleanValue(Constants.FIREBASE + "_sent", true);
-                        } else {
-                            Log.e(TAG, "Token Not Updated");
+                        if(response.isSuccessful()){
+                            if (response.body().equals(Constants.SUCCESS)) {
+                                sharedPreferencesUtil.putBooleanValue(Constants.FIREBASE + "_sent", true);
+                            } else {
+                                Log.e(TAG, "Token Not Updated");
+                            }
+                        }else {
+                            showAlert("Website is sleeping");
                         }
                     }
 

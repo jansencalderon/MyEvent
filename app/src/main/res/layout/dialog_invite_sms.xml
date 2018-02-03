@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/bg_card"
             android:layout_marginTop="6dp"
-            android:hint="Contact No."
+            android:hint="Contact Name"
             android:textSize="16sp"
             android:inputType="textEmailAddress"
             android:padding="10dp" />
@@ -59,6 +59,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                android:id="@+id/textHello"
                 android:text="Hello! You have been invited to EVENT by Dave Lagdameo" />
 
             <TextView
@@ -71,9 +72,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                android:id="@+id/eventLink"
                 android:text="www.eventcoordinator.com"
                 android:textColor="@color/hyperlink" />
         </LinearLayout>
+
 
         <Button
             android:id="@+id/add"
