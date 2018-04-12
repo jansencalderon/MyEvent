@@ -183,7 +183,7 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         textView.setOnItemClickListener(this);
 
 
-        String link = "https://eventcoordinator.000webhostapp.com/eventviewer/event_viewer.php?event_id" + event.getEventId();
+        String link = "https://eventcoordinator.000webhostapp.com/eventviewer/event_viewer.php?event_id=" + event.getEventId();
         binding.textHello.setText("Hello! You have been invited to " + event.getEventName() + " by " + App.getUser().getFullName());
         binding.eventLink.setText(link);
 
