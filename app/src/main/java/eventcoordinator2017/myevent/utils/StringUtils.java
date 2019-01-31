@@ -1,11 +1,8 @@
 package eventcoordinator2017.myevent.utils;
 
-import java.text.FieldPosition;
 import java.text.NumberFormat;
-import java.text.ParsePosition;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
@@ -36,6 +33,15 @@ public class StringUtils {
     public static String moneyFormat(int s) {
        // NumberFormat numberFormat = Nu
         return NumberFormat.getNumberInstance(Locale.US).format(s);
+    }
+
+    public static String translateResponse(String x){
+        switch (x){
+            case "Y": return "Going";
+            case "M": return "Maybe";
+            case "N": return "Not Interested";
+            default: return "No Response";
+        }
     }
 
 

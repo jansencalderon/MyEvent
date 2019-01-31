@@ -1,5 +1,6 @@
 package eventcoordinator2017.myevent.ui.events;
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
@@ -11,7 +12,6 @@ import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.utils.DateTimeUtils;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import retrofit2.Call;
@@ -33,13 +33,8 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
         realm = Realm.getDefaultInstance();
         user = realm.copyFromRealm(App.getUser());
 
-        eventRealmResults = realm.where(Event.class).equalTo("userId", user.getUserId()).findAllSorted("eventId", Sort.DESCENDING);
-        eventRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Event>>() {
-            @Override
-            public void onChange(RealmResults<Event> element) {
-                getView().setEvents(eventRealmResults);
-            }
-        });
+        eventRealmResults = realm.where(Event.class).equalTo("userId", user.getUserId()).findAll().sort("eventId", Sort.DESCENDING);
+        eventRealmResults.addChangeListener(element -> getView().setEvents(eventRealmResults));
 
         getView().setEvents(eventRealmResults);
 
@@ -57,33 +52,19 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
         getView().startLoading();
         eventListCall.enqueue(new Callback<List<Event>>() {
             @Override
-            public void onResponse(Call<List<Event>> call, final Response<List<Event>> response) {
+            public void onResponse(@NonNull Call<List<Event>> call, @NonNull final Response<List<Event>> response) {
                 getView().stopLoading();
                 final Realm realm = Realm.getDefaultInstance();
-                realm.executeTransactionAsync(new Realm.Transaction() {
-                    @Override
-                    public void execute(Realm realm) {
-                        realm.where(Event.class)
-                                .equalTo("userId", user.getUserId())
-                                .findAll().deleteAllFromRealm();
-                        realm.copyToRealmOrUpdate(response.body());
-                    }
-                }, new Realm.Transaction.OnSuccess() {
-                    @Override
-                    public void onSuccess() {
-                        realm.close();
-                    }
-                }, new Realm.Transaction.OnError() {
-                    @Override
-                    public void onError(Throwable error) {
-                        realm.close();
-                        Log.e(TAG, "onError: Unable to save USER", error);
-                    }
+                realm.executeTransactionAsync(realm1 -> {
+                    realm1.copyToRealmOrUpdate(response.body());
+                }, realm::close, error -> {
+                    realm.close();
+                    Log.e(TAG, "onError: Unable to save USER", error);
                 });
             }
 
             @Override
-            public void onFailure(Call<List<Event>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Event>> call, @NonNull Throwable t) {
                 Log.e(TAG, "onFailure: Error calling login api", t);
                 getView().stopLoading();
                 getView().showAlert("Error Connecting to Server");
@@ -107,8 +88,8 @@ public class EventsPresenter extends MvpNullObjectBasePresenter<EventsView> {
             if (item.equals("All")) {
                 eventList = realm.copyFromRealm(eventRealmResults);
             } else if (item.equals("Past")) {
-                eventList = realm.copyFromRealm(eventRealmResults.where().lessThan("eventDateFrom",DateTimeUtils.getDateToday()).findAll());
-            }else if (item.equals("Future")){
+                eventList = realm.copyFromRealm(eventRealmResults.where().lessThan("eventDateFrom", DateTimeUtils.getDateToday()).findAll());
+            } else if (item.equals("Future")) {
                 eventList = realm.copyFromRealm(eventRealmResults.where()
                         .greaterThan("eventDateFrom", DateTimeUtils.getDateTodayEnd()).findAll());
             }

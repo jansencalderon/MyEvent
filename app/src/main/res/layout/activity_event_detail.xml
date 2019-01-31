@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -165,14 +165,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="20dp"
                     android:text="Details"
-                    android:textColor="@color/darkGray"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textAppearance="@style/AppTheme.Subhead" />
 
 
                 <TextView
+                    android:layout_marginTop="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@{event.eventDescription}"
@@ -182,14 +181,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="15dp"
+                    android:layout_marginTop="20dp"
                     android:text="Tags"
-                    android:textColor="@color/darkGray"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textAppearance="@style/AppTheme.Subhead"/>
 
                 <TextView
                     android:layout_width="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:layout_height="wrap_content"
                     android:text='@{StringUtils.putHashtags(event.eventTags) ?? ""}'
                     android:textColor="@color/darkGray"
@@ -204,7 +202,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:onClick="@{()->view.onLocationClicked(event.location)}"
                     android:text="@{event.location.locName}"
                     android:textColor="@color/hyperlink"
@@ -214,6 +212,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:gravity="start"
                     android:text="@{event.location.locAddress}"
                     android:textColor="@color/darkGray"
@@ -236,7 +235,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:background="@color/lightGray"
+            android:background="@color/colorPrimary"
             android:gravity="center_horizontal"
             android:padding="6dp"
             android:text="You are not invited to this event"
@@ -269,7 +268,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/lightGray"
+                android:background="@color/colorPrimary"
                 android:drawableTop="@drawable/ic_going"
                 android:gravity="center"
                 android:onClick="@{()->view.onResponseGoing(user)}"
@@ -282,7 +281,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/lightGray"
+                android:background="@color/colorPrimary"
                 android:drawableTop="@drawable/ic_maybe"
                 android:gravity="center"
                 android:onClick="@{()->view.onResponseMaybe(user)}"
@@ -295,7 +294,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:background="@color/lightGray"
+                android:background="@color/colorPrimary"
                 android:drawableTop="@drawable/ic_ignore"
                 android:gravity="center"
                 android:onClick="@{()->view.onResponseIgnore(user)}"

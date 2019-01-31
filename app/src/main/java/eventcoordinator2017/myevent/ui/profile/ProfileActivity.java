@@ -10,11 +10,9 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.DatePicker;
 import android.widget.Toast;
 
@@ -24,16 +22,12 @@ import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityProfileBinding;
-import eventcoordinator2017.myevent.databinding.NoResultBinding;
-import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
-import eventcoordinator2017.myevent.ui.events.EventsListAdapter;
 import eventcoordinator2017.myevent.utils.PermissionsActivity;
 import eventcoordinator2017.myevent.utils.PermissionsChecker;
 import io.realm.Realm;
@@ -79,7 +73,9 @@ public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> 
 
         Glide.with(this)
                 .load(Constants.URL_IMAGE + user.getImage())
-                .error(R.drawable.ic_user)
+                .dontAnimate()
+                .placeholder(R.drawable.ic_gallery)
+                .error(R.drawable.ic_gallery)
                 .into(binding.userImage);
 
     }
@@ -146,7 +142,7 @@ public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> 
     }
 
     @Override
-    public void finishAct(){
+    public void finishAct() {
         finish();
         showAlert("Profile Updated");
     }
@@ -205,6 +201,8 @@ public class ProfileActivity extends MvpActivity<ProfileView, ProfilePresenter> 
             Glide.with(this)
                     .load(uri)
                     .centerCrop()
+                    .dontAnimate()
+                    .placeholder(R.drawable.ic_gallery)
                     .error(R.drawable.ic_gallery)
                     .into(binding.userImage);
 

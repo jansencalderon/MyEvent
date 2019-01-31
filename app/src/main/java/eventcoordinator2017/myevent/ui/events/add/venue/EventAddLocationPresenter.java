@@ -1,7 +1,6 @@
 package eventcoordinator2017.myevent.ui.events.add.venue;
 
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
@@ -10,8 +9,6 @@ import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.model.data.Location;
-import eventcoordinator2017.myevent.model.data.Package;
-import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
@@ -38,7 +35,7 @@ public class EventAddLocationPresenter extends MvpNullObjectBasePresenter<EventA
         user = App.getUser();
 
         locationRealmResults = realm.where(Location.class).
-                findAllSortedAsync("locId", Sort.ASCENDING);
+                findAll().sort("locId", Sort.ASCENDING);
         locationRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Location>>() {
             @Override
             public void onChange(RealmResults<Location> element) {

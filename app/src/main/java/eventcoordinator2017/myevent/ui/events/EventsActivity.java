@@ -22,7 +22,6 @@ import com.hannesdorfmann.mosby.mvp.MvpActivity;
 import java.util.List;
 
 import eventcoordinator2017.myevent.R;
-import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventsBinding;
 import eventcoordinator2017.myevent.model.data.Event;
@@ -173,8 +172,8 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         presenter.onStop();
     }
 

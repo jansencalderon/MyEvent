@@ -1,11 +1,8 @@
 package eventcoordinator2017.myevent.ui.main.tabs;
 
-import android.content.Context;
 import android.databinding.DataBindingUtil;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import com.bumptech.glide.Glide;
@@ -17,10 +14,6 @@ import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ItemEventMainBinding;
 import eventcoordinator2017.myevent.model.data.Event;
-import eventcoordinator2017.myevent.ui.events.EventsView;
-import eventcoordinator2017.myevent.ui.main.tabs.MainPageView;
-import io.realm.OrderedRealmCollection;
-import io.realm.RealmRecyclerViewAdapter;
 
 /**
  * Created by Mark Jansen Calderon on 1/12/2017.
@@ -63,6 +56,7 @@ public class MainListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 .load(Constants.URL_IMAGE+eventList.get(position).getImageDirectory())
                 .centerCrop()
                 .error(R.drawable.ic_gallery)
+                .dontAnimate()
                 .into(eventViewHolder.itemEventBinding.eventImage);
 
     }

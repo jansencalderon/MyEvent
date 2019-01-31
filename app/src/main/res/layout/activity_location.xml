@@ -38,10 +38,10 @@
                     android:id="@+id/locationImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@color/lightestGray"
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_gallery"
-                    android:background="@color/lightestGray"
                     app:layout_collapseMode="parallax" />
 
                 <android.support.v7.widget.Toolbar
@@ -52,7 +52,7 @@
                     android:minHeight="?attr/actionBarSize"
                     app:layout_collapseMode="pin"
                     app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-                    app:title="@{location.locName}"/>
+                    app:title="@{location.locName}" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -79,20 +79,20 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="50dp"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:padding="20dp">
 
                 <TextView
+                    android:layout_marginTop="20dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Address"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textAppearance="@style/AppTheme.Subhead" />
 
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="16dp"
                     android:text="@{location.locAddress}"
                     android:textColor="@color/darkGray"
                     android:textSize="14sp" />
@@ -100,13 +100,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="16dp"
                     android:text="Navigate with: " />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="16dp"
                     android:orientation="horizontal">
 
                     <LinearLayout
@@ -160,15 +160,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:text="Setup"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textAppearance="@style/AppTheme.Subhead" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="16dp"
                     android:text="@{location.locSetup}"
                     android:textColor="@color/darkGray"
                     android:textSize="14sp" />
@@ -176,15 +175,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:text="Capacity"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textAppearance="@style/AppTheme.Subhead" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="16dp"
                     android:text="@{location.locCapacity+` persons`}"
                     android:textColor="@color/darkGray"
                     android:textSize="14sp" />
@@ -192,55 +190,52 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:text="Features"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textAppearance="@style/AppTheme.Subhead" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/features"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp" />
+                    android:layout_marginTop="16dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:text="Catered Events"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textAppearance="@style/AppTheme.Subhead" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/cateredEvents"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp" />
+                    android:layout_marginTop="16dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="20dp"
                     android:text="Venue Types"
-                    android:textColor="@color/colorPrimaryDark"
-                    android:textSize="16sp" />
+                    android:textAppearance="@style/AppTheme.Subhead" />
 
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/venueTypes"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp" />
+                    android:layout_marginTop="16dp" />
 
             </LinearLayout>
 
         </android.support.v4.widget.NestedScrollView>
 
         <Button
+            android:id="@+id/selectVenue"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_margin="10dp"
-            android:id="@+id/selectVenue"
             android:background="@drawable/rounded_button_accent"
             android:onClick="@{()->view.onAvail()}"
             android:text="SELECT VENUE"

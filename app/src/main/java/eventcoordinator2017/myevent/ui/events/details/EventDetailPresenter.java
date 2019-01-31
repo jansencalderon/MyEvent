@@ -4,12 +4,14 @@ import android.util.Log;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
+import java.util.List;
+
 import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.model.data.Guest;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
-import eventcoordinator2017.myevent.ui.events.EventsView;
 import io.realm.Realm;
 import io.realm.RealmResults;
 import retrofit2.Call;
@@ -28,20 +30,20 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
     private Event event;
     private String TAG = EventDetailPresenter.class.getSimpleName();
 
-    public void onStart(){
+    public void onStart() {
         realm = Realm.getDefaultInstance();
 
     }
 
-    public void sendResponse(String userId, String eventId, final String userResponse){
-        App.getInstance().getApiInterface().eventResponse(userId,eventId,userResponse).enqueue(new Callback<ResultResponse>() {
+    public void sendResponse(String userId, String eventId, final String userResponse) {
+        App.getInstance().getApiInterface().eventResponse(userId, eventId, userResponse).enqueue(new Callback<ResultResponse>() {
             @Override
             public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
-                if(response.isSuccessful()){
-                    if(response.body().getResult().equals(Constants.SUCCESS)){
+                if (response.isSuccessful()) {
+                    if (response.body().getResult().equals(Constants.SUCCESS)) {
                         getView().onResponseSuccessful(userResponse);
-                    }else getView().showAlert("Failed");
-                }else
+                    } else getView().showAlert("Failed");
+                } else
                     getView().showAlert(response.message() != null ? response.message()
                             : "Unknown Error");
             }
@@ -54,7 +56,7 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
         });
     }
 
-    public void onStop(){
+    public void onStop() {
         realm.close();
 
     }
@@ -66,11 +68,11 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
             @Override
             public void onResponse(Call<Event> call, Response<Event> response) {
                 getView().stopLoading();
-                if(response.isSuccessful()){
-                    if(response.body().getEventId()!=null){
+                if (response.isSuccessful()) {
+                    if (response.body().getEventId() != null) {
                         getView().setEvent(response.body());
-                    }else getView().showAlert("Failed");
-                }else
+                    } else getView().showAlert("Failed");
+                } else
                     getView().showAlert(response.message() != null ? response.message()
                             : "Unknown Error");
             }
@@ -82,5 +84,10 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
                 getView().showAlert("Error Connecting to Server");
             }
         });
+    }
+
+    public List<Guest> getGuests(int eventId) {
+        Event event = realm.where(Event.class).equalTo("eventId", eventId).findFirst();
+        return realm.copyFromRealm(event.getGuests().where().equalTo("response", "Y").findAll());
     }
 }

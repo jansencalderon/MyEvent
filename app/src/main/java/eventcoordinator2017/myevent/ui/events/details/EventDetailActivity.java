@@ -81,10 +81,10 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
                 finish();
             } else {
                 event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
-                event.addChangeListener(new RealmChangeListener<RealmModel>() {
-                    @Override
-                    public void onChange(RealmModel element) {
-                        guestList = event.getGuests();
+                if (event != null) {
+                    setEventData(event);
+                    event.addChangeListener(element -> {
+                        guestList = presenter.getGuests(eventId);
                         if (event.isValid()) {
                             if (guestList.size() > 0) {
                                 binding.goingCount.setText(guestList.size() + " people going");
@@ -92,10 +92,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
                                 binding.goingCount.setText("No guests invited yet");
                             }
                         }
-                    }
-                });
-                if (event != null) {
-                    setEventData(realm.copyFromRealm(event));
+                    });
                 }
             }
         }
@@ -103,11 +100,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
 
     }
 
-    private void setEventData(final Event event) {
-        if (!event.isValid()) {
-            return;
-        }
-        this.event = event;
+    private void setEventData(Event event) {
         user = App.getUser();
         binding.setEvent(event);
         binding.setUser(user);
@@ -122,13 +115,14 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
             } else {
                 Guest guest = event.getGuests().where().equalTo("email", user.getEmail()).findFirst();
                 onResponseSuccessful(guest.getResponse());
-                showAlert(guest.getResponse());
+                //showAlert(guest.getResponse());
             }
         }
 
         Glide.with(this)
                 .load(Constants.URL_IMAGE + event.getImageDirectory())
                 .centerCrop()
+                .dontAnimate()
                 .error(R.drawable.ic_gallery)
                 .into(binding.eventImage);
 
@@ -158,6 +152,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
         Glide.with(this)
                 .load(Constants.URL_IMAGE + user.getImage())
                 .error(R.drawable.ic_mood)
+                .dontAnimate()
                 .into(dialogProfileViewBinding.guestImage);
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -203,21 +198,21 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
 
     @Override
     public void onResponseSuccessful(String userResponse) {
-        binding.going.setBackgroundColor(ContextCompat.getColor(this, R.color.lightestGray));
-        binding.maybe.setBackgroundColor(ContextCompat.getColor(this, R.color.lightestGray));
-        binding.ignore.setBackgroundColor(ContextCompat.getColor(this, R.color.lightestGray));
+        binding.going.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        binding.maybe.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
+        binding.ignore.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
         switch (userResponse) {
             case Constants.RESPONSE_GOING:
-                binding.going.setBackgroundColor(ContextCompat.getColor(this, R.color.gray));
+                binding.going.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
                 break;
             case Constants.RESPONSE_MAYBE:
-                binding.maybe.setBackgroundColor(ContextCompat.getColor(this, R.color.gray));
+                binding.maybe.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
                 break;
             case Constants.RESPONSE_IGNORE:
-                binding.ignore.setBackgroundColor(ContextCompat.getColor(this, R.color.gray));
+                binding.ignore.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimaryDark));
                 break;
             default:
-                binding.ignore.setBackgroundColor(ContextCompat.getColor(this, R.color.lightestGray));
+                binding.ignore.setBackgroundColor(ContextCompat.getColor(this, R.color.colorPrimary));
                 break;
         }
 
@@ -281,7 +276,6 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
     protected void onDestroy() {
         super.onDestroy();
         realm.removeAllChangeListeners();
-        event.removeAllChangeListeners();
         realm.close();
         presenter.onStop();
     }

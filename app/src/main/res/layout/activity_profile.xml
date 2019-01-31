@@ -37,9 +37,9 @@
                 android:id="@+id/userImage"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
+                app:civ_circle_background_color="@color/darkGray"
                 android:layout_gravity="center"
-                android:onClick="@{()->view.onPhotoClicked()}"
-                android:src="@drawable/ic_user" />
+                android:onClick="@{()->view.onPhotoClicked()}" />
 
         </LinearLayout>
 

@@ -73,6 +73,8 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
     private GuestsListAdapter guestsListAdapter;
     private Event event;
     String numberSend;
+    Dialog dialog;
+    DialogInviteSmsBinding dialogInviteSmsBinding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,95 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
                 showSmsDialog();
             }
         });
+
+
+        dialogInviteSmsBinding = DataBindingUtil.inflate(LayoutInflater.from(this),
+                R.layout.dialog_invite_sms, null, false);
+
+        textView = dialogInviteSmsBinding.query;
+        adapter = new ArrayAdapter<String>
+                (this, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
+        textView.setThreshold(1);
+        textView.setAdapter(adapter);
+        textView.setOnItemSelectedListener(this);
+        textView.setOnItemClickListener(this);
+
+
+        String link = "https://eventcoordinator.000webhostapp.com/eventviewer/event_viewer.php?event_id=" + event.getEventId();
+        dialogInviteSmsBinding.textHello.setText("Hello! You have been invited to " + event.getEventName() + " by " + App.getUser().getFullName());
+        dialogInviteSmsBinding.eventLink.setText(link);
+
+
+        final String toBeSent = "Hello! You have been invited to " + event.getEventName() + " by " + App.getUser().getFullName()
+                + "\n\nYou can view the event here: " + link+"\n\n\n NOTE: YOU MUST BE REGISTERED TO THE APP TO RESPOND";
+
+        //binding.add.setOnClickListener(BtnAction(textView));
+
+        dialog = new Dialog(this);
+        dialog.setContentView(dialogInviteSmsBinding.getRoot());
+
+        dialogInviteSmsBinding.add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String NameSel = "";
+                toNumber = textView;
+                NameSel = toNumber.getText().toString();
+
+
+                final String ToNumber = toNumberValue;
+
+
+                if (ToNumber.length() == 0) {
+                    Toast.makeText(getBaseContext(), "Please fill phone number",
+                            Toast.LENGTH_SHORT).show();
+                } else if (textView.getText().toString().equals("")) {
+                    Toast.makeText(getBaseContext(), "Please fill phone number",
+                            Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getBaseContext(), NameSel + " : " + toNumberValue,
+                            Toast.LENGTH_LONG).show();
+                    try {
+                       /* SmsManager smsManager = SmsManager.getDefault();
+                        smsManager.sendTextMessage(numberSend, null, toBeSent, null, null);
+                        Toast.makeText(getApplicationContext(), "Message Sent",
+                                Toast.LENGTH_LONG).show();
+
+                        dialog.dismiss();*/
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) // At least KitKat
+                        {
+                            String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(GuestsActivity.this); // Need to change the build to API 19
+
+                            Intent sendIntent = new Intent(Intent.ACTION_SEND);
+                            sendIntent.setType("text/plain");
+                            sendIntent.putExtra(Intent.EXTRA_PHONE_NUMBER, toNumberValue);
+                            sendIntent.putExtra(Intent.EXTRA_TEXT, toBeSent);
+
+                            if (defaultSmsPackageName != null)// Can be null in case that there is no default, then the user would be able to choose
+                            // any app that support this intent.
+                            {
+                                sendIntent.setPackage(defaultSmsPackageName);
+                            }
+                            startActivity(sendIntent);
+
+                        } else // For early versions, do what worked for you before.
+                        {
+                            Intent smsIntent = new Intent(android.content.Intent.ACTION_VIEW);
+                            smsIntent.setType("vnd.android-dir/mms-sms");
+                            smsIntent.putExtra("address", numberSend);
+                            smsIntent.putExtra("sms_body", toBeSent);
+                            startActivity(smsIntent);
+                        }
+
+                    } catch (Exception ex) {
+                        Toast.makeText(getApplicationContext(), ex.getMessage().toString(),
+                                Toast.LENGTH_LONG).show();
+                        ex.printStackTrace();
+                    }
+                }
+            }
+        });
+
+        new Thread(this::readContactData).start();
 
 
     }
@@ -170,95 +261,7 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
     }
 
     public void showSmsDialog() {
-
-        final DialogInviteSmsBinding binding = DataBindingUtil.inflate(LayoutInflater.from(this),
-                R.layout.dialog_invite_sms, null, false);
-
-        textView = binding.query;
-        adapter = new ArrayAdapter<String>
-                (this, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
-        textView.setThreshold(1);
-        textView.setAdapter(adapter);
-        textView.setOnItemSelectedListener(this);
-        textView.setOnItemClickListener(this);
-
-
-        String link = "https://eventcoordinator.000webhostapp.com/eventviewer/event_viewer.php?event_id=" + event.getEventId();
-        binding.textHello.setText("Hello! You have been invited to " + event.getEventName() + " by " + App.getUser().getFullName());
-        binding.eventLink.setText(link);
-
-        final String toBeSent = "Hello! You have been invited to " + event.getEventName() + " by " + App.getUser().getFullName()
-                + "\n\nLINK: " + link;
-
-        //binding.add.setOnClickListener(BtnAction(textView));
-
-        final Dialog dialog = new Dialog(this);
-        dialog.setContentView(binding.getRoot());
         dialog.show();
-
-        binding.add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String NameSel = "";
-                toNumber = textView;
-                NameSel = toNumber.getText().toString();
-
-
-                final String ToNumber = toNumberValue;
-
-
-                if (ToNumber.length() == 0) {
-                    Toast.makeText(getBaseContext(), "Please fill phone number",
-                            Toast.LENGTH_SHORT).show();
-                } else if (textView.getText().toString().equals("")) {
-                    Toast.makeText(getBaseContext(), "Please fill phone number",
-                            Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getBaseContext(), NameSel + " : " + toNumberValue,
-                            Toast.LENGTH_LONG).show();
-                    try {
-                       /* SmsManager smsManager = SmsManager.getDefault();
-                        smsManager.sendTextMessage(numberSend, null, toBeSent, null, null);
-                        Toast.makeText(getApplicationContext(), "Message Sent",
-                                Toast.LENGTH_LONG).show();
-
-                        dialog.dismiss();*/
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) // At least KitKat
-                        {
-                            String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(GuestsActivity.this); // Need to change the build to API 19
-
-                            Intent sendIntent = new Intent(Intent.ACTION_SEND);
-                            sendIntent.setType("text/plain");
-                            sendIntent.putExtra(Intent.EXTRA_PHONE_NUMBER, numberSend);
-                            sendIntent.putExtra(Intent.EXTRA_TEXT, toBeSent);
-
-                            if (defaultSmsPackageName != null)// Can be null in case that there is no default, then the user would be able to choose
-                            // any app that support this intent.
-                            {
-                                sendIntent.setPackage(defaultSmsPackageName);
-                            }
-                            startActivity(sendIntent);
-
-                        } else // For early versions, do what worked for you before.
-                        {
-                            Intent smsIntent = new Intent(android.content.Intent.ACTION_VIEW);
-                            smsIntent.setType("vnd.android-dir/mms-sms");
-                            smsIntent.putExtra("address", numberSend);
-                            smsIntent.putExtra("sms_body", toBeSent);
-                            startActivity(smsIntent);
-                        }
-
-                    } catch (Exception ex) {
-                        Toast.makeText(getApplicationContext(), ex.getMessage().toString(),
-                                Toast.LENGTH_LONG).show();
-                        ex.printStackTrace();
-                    }
-                }
-            }
-        });
-
-
-        readContactData();
     }
 
     private View.OnClickListener BtnAction(final AutoCompleteTextView toNumber) {

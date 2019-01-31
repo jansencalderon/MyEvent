@@ -1,7 +1,6 @@
 package eventcoordinator2017.myevent.ui.events.add.packages;
 
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
@@ -9,11 +8,8 @@ import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
-import eventcoordinator2017.myevent.model.data.Location;
 import eventcoordinator2017.myevent.model.data.Package;
-import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
-import eventcoordinator2017.myevent.ui.events.add.EventAddView;
 import io.realm.Realm;
 import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
@@ -38,8 +34,7 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
         realm = Realm.getDefaultInstance();
         user = App.getUser();
 
-        packageRealmResults = realm.where(Package.class).
-                findAllSortedAsync("packageId", Sort.ASCENDING);
+        packageRealmResults = realm.where(Package.class).findAll().sort("packageId", Sort.ASCENDING);
         packageRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Package>>() {
             @Override
             public void onChange(RealmResults<Package> element) {
@@ -171,20 +166,20 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
             RealmResults<Package> packages = packageRealmResults.where()
                     .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
                     .contains("packageType", filterType)
-                    .findAllSorted("packageName", Sort.DESCENDING);
+                    .findAll().sort("packageName", Sort.DESCENDING);
 
             if (filterSort.equals("Price (High to Low)")) {
                 packages = packageRealmResults.where()
                         .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
                         .contains("packageType", filterType)
-                        .findAllSorted("packagePrice", Sort.DESCENDING);
+                        .findAll().sort("packagePrice", Sort.DESCENDING);
             }
 
             if (filterSort.equals("Price (Low To High)")) {
                 packages = packageRealmResults.where()
                         .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
                         .contains("packageType", filterType)
-                        .findAllSorted("packagePrice", Sort.ASCENDING);
+                        .findAll().sort("packagePrice", Sort.ASCENDING);
             }
 
 
