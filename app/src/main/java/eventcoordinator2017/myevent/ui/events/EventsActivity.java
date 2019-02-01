@@ -74,12 +74,9 @@ public class EventsActivity extends MvpActivity<EventsView, EventsPresenter> imp
 
     @Override
     public void onNewViewStateInstance() {
-        binding.swipeRefreshLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                binding.swipeRefreshLayout.setRefreshing(true);
-                onRefresh();
-            }
+        binding.swipeRefreshLayout.post(() -> {
+            binding.swipeRefreshLayout.setRefreshing(true);
+            onRefresh();
         });
     }
 

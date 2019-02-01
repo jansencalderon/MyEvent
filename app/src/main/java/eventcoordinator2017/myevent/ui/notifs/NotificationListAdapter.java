@@ -1,7 +1,9 @@
 package eventcoordinator2017.myevent.ui.notifs;
 
 import android.databinding.DataBindingUtil;
+import android.os.Build;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -12,9 +14,8 @@ import java.util.List;
 
 import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
-import eventcoordinator2017.myevent.databinding.ItemEventBinding;
+import eventcoordinator2017.myevent.databinding.ItemNotificationBinding;
 import eventcoordinator2017.myevent.model.data.Event;
-import eventcoordinator2017.myevent.ui.events.EventsView;
 
 /**
  * Created by Sen on 1/26/2017.
@@ -22,14 +23,14 @@ import eventcoordinator2017.myevent.ui.events.EventsView;
 
 public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    private EventsView eventsView;
+    private NotificationsView mvpView;
     private List<Event> eventList;
     private static final int VIEW_TYPE_MORE = 1;
     private static final int VIEW_TYPE_DEFAULT = 0;
     private boolean loading;
 
-    public NotificationListAdapter(EventsView eventsView) {
-        this.eventsView = eventsView;
+    public NotificationListAdapter(NotificationsView mvpView) {
+        this.mvpView = mvpView;
         eventList = new ArrayList<>();
 
     }
@@ -42,22 +43,29 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        ItemEventBinding itemEventBinding = DataBindingUtil.inflate(
-                LayoutInflater.from(parent.getContext()), R.layout.item_event, parent, false);
-        return new EventViewHolder(itemEventBinding);
+        ItemNotificationBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(parent.getContext()), R.layout.item_notification, parent, false);
+        return new EventViewHolder(binding);
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         EventViewHolder eventViewHolder = (EventViewHolder) holder;
-        eventViewHolder.itemEventBinding.setEvent(eventList.get(position));
-        eventViewHolder.itemEventBinding.setView(eventsView);
+        Event event = eventList.get(position);
+        eventViewHolder.binding.setEvent(eventList.get(position));
+        eventViewHolder.binding.setView(mvpView);
+        String toHtml = "<b>" + event.getUser().getFullName() + "</b> has invited you to <b>"+event.getEventName()+"</b>";
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            eventViewHolder.binding.content.setText(Html.fromHtml(toHtml, Html.FROM_HTML_MODE_COMPACT));
+        } else {
+            eventViewHolder.binding.content.setText(Html.fromHtml(toHtml));
+        }
         Glide.with(eventViewHolder.itemView.getContext())
-                .load(Constants.URL_IMAGE+eventList.get(position).getImageDirectory())
+                .load(Constants.URL_IMAGE + eventList.get(position).getImageDirectory())
                 .centerCrop()
                 .error(R.drawable.ic_gallery)
                 .dontAnimate()
-                .into(eventViewHolder.itemEventBinding.eventImage);
+                .into(eventViewHolder.binding.userImage);
 
     }
 
@@ -80,11 +88,11 @@ public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.V
 
 
     public class EventViewHolder extends RecyclerView.ViewHolder {
-        private ItemEventBinding itemEventBinding;
+        private ItemNotificationBinding binding;
 
-        public EventViewHolder(ItemEventBinding itemEventBinding) {
-            super(itemEventBinding.getRoot());
-            this.itemEventBinding = itemEventBinding;
+        public EventViewHolder(ItemNotificationBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
         }
     }
 

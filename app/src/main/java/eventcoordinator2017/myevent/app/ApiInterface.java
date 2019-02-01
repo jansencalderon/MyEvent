@@ -92,8 +92,8 @@ public interface ApiInterface {
 
 
     @FormUrlEncoded
-    @POST(Endpoints.GET_ALL_EVENTS)
-    Call<List<Event>> getAllEventsInvited(@Field("") String field);
+    @POST(Endpoints.GET_ALL_EVENTS_INVITE)
+    Call<List<Event>> getAllEventsInvited(@Field(Constants.USER_ID) int id);
 
 
     @FormUrlEncoded

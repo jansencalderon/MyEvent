@@ -12,7 +12,7 @@
 
         <variable
             name="view"
-            type="eventcoordinator2017.myevent.ui.events.EventsView" />
+            type="eventcoordinator2017.myevent.ui.notifs.NotificationsView" />
 
         <variable
             name="event"
@@ -33,30 +33,29 @@
         android:layout_marginBottom="10dp"
         android:clickable="true"
         android:foreground="?selectableItemBackground"
-        android:onClick="@{()->view.onNotifClicked(event)}"
+        android:onClick="@{()->view.onEventClicked(event)}"
         android:orientation="vertical"
         app:cardElevation="0dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:gravity="center_vertical"
-            android:padding="16dp"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
+            <ImageView
                 android:id="@+id/userImage"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/ic_mood"
-                android:layout_centerVertical="true" />
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="12dp" />
 
             <TextView
-                android:layout_marginStart="6dp"
                 android:id="@+id/content"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Harold Oronan has invited you to his Birthday Party" />
+
 
         </LinearLayout>
 
