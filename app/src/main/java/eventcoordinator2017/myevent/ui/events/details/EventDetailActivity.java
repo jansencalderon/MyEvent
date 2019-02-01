@@ -49,20 +49,18 @@ import io.realm.RealmModel;
 public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetailPresenter> implements EventDetailView, OnMapReadyCallback {
 
     ActivityEventDetailBinding binding;
-    private Event event;
     private User user;
-    private Realm realm;
     private int eventId;
     private List<Guest> guestList;
     private Boolean fromMain;
     private ProgressDialog progressDialog;
+    private Event event;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_event_detail);
         binding.setView(getMvpView());
-        realm = Realm.getDefaultInstance();
 
         setSupportActionBar(binding.toolbar);
         if (getSupportActionBar() != null)
@@ -80,19 +78,9 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
                 showAlert("No event data");
                 finish();
             } else {
-                event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
+                event = presenter.getEvent(eventId);
                 if (event != null) {
                     setEventData(event);
-                    event.addChangeListener(element -> {
-                        guestList = presenter.getGuests(eventId);
-                        if (event.isValid()) {
-                            if (guestList.size() > 0) {
-                                binding.goingCount.setText(guestList.size() + " people going");
-                            } else {
-                                binding.goingCount.setText("No guests invited yet");
-                            }
-                        }
-                    });
                 }
             }
         }
@@ -128,7 +116,7 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
 
         guestList = event.getGuests();
         if (guestList.size() > 0) {
-            binding.goingCount.setText(guestList.size() + " people going");
+            binding.goingCount.setText(guestList.size() + " people invited");
         } else {
             binding.goingCount.setText("No guests invited yet");
         }
@@ -275,8 +263,6 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        realm.removeAllChangeListeners();
-        realm.close();
         presenter.onStop();
     }
 

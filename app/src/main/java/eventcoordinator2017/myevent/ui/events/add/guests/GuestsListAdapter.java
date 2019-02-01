@@ -48,6 +48,8 @@ public class GuestsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         Glide.with(viewHolder.itemView.getContext())
                 .load(Constants.URL_IMAGE + guest.getImage())
                 .error(R.drawable.ic_mood)
+                .placeholder(R.drawable.ic_mood)
+                .dontAnimate()
                 .into(viewHolder.itemGuestBinding.userImage);
 
     }

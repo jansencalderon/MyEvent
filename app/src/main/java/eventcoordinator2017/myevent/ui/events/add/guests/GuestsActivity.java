@@ -68,8 +68,8 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
     String toNumberValue = "";
 
 
+
     ActivityAddGuestsBinding binding;
-    private Realm realm;
     private GuestsListAdapter guestsListAdapter;
     private Event event;
     String numberSend;
@@ -81,13 +81,11 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_add_guests);
         binding.setView(getMvpView());
-        realm = Realm.getDefaultInstance();
 
         int eventId = getIntent().getIntExtra(Constants.ID, -1);
         if (eventId == -1) {
             finish();
         }
-        event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
 
         setSupportActionBar(binding.toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -96,7 +94,8 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         binding.recyclerView.setAdapter(guestsListAdapter);
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        presenter.onStart(event.getEventId());
+        presenter.onStart();
+        event = presenter.getEvent(eventId);
 
         binding.inviteSMS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -253,6 +252,8 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
         Glide.with(this)
                 .load(Constants.URL_IMAGE + guest.getImage())
                 .error(R.drawable.ic_mood)
+                .placeholder(R.drawable.ic_mood)
+                .dontAnimate()
                 .into(dialogProfileViewBinding.guestImage);
         final Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -302,6 +303,7 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
 
     @Override
     public void refreshList(List<Guest> guests) {
+        Log.d("GUEST COUNT", guests.size()+"");
         guestsListAdapter.setList(guests);
         checkResult(guests.size());
     }
@@ -351,15 +353,9 @@ public class GuestsActivity extends MvpActivity<GuestsView, GuestsPresenter> imp
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        presenter.onStop();
-    }
-
-    @Override
     protected void onDestroy() {
-        super.onDestroy();
-        realm.close();
+        super.onDestroy();        presenter.onStop();
+
     }
 
     @Override

@@ -1,4 +1,7 @@
 package eventcoordinator2017.myevent.ui.notifs;
 
-class NotificationsPresenter {
+import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
+
+class NotificationsPresenter extends MvpNullObjectBasePresenter<NotificationsView> {
+
 }

@@ -35,6 +35,12 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
 
     }
 
+    public Event getEvent(int eventId) {
+        event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
+
+        return event;
+    }
+
     public void sendResponse(String userId, String eventId, final String userResponse) {
         App.getInstance().getApiInterface().eventResponse(userId, eventId, userResponse).enqueue(new Callback<ResultResponse>() {
             @Override
@@ -86,8 +92,9 @@ public class EventDetailPresenter extends MvpNullObjectBasePresenter<EventDetail
         });
     }
 
-    public List<Guest> getGuests(int eventId) {
+   /* public List<Guest> getGuests(int eventId) {
         Event event = realm.where(Event.class).equalTo("eventId", eventId).findFirst();
-        return realm.copyFromRealm(event.getGuests().where().equalTo("response", "Y").findAll());
-    }
+        //return realm.copyFromRealm(event.getGuests().where().equalTo("response", "Y").findAll());
+        return realm.copyFromRealm(event.getGuests());
+    }*/
 }

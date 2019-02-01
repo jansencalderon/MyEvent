@@ -31,16 +31,24 @@ public class StringUtils {
     }
 
     public static String moneyFormat(int s) {
-       // NumberFormat numberFormat = Nu
+        // NumberFormat numberFormat = Nu
         return NumberFormat.getNumberInstance(Locale.US).format(s);
     }
 
-    public static String translateResponse(String x){
-        switch (x){
-            case "Y": return "Going";
-            case "M": return "Maybe";
-            case "N": return "Not Interested";
-            default: return "No Response";
+    public static String translateResponse(String x) {
+        try {
+            switch (x) {
+                case "G":
+                    return "Going";
+                case "M":
+                    return "Maybe";
+                case "N":
+                    return "Not Interested";
+                default:
+                    return "No Response";
+            }
+        } catch (NullPointerException e) {
+            return "No Response";
         }
     }
 

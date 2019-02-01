@@ -37,7 +37,6 @@ public class MainPageFragment extends MvpFragment<MainPageView, MainPagePresente
     private int mPage;
     private String type;
     private FragmentMainPageBinding binding;
-    private Realm realm;
     private MainListAdapter adapter;
 
     public static MainPageFragment newInstance(int page, String s) {
@@ -73,11 +72,6 @@ public class MainPageFragment extends MvpFragment<MainPageView, MainPagePresente
         return binding.getRoot();
     }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        realm = Realm.getDefaultInstance();
-    }
 
     @Override
     public void onResume() {
@@ -133,10 +127,4 @@ public class MainPageFragment extends MvpFragment<MainPageView, MainPagePresente
         Toast.makeText(getActivity(), s, Toast.LENGTH_SHORT).show();
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        presenter.onStop();
-        realm.close();
-    }
 }

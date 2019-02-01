@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
         <import type="android.view.View" />
+
         <import type="eventcoordinator2017.myevent.utils.DateTimeUtils" />
+
         <import type="eventcoordinator2017.myevent.utils.StringUtils" />
+
         <variable
             name="view"
             type="eventcoordinator2017.myevent.ui.events.EventsView" />
@@ -27,97 +31,34 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="10dp"
-        android:onClick="@{()->view.onEventClicked(event)}"
         android:clickable="true"
         android:foreground="?selectableItemBackground"
-        android:orientation="vertical">
+        android:onClick="@{()->view.onNotifClicked(event)}"
+        android:orientation="vertical"
+        app:cardElevation="0dp">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:gravity="center_vertical"
+            android:padding="16dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/eventImage"
-                android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:scaleType="centerCrop"
-                android:src="@drawable/sample_event" />
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userImage"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_mood"
+                android:layout_centerVertical="true" />
 
-            <LinearLayout
-                android:id="@+id/eventInfoLayout"
-                android:layout_width="match_parent"
+            <TextView
+                android:layout_marginStart="6dp"
+                android:id="@+id/content"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/eventImage"
-                android:orientation="vertical"
-                android:padding="10dp">
+                android:text="Harold Oronan has invited you to his Birthday Party" />
 
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@{event.eventName}"
-                    android:textColor="@color/black"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:gravity="center_vertical"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:layout_marginEnd="6dp"
-                        android:src="@drawable/ic_calendar"
-                        android:tint="@color/gray" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text='@{DateTimeUtils.toReadable(event.eventDateFrom) +" to "+DateTimeUtils.toReadable(event.eventDateTo)}'
-                        android:textColor="@color/gray"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="start"
-                        android:src="@drawable/ic_loc"
-                        android:layout_marginEnd="6dp"
-                        android:tint="@color/gray" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@{event.location.locName}"
-                        android:textColor="@color/gray"
-                        android:textSize="12sp" />
-                </LinearLayout>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:text="@{StringUtils.putHashtags(event.eventTags)}"
-                    android:textColor="@color/lightGray"
-                    android:textSize="12sp" />
-            </LinearLayout>
-
-        </RelativeLayout>
-
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 </layout>

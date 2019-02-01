@@ -36,6 +36,7 @@ import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
 import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import eventcoordinator2017.myevent.ui.login.LoginActivity;
+import eventcoordinator2017.myevent.ui.notifs.NotificationsActivity;
 import eventcoordinator2017.myevent.ui.profile.ProfileActivity;
 import eventcoordinator2017.myevent.utils.SharedPreferencesUtil;
 import io.realm.Realm;
@@ -46,7 +47,6 @@ import retrofit2.Response;
 
 public class MainActivity extends MvpActivity<MainView, MainPresenter> implements MainView, NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = MainActivity.class.getSimpleName();
-    private Realm realm;
     private ActivityMainBinding binding;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -55,6 +55,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     private GoogleApiClient client;
     private ProgressDialog progressDialog;
     private List<String> strings = new ArrayList<>();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -74,12 +75,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
 
         //display data
-        binding.navigationView.getHeaderView(0).findViewById(R.id.viewProfile).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(MainActivity.this, ProfileActivity.class));
-            }
-        });
+        binding.navigationView.getHeaderView(0).findViewById(R.id.viewProfile).setOnClickListener(view -> startActivity(new Intent(MainActivity.this, ProfileActivity.class)));
 
         binding.navigationView.getMenu().getItem(0).setChecked(true);
 
@@ -119,13 +115,13 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
                 App.getInstance().getApiInterface().saveUserToken(user.getUserId() + "", token).enqueue(new Callback<ResultResponse>() {
                     @Override
                     public void onResponse(Call<ResultResponse> call, Response<ResultResponse> response) {
-                        if(response.isSuccessful()){
+                        if (response.isSuccessful()) {
                             if (response.body().equals(Constants.SUCCESS)) {
                                 sharedPreferencesUtil.putBooleanValue(Constants.FIREBASE + "_sent", true);
                             } else {
                                 Log.e(TAG, "Token Not Updated");
                             }
-                        }else {
+                        } else {
                             showAlert("Website is sleeping");
                         }
                     }
@@ -163,13 +159,13 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void displayUserData(User user) {
-       // TextView email = (TextView) binding.navigationView.getHeaderView(0).findViewById(R.id.email);
-        TextView name = (TextView) binding.navigationView.getHeaderView(0).findViewById(R.id.name);
-        CircleImageView circleImageView = (CircleImageView) binding.navigationView.getHeaderView(0).findViewById(R.id.userImage);
-       // email.setText(user.getEmail());
+        // TextView email = (TextView) binding.navigationView.getHeaderView(0).findViewById(R.id.email);
+        TextView name = binding.navigationView.getHeaderView(0).findViewById(R.id.name);
+        CircleImageView circleImageView = binding.navigationView.getHeaderView(0).findViewById(R.id.userImage);
+        // email.setText(user.getEmail());
         name.setText(user.getFullName());
         Glide.with(this)
-                .load(Constants.URL_IMAGE+user.getImage())
+                .load(Constants.URL_IMAGE + user.getImage())
                 .error(R.drawable.ic_gallery)
                 .into(circleImageView);
     }
@@ -233,36 +229,24 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
         } else if (id == R.id.events) {
             startActivity(new Intent(this, EventsActivity.class));
             binding.navigationView.getMenu().getItem(0).setChecked(true);
+        } else if (id == R.id.notification) {
+            startActivity(new Intent(this, NotificationsActivity.class));
+            binding.navigationView.getMenu().getItem(0).setChecked(true);
         } else if (id == R.id.logout) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("Log Out");
             builder.setMessage("Are you sure?");
-            builder.setPositiveButton("YES", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    // Do nothing but close the dialog
-                    final Realm realm = Realm.getDefaultInstance();
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            realm.deleteAll();
-                        }
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            realm.close();
-                            // TODO: 12/4/2016 add flag to clear all task
-                            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                            MainActivity.this.finish();
-                        }
-                    }, new Realm.Transaction.OnError() {
-                        @Override
-                        public void onError(Throwable error) {
-                            realm.close();
-                            Log.e(TAG, "onError: Error Logging out (deleting all data)", error);
-                        }
-                    });
-                    finish();
-                }
+            builder.setPositiveButton("YES", (dialog, which) -> {
+                // Do nothing but close the dialog
+                final Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(realm1 -> realm1.deleteAll(), () -> {
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                    MainActivity.this.finish();
+                }, error -> {
+                    realm.close();
+                    Log.e(TAG, "onError: Error Logging out (deleting all data)", error);
+                });
+                finish();
             });
             builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
 
@@ -283,8 +267,8 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     }
 
     @Override
-    public void onStop() {
-        super.onStop();
+    public void onDestroy() {
+        super.onDestroy();
         presenter.onStop();
     }
 

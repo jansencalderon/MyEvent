@@ -13,7 +13,12 @@
             android:id="@+id/events"
             android:checkable="false"
             android:icon="@drawable/ic_calendar"
-            android:title="My Events" />
+            android:title="Manage Events" />
+        <item
+            android:id="@+id/notification"
+            android:checkable="false"
+            android:icon="@drawable/ic_notification"
+            android:title="Notifications" />
         <item
             android:id="@+id/logout"
             android:checkable="false"

@@ -29,24 +29,24 @@ public class GuestsPresenter extends MvpNullObjectBasePresenter<GuestsView> {
     private Realm realm;
     private List<Guest> guest = new ArrayList<>();
     private String TAG = GuestsPresenter.class.getSimpleName();
-    private RealmResults<Event> eventRealmResults;
     private Event event;
 
-    public void onStart(int id) {
+    public void onStart() {
         realm = Realm.getDefaultInstance();
 
-        event = realm.where(Event.class).equalTo(Constants.EVENT_ID, id).findFirst();
-        getView().refreshList(event.getGuests());
-        event.addChangeListener(new RealmChangeListener<RealmModel>() {
-            @Override
-            public void onChange(RealmModel element) {
-                if(event.isValid()){
-                    getView().refreshList(event.getGuests());
-                }
+    }
+
+    public Event getEvent(int eventId) {
+        event = realm.where(Event.class).equalTo(Constants.EVENT_ID, eventId).findFirst();
+
+        event.addChangeListener(element -> {
+            if (event.isValid()) {
+                getView().refreshList(event.getGuests());
             }
         });
+        getView().refreshList(event.getGuests());
 
-
+        return event;
     }
 
     public void getGuests(String event_id) {
@@ -96,13 +96,10 @@ public class GuestsPresenter extends MvpNullObjectBasePresenter<GuestsView> {
                     if (response.isSuccessful()) {
                         if (response.body() != null) {
                             if (event != null) {
-                                realm.executeTransaction(new Realm.Transaction() {
-                                    @Override
-                                    public void execute(Realm realm) {
-                                        update(event, realm, response.body());
-                                        getView().showAlert(response.body().getFullName() + " added");
-                                        getView().clearEmail();
-                                    }
+                                realm.executeTransaction(realm -> {
+                                    event.getGuests().add(response.body());
+                                    getView().showAlert(response.body().getFullName() + " invited");
+                                    getView().clearEmail();
                                 });
                             } else {
                                 getView().showAlert("Event is null");
@@ -130,15 +127,18 @@ public class GuestsPresenter extends MvpNullObjectBasePresenter<GuestsView> {
 
     }
 
-    public static void update(Event event, Realm realm, Guest guest) {
+ /*   public static void update(Event event, Realm realm, Guest guest) {
         //do update stuff
         Guest update = realm.copyToRealmOrUpdate(guest);
         event.getGuests().add(update);
 
     }
-
+*/
 
     public void onStop() {
+        realm.removeAllChangeListeners();
         realm.close();
     }
+
+
 }

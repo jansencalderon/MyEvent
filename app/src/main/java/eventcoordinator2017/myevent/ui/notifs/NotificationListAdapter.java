@@ -1,4 +1,4 @@
-package eventcoordinator2017.myevent.ui.events;
+package eventcoordinator2017.myevent.ui.notifs;
 
 import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
@@ -14,12 +14,13 @@ import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ItemEventBinding;
 import eventcoordinator2017.myevent.model.data.Event;
+import eventcoordinator2017.myevent.ui.events.EventsView;
 
 /**
  * Created by Sen on 1/26/2017.
  */
 
-public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class NotificationListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private EventsView eventsView;
     private List<Event> eventList;
@@ -27,7 +28,7 @@ public class EventsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private static final int VIEW_TYPE_DEFAULT = 0;
     private boolean loading;
 
-    public EventsListAdapter(EventsView eventsView) {
+    public NotificationListAdapter(EventsView eventsView) {
         this.eventsView = eventsView;
         eventList = new ArrayList<>();
 

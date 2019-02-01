@@ -92,6 +92,11 @@ public interface ApiInterface {
 
 
     @FormUrlEncoded
+    @POST(Endpoints.GET_ALL_EVENTS)
+    Call<List<Event>> getAllEventsInvited(@Field("") String field);
+
+
+    @FormUrlEncoded
     @POST(Endpoints.GET_PACKAGES)
     Call<List<Package>> getPackages(@Field("") String ah);
 
