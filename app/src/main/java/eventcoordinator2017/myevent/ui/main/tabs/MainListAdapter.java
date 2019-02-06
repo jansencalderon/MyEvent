@@ -55,7 +55,6 @@ public class MainListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         Glide.with(eventViewHolder.itemView.getContext())
                 .load(Constants.URL_IMAGE+eventList.get(position).getImageDirectory())
                 .centerCrop()
-                .error(R.drawable.ic_gallery)
                 .dontAnimate()
                 .into(eventViewHolder.itemEventBinding.eventImage);
 

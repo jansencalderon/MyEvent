@@ -111,7 +111,6 @@ public class EventDetailActivity extends MvpActivity<EventDetailView, EventDetai
                 .load(Constants.URL_IMAGE + event.getImageDirectory())
                 .centerCrop()
                 .dontAnimate()
-                .error(R.drawable.ic_gallery)
                 .into(binding.eventImage);
 
         guestList = event.getGuests();

@@ -54,7 +54,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                             final String type) {
         final String joined = TextUtils.join(",", tags).trim();
         if (eventName.equals("") || eventDescription.equals("") || fromDate.equals("") || fromTime.equals("") ||
-                toDate.equals("") || toTime.equals("") || joined.equals("") || eventBudget.equals("")) {
+                toDate.equals("") || toTime.equals("") || joined.equals("") ) {
             getView().showAlert("Fill up all fields");
         } else if(eventUri == null){
             getView().showAlert("Pick event photo");
@@ -73,7 +73,7 @@ public class EventAddPresenter extends MvpNullObjectBasePresenter<EventAddView> 
                     tempEvent.setEventDateTo(toDate);
                     tempEvent.setEventTimeFrom(fromTime);
                     tempEvent.setEventTimeTo(toTime);
-                    tempEvent.setBudget(eventBudget);
+                    tempEvent.setBudget("1000000");
                     tempEvent.setImageUri(eventUri);
                     realm.copyToRealmOrUpdate(tempEvent);
 

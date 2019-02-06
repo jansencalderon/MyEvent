@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Locale;
 
 import eventcoordinator2017.myevent.R;
+import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddBinding;
 import eventcoordinator2017.myevent.databinding.DialogBudgetBinding;
@@ -110,6 +111,7 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
                     .load(new File(tempEvent.getImageUri()))
                     .error(R.drawable.ic_gallery)
                     .centerCrop()
+                    .dontAnimate()
                     .into(binding.eventImage);
             eventImage = new File(tempEvent.getImageUri());
 
@@ -181,32 +183,34 @@ public class EventAddActivity extends MvpActivity<EventAddView, EventAddPresente
             binding.packageCard.setVisibility(View.GONE);
         }
 
-        binding.addPackage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (tempEvent != null && (tempEvent.getaPackage() != null || tempEvent.getLocation() != null)) {
-                    onAddPackage();
-                } else {
-                    presenter.updateEvent(
-                            binding.eventName.getText().toString(),
-                            binding.eventDescription.getText().toString(),
-                            binding.tagGroup.getTags(),
-                            binding.eventFromDate.getText().toString(),
-                            binding.eventFromTime.getText().toString(),
-                            binding.eventToDate.getText().toString(),
-                            binding.eventToTime.getText().toString(),
-                            realBudget,
-                            eventUri,
-                            "pack");
-                    Log.d(TAG, "Create new tempEvent and pick Pack");
-                }
+        binding.addPackage.setOnClickListener(view -> {
+            if(App.getUser().getEmail().equals("oakpalettetown@gmail.com")){
+                onAddPackage();
             }
-
+            if (tempEvent != null && (tempEvent.getaPackage() != null || tempEvent.getLocation() != null)) {
+                onAddPackage();
+            } else {
+                presenter.updateEvent(
+                        binding.eventName.getText().toString(),
+                        binding.eventDescription.getText().toString(),
+                        binding.tagGroup.getTags(),
+                        binding.eventFromDate.getText().toString(),
+                        binding.eventFromTime.getText().toString(),
+                        binding.eventToDate.getText().toString(),
+                        binding.eventToTime.getText().toString(),
+                        realBudget,
+                        eventUri,
+                        "pack");
+                Log.d(TAG, "Create new tempEvent and pick Pack");
+            }
         });
 
         binding.addLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if(App.getUser().getEmail().equals("oakpalettetown@gmail.com")){
+                    onAddLocation();
+                }
                 if (tempEvent != null && (tempEvent.getLocation() != null || tempEvent.getaPackage() != null)) {
                     onAddLocation();
                 } else {

@@ -1,12 +1,17 @@
 package eventcoordinator2017.myevent.ui.events.add.packages;
 
 import android.app.Dialog;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -22,10 +27,8 @@ import eventcoordinator2017.myevent.app.Constants;
 import eventcoordinator2017.myevent.databinding.ActivityEventAddPackageBinding;
 import eventcoordinator2017.myevent.databinding.DialogFilterPackagesBinding;
 import eventcoordinator2017.myevent.model.data.Package;
-import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
 import eventcoordinator2017.myevent.ui.pack.PackActivity;
-import io.realm.Realm;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
@@ -35,16 +38,16 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
 
     ActivityEventAddPackageBinding binding;
     PackagesListAdapter packagesListAdapter;
-    private Realm realm;
-    private TempEvent tempEvent;
-    private String filterType ="", filterSort ="";
+    //  private TempEvent tempEvent;
+    private String filterType = "", filterSort = "";
+    private SearchView searchView;
+    String query;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_event_add_package);
         binding.setView(getMvpView());
-        realm = Realm.getDefaultInstance();
 
 
         setSupportActionBar(binding.toolbar);
@@ -58,11 +61,11 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
-        tempEvent = realm.where(TempEvent.class).findFirst();
+       /* tempEvent = presenter.getTempEvent();
         if (tempEvent != null) {
             presenter.setQuery(tempEvent.getBudget());
-           // binding.eventBudget.setText(tempEvent.getBudget());
-        }
+            binding.eventBudget.setText(tempEvent.getBudget());
+        }*/
     }
 
 
@@ -85,7 +88,37 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setQueryHint("Budget, Name");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                presenter.setApplyFilter(filterType, filterSort, query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                presenter.setApplyFilter(filterType, filterSort, query);
+                return false;
+            }
+        });
+        return true;
+    }
+
+    @Override
     public void onBackPressed() {
+        if (!searchView.isIconified()) {
+            searchView.setIconified(true);
+            return;
+        }
         startActivity(new Intent(this, EventAddActivity.class));
         overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
@@ -101,7 +134,6 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
         Intent i = new Intent(this, PackActivity.class);
         i.putExtra(Constants.ID, aPackage.getPackageId());
         startActivity(i);
-        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
         finish();
     }
 
@@ -140,12 +172,9 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
                 new MaterialDialog.Builder(EventAddPackageActivity.this)
                         .title("Package Types")
                         .items("Name", "Price (High to Low)", "Price (Low to High)")
-                        .itemsCallback(new MaterialDialog.ListCallback() {
-                            @Override
-                            public void onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
-                                binding.filterSort.setText(text);
-                                filterSort = binding.filterSort.getText().toString();
-                            }
+                        .itemsCallback((dialog, view, which, text) -> {
+                            binding.filterSort.setText(text);
+                            filterSort = binding.filterSort.getText().toString();
                         })
                         .show();
             }
@@ -154,7 +183,7 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
         binding.filterApply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                presenter.setApplyFilter(filterType, filterSort, tempEvent.getBudget());
+                presenter.setApplyFilter(filterType, filterSort, query);
                 dialogFilter.dismiss();
             }
         });
@@ -170,11 +199,12 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
 
 
     }
+
     @Override
     public void clearFilter() {
         filterSort = "";
         filterType = "";
-        presenter.setApplyFilter(filterType, filterSort,tempEvent.getBudget());
+        presenter.setApplyFilter(filterType, filterSort, query);
 
     }
 
@@ -186,15 +216,18 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
 
     @Override
     public void startLoading() {
-
+        binding.swipeRefreshLayout.setRefreshing(true);
     }
 
     @Override
     public void stopLoading() {
+        binding.swipeRefreshLayout.setRefreshing(false);
 
     }
+
     @Override
     public void checkResult(int count) {
+        Log.d("Item Count", count+"");
         binding.noResult.resultText.setText("No Result for Filters\nTry others");
         binding.noResult.resultImage.setImageResource(R.drawable.ic_no);
         if (count > 0) {
@@ -212,8 +245,11 @@ public class EventAddPackageActivity extends MvpActivity<EventAddPackageView, Ev
 
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
+        if(binding.swipeRefreshLayout.isRefreshing()){
+            binding.swipeRefreshLayout.setRefreshing(false);
+        }
         presenter.onStop();
     }
 }

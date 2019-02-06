@@ -15,7 +15,7 @@ public class Constants {
     public static final String PUSH_NOTIFICATION = "pushNotification";
 
 
-    public static final String URL_IMAGE = "http://eventcoordinator.000webhostapp.com/images/";
+    public static final String URL_IMAGE = Endpoints.BASE_URL + "/images/";
     public static final String EMAIL = "email";
     public static final String PASSWORD = "password";
     public static final String FIRST_NAME = "firstname";
@@ -43,7 +43,7 @@ public class Constants {
     public static final String USER_ID = "user_id";
     public static final String EVENT_ID = "eventId";
     public static final String PACKAGE_ID = "packageId";
-    public static final String ID ="id";
+    public static final String ID = "id";
     public static final String LOCATION_ID = "locId";
 
 
@@ -75,7 +75,7 @@ public class Constants {
 
     public static final String RESPONSE_GOING = "G";
     public static final String RESPONSE_IGNORE = "I";
-    public static final String RESPONSE_MAYBE = "M" ;
+    public static final String RESPONSE_MAYBE = "M";
 
     public static final String VIEW_ONLY = "viewOnly";
     public static final String FIREBASE = "firebase";

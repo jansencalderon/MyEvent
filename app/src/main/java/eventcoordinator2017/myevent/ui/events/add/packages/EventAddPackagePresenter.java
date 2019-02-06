@@ -1,6 +1,7 @@
 package eventcoordinator2017.myevent.ui.events.add.packages;
 
 
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
@@ -9,9 +10,10 @@ import java.util.List;
 
 import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.model.data.Package;
+import eventcoordinator2017.myevent.model.data.TempEvent;
 import eventcoordinator2017.myevent.model.data.User;
+import io.realm.Case;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
 import io.realm.Sort;
 import retrofit2.Call;
@@ -26,70 +28,43 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
 
     private Realm realm;
     private User user;
-    private RealmResults<Package> packageRealmResults;
     private static final String TAG = EventAddPackagePresenter.class.getSimpleName();
-    private String query;
 
     public void onStart() {
         realm = Realm.getDefaultInstance();
         user = App.getUser();
 
-        packageRealmResults = realm.where(Package.class).findAll().sort("packageId", Sort.ASCENDING);
-        packageRealmResults.addChangeListener(new RealmChangeListener<RealmResults<Package>>() {
-            @Override
-            public void onChange(RealmResults<Package> element) {
-                filterList();
-            }
-        });
-
         loadPackageList();
     }
 
     public void onStop() {
-        if (packageRealmResults.isValid()) {
-            packageRealmResults.removeAllChangeListeners();
-        }
+        realm.removeAllChangeListeners();
         realm.close();
     }
 
-    private void packages(Call<List<Package>> packageListCall) {
+    private void loadPackageList() {
         getView().startLoading();
-        packageListCall.enqueue(new Callback<List<Package>>() {
+        App.getInstance().getApiInterface().getPackages("").enqueue(new Callback<List<Package>>() {
             @Override
-            public void onResponse(Call<List<Package>> call, final Response<List<Package>> response) {
+            public void onResponse(@NonNull Call<List<Package>> call, @NonNull final Response<List<Package>> response) {
                 if (!response.body().isEmpty()) {
                     getView().stopLoading();
+                    getView().setPackages(response.body());
                     final Realm realm = Realm.getDefaultInstance();
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            realm.delete(Package.class);
-                            realm.copyToRealmOrUpdate(response.body());
-                        }
-                    }, new Realm.Transaction.OnSuccess() {
-                        @Override
-                        public void onSuccess() {
-                            realm.close();
-                        }
-                    }, new Realm.Transaction.OnError() {
-                        @Override
-                        public void onError(Throwable error) {
-                            realm.close();
-                            Log.e(TAG, "onError: Unable to save USER", error);
-                        }
+                    realm.executeTransactionAsync(realm1 -> {
+                        realm1.delete(Package.class);
+                        realm1.copyToRealmOrUpdate(response.body());
+                    }, realm::close, error -> {
+                        realm.close();
+                        Log.e(TAG, "onError: Unable to save USER", error);
                     });
                 } else {
-                    realm.executeTransactionAsync(new Realm.Transaction() {
-                        @Override
-                        public void execute(Realm realm) {
-                            realm.delete(Package.class);
-                        }
-                    });
+                    realm.executeTransactionAsync(realm -> realm.delete(Package.class));
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Package>> call, Throwable t) {
+            public void onFailure(@NonNull Call<List<Package>> call, @NonNull Throwable t) {
                 Log.e(TAG, "onFailure: Error calling login api", t);
                 getView().stopLoading();
                 getView().showAlert("Error Connecting to Server");
@@ -98,94 +73,87 @@ public class EventAddPackagePresenter extends MvpNullObjectBasePresenter<EventAd
         });
     }
 
-    void loadPackageList() {
-        packages(App.getInstance().getApiInterface().getPackages(""));
-    }
-/*
+    /*
 
-    public void updateEvent(final String eventName, final String eventDescription, final String[] tags,
-                            final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventBudget) {
-        final String joined = TextUtils.join("", tags).trim();
-        if (eventName.equals("") || eventDescription.equals("") || fromDate.equals("") || fromTime.equals("") ||
-                toDate.equals("") || toTime.equals("") || joined.equals("") || eventBudget.equals("")) {
-            getView().showAlert("Fill up all fields");
-        } else {
-            final Realm realm = Realm.getDefaultInstance();
-            realm.executeTransactionAsync(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    realm.delete(TempEvent.class);
-                    TempEvent tempEvent = new TempEvent();
-                    tempEvent.setEventId(1);
-                    tempEvent.setEventName(eventName);
-                    tempEvent.setEventDescription(eventDescription);
-                    tempEvent.setEventTags(joined);
-                    tempEvent.setEventDateFrom(fromDate);
-                    tempEvent.setEventDateTo(toDate);
-                    tempEvent.setEventTimeFrom(fromTime);
-                    tempEvent.setEventTimeTo(toTime);
-                    tempEvent.setBudget(eventBudget);
-                    realm.copyToRealmOrUpdate(tempEvent);
-
-                }
-            });
-            realm.close();
-            getView().onNext();
-        }
-
-    }
-*/
-
-    void setQuery(String query) {
-        this.query = query;
-        filterList();
-    }
-
-    private void filterList() {
-        if (packageRealmResults.isLoaded() && packageRealmResults.isValid()) {
-            List<Package> packageList;
-            if (query != null && !query.isEmpty()) {
-                RealmResults<Package> packages = packageRealmResults.where()
-                        .lessThanOrEqualTo("packagePrice", Integer.parseInt(query))
-                        .findAll();
-
-                packageList = realm.copyFromRealm(packages);
-
+        public void updateEvent(final String eventName, final String eventDescription, final String[] tags,
+                                final String fromDate, final String fromTime, final String toDate, final String toTime, final String eventBudget) {
+            final String joined = TextUtils.join("", tags).trim();
+            if (eventName.equals("") || eventDescription.equals("") || fromDate.equals("") || fromTime.equals("") ||
+                    toDate.equals("") || toTime.equals("") || joined.equals("") || eventBudget.equals("")) {
+                getView().showAlert("E all fields");
             } else {
-                packageList = realm.copyFromRealm(packageRealmResults);
+                final Realm realm = Realm.getDefaultInstance();
+                realm.executeTransactionAsync(new Realm.Transaction() {
+                    @Override
+                    public void execute(Realm realm) {
+                        realm.delete(TempEvent.class);
+                        TempEvent tempEvent = new TempEvent();
+                        tempEvent.setEventId(1);
+                        tempEvent.setEventName(eventName);
+                        tempEvent.setEventDescription(eventDescription);
+                        tempEvent.setEventTags(joined);
+                        tempEvent.setEventDateFrom(fromDate);
+                        tempEvent.setEventDateTo(toDate);
+                        tempEvent.setEventTimeFrom(fromTime);
+                        tempEvent.setEventTimeTo(toTime);
+                        tempEvent.setBudget(eventBudget);
+                        realm.copyToRealmOrUpdate(tempEvent);
+
+                    }
+                });
+                realm.close();
+                getView().onNext();
             }
 
-            getView().setPackages(packageList);
-
         }
-    }
+    */
+    public void setApplyFilter(String filterType, String filterSort, String query) {
 
-    public void setApplyFilter(String filterType, String filterSort, String budget) {
-        if (packageRealmResults.isLoaded() && packageRealmResults.isValid()) {
-            List<Package> list;
-            RealmResults<Package> packages = packageRealmResults.where()
-                    .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
-                    .contains("packageType", filterType)
-                    .findAll().sort("packageName", Sort.DESCENDING);
+        int budget = 0;
+        boolean isString = false;
+        try {
+            budget = Integer.parseInt(query);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            isString = true;
+        }
+        RealmResults<Package> packages = realm.where(Package.class).findAll().sort("packageId", Sort.ASCENDING);
+
+        if (isString) {
+            Log.d(TAG, "String: " + query);
+            if (query.equals("")) {
+                packages = packages.sort("packageName", Sort.DESCENDING);
+            } else {
+                packages = packages.where()
+                        .contains("packageName", query.trim(), Case.INSENSITIVE)
+                        .or().contains("packageType", query.trim(), Case.INSENSITIVE)
+                        .findAll().sort("packageName", Sort.DESCENDING);
+            }
+        } else {
+            Log.d(TAG, "Integer");
+            packages = packages.where().lessThanOrEqualTo("packagePrice", budget)
+                    .findAll().sort("packagePrice", Sort.DESCENDING);
+        }
+/*
+            if(!filterType.equals("")){
+                packages = packages.where().contains("packageType", filterType).findAll();
+            }
 
             if (filterSort.equals("Price (High to Low)")) {
-                packages = packageRealmResults.where()
-                        .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
-                        .contains("packageType", filterType)
+                packages = packages.where()
                         .findAll().sort("packagePrice", Sort.DESCENDING);
             }
-
             if (filterSort.equals("Price (Low To High)")) {
-                packages = packageRealmResults.where()
-                        .lessThanOrEqualTo("packagePrice", Integer.parseInt(budget))
-                        .contains("packageType", filterType)
+                packages = packages.where()
                         .findAll().sort("packagePrice", Sort.ASCENDING);
-            }
+            }*/
 
 
-            list = realm.copyFromRealm(packages);
-            getView().setPackages(list);
-
-        }
+        getView().setPackages(packages);
     }
+
+    public TempEvent getTempEvent() {
+        return realm.where(TempEvent.class).findFirst();
+    }
+
 }

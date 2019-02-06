@@ -12,10 +12,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -55,6 +55,7 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
     private GoogleApiClient client;
     private ProgressDialog progressDialog;
     private List<String> strings = new ArrayList<>();
+    private SearchView searchView;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -188,18 +189,42 @@ public class MainActivity extends MvpActivity<MainView, MainPresenter> implement
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+            if (!searchView.isIconified()) {
+                searchView.setIconified(true);
+                return;
+            }
             super.onBackPressed();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        /*getMenuInflater().inflate(R.menu.menu_search, menu);
+
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setMaxWidth(Integer.MAX_VALUE);
+        searchView.setQueryHint("Budget, Name");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+               // presenter.setApplyFilter(filterType, filterSort, query);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                //presenter.setApplyFilter(filterType, filterSort, query);
+                return false;
+            }
+        });*/
+
         return true;
     }
 

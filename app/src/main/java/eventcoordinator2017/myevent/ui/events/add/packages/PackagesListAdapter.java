@@ -46,6 +46,7 @@ public class PackagesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         packageViewHolder.itemPackageBinding.setView(eventsView);
         Glide.with(holder.itemView.getContext())
                 .load(Constants.URL_IMAGE + list.get(position).getImageDirectory())
+                .dontAnimate()
                 .into(packageViewHolder.itemPackageBinding.packageImage);
     }
 
