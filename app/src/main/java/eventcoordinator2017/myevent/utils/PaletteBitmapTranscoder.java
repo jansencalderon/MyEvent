@@ -6,7 +6,7 @@ package eventcoordinator2017.myevent.utils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.support.v7.graphics.Palette;
+import androidx.palette.graphics.Palette;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.Resource;
@@ -15,7 +15,7 @@ import com.bumptech.glide.load.resource.transcode.ResourceTranscoder;
 
 /**
  * A {@link com.bumptech.glide.load.resource.transcode.ResourceTranscoder} for generating
- * {@link android.support.v7.graphics.Palette}s from {@link android.graphics.Bitmap}s in the background.
+ * {@link Palette}s from {@link android.graphics.Bitmap}s in the background.
  */
 public class PaletteBitmapTranscoder implements ResourceTranscoder<Bitmap, PaletteBitmap> {
     private final BitmapPool bitmapPool;

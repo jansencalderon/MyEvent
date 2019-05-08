@@ -2,9 +2,9 @@ package eventcoordinator2017.myevent.firebase;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.support.v4.content.LocalBroadcastManager;
-import android.text.TextUtils;
+
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+
 import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;

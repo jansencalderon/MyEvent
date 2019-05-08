@@ -2,11 +2,11 @@ package eventcoordinator2017.myevent.ui.pack;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import android.view.MenuItem;
 import android.view.View;
 

@@ -2,7 +2,7 @@ package eventcoordinator2017.myevent.utils;
 
 import android.content.Context;
 import android.content.pm.PackageManager;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by Sen on 2/24/2017.

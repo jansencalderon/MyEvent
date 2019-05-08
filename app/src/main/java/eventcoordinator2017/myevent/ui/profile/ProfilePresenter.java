@@ -1,23 +1,17 @@
 package eventcoordinator2017.myevent.ui.profile;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;
 
 import java.io.File;
-import java.util.List;
 
-import eventcoordinator2017.myevent.R;
 import eventcoordinator2017.myevent.app.App;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.model.data.User;
-import eventcoordinator2017.myevent.utils.DateTimeUtils;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmResults;
-import io.realm.Sort;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;

@@ -6,11 +6,11 @@ package eventcoordinator2017.myevent.utils;
 
 
 import android.graphics.Bitmap;
-import android.support.annotation.NonNull;
-import android.support.v7.graphics.Palette;
+import androidx.annotation.NonNull;
+import androidx.palette.graphics.Palette;
 
 /**
- * A simple wrapper for a {@link android.support.v7.graphics.Palette} and a {@link android.graphics.Bitmap}.
+ * A simple wrapper for a {@link Palette} and a {@link android.graphics.Bitmap}.
  */
 public class PaletteBitmap {
     public final Palette palette;

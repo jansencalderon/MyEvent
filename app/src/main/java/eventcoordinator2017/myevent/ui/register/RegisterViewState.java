@@ -1,7 +1,7 @@
 package eventcoordinator2017.myevent.ui.register;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.hannesdorfmann.mosby.mvp.viewstate.RestorableViewState;
 

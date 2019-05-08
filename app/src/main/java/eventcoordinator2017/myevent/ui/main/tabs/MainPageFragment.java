@@ -1,10 +1,10 @@
 package eventcoordinator2017.myevent.ui.main.tabs;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v7.widget.LinearLayoutManager;
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +23,6 @@ import eventcoordinator2017.myevent.databinding.FragmentMainPageBinding;
 import eventcoordinator2017.myevent.model.data.Event;
 import eventcoordinator2017.myevent.ui.events.details.EventDetailActivity;
 import eventcoordinator2017.myevent.utils.StringUtils;
-import io.realm.Realm;
 
 /**
  * Created by Sen on 2/28/2017.

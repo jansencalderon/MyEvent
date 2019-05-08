@@ -10,6 +10,7 @@ import eventcoordinator2017.myevent.model.data.Package;
 import eventcoordinator2017.myevent.model.data.User;
 import eventcoordinator2017.myevent.model.response.LoginResponse;
 import eventcoordinator2017.myevent.model.response.ResultResponse;
+import io.reactivex.Single;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import retrofit2.Call;
@@ -24,8 +25,8 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST(Endpoints.LOGIN)
-    Call<LoginResponse> login(@Field(Constants.EMAIL) String username,
-                              @Field(Constants.PASSWORD) String password);
+    Single<LoginResponse> login(@Field(Constants.EMAIL) String username,
+                                @Field(Constants.PASSWORD) String password);
 
     @FormUrlEncoded
     @POST(Endpoints.SAVE_USER_TOKEN)
@@ -88,7 +89,7 @@ public interface ApiInterface {
 
     @FormUrlEncoded
     @POST(Endpoints.GET_ALL_EVENTS)
-    Call<List<Event>> getAllEvents(@Field("") String field);
+    Single<List<Event>> getAllEvents(@Field("") String field);
 
 
     @FormUrlEncoded

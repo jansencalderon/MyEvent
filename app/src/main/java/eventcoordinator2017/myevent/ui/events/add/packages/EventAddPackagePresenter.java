@@ -1,7 +1,7 @@
 package eventcoordinator2017.myevent.ui.events.add.packages;
 
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.hannesdorfmann.mosby.mvp.MvpNullObjectBasePresenter;

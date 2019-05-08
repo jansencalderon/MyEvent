@@ -3,11 +3,11 @@ package eventcoordinator2017.myevent.ui.events.details;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
+import androidx.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.NavUtils;
-import android.support.v4.content.ContextCompat;
+import androidx.annotation.NonNull;
+import androidx.core.app.NavUtils;
+import androidx.core.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -38,9 +38,6 @@ import eventcoordinator2017.myevent.ui.events.EventsActivity;
 import eventcoordinator2017.myevent.ui.events.add.EventAddActivity;
 import eventcoordinator2017.myevent.ui.events.add.guests.GuestsActivity;
 import eventcoordinator2017.myevent.ui.venue.LocationActivity;
-import io.realm.Realm;
-import io.realm.RealmChangeListener;
-import io.realm.RealmModel;
 
 /**
  * Created by Mark Jansen Calderon on 1/26/2017.
